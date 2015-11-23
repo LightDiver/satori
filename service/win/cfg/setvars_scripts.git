@@ -1,0 +1,38 @@
+echo on
+
+rem ==================
+rem Change Your Branch
+rem ==================
+@set mv15_RlsBranch=RLS_001.01
+@set mv15_MstBranch=master
+@set mv15_DevBranch=dev_all
+
+@set mv15_Branch=%mv15_DevBranch%
+
+rem ===============
+rem Change The Path
+rem ===============
+@set git_install=C:\Program Files\Git
+@set git_editor=C:\Program Files (x86)\Notepad++\Notepad++.exe 
+
+@set IF_ERROR=%errorlevel%
+
+rem ==============================
+rem Change The Options  For Oracle
+rem ==============================
+@set Oracle_Instance=FMS
+@set Sysdba_name=SYS
+@set Sysdba_pass=Oracle11
+@set User_name=DEV_TEST
+@set User_pass=DEV_TEST
+@set sql_util="C:\OracleClient11g\product\11.2.0\client_1\BIN\sqlplus.exe"
+@set sql_load="C:\OracleClient11g\product\11.2.0\client_1\BIN\sqlldr.exe"
+
+rem ==============
+rem Do Not Change!
+rem ==============
+chcp 1251
+
+if %IF_ERROR% == 1 EXIT 1
+
+echo on
