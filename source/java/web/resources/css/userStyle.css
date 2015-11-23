@@ -7,9 +7,10 @@
 }
 .wrapper {
 	width: 720px;
-	position: relative;
+	margin: 0 auto;
+	/*position: relative;
 	left: 50%;
-	margin-left: -360px;
+	margin-left: -360px;*/
 	background-color: #CCCCCC;
 	border: 1px dotted #FFF;
 	box-shadow: 0px 2px 5px #333333
