@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <h:outputScript library="javascript" name="simple.js" target="head"/>
+    <h:outputScript library="javascript" name="sha1.js" target="head"/>
+</h:head>
+<body>
+<f:view>
+
+    <h:outputLabel value="Hello, world"/>
+
+
+        <h:outputLabel value="pass" />
+        <h:inputText value="3" id="pass"/>
+        <h:commandButton id="sha1" value="SHA1"
+
+                         onclick="document.getElementById('pass_sha1').value = hex_sha1(document.getElementById('pass').value)"
+                />
+        <!--onclick="document.getElementById('pass_sha1').value = hex_sha1(document.getElementById('pass').value)"-->
+        <h:outputLabel value="pass_sha1"/>
+        <h:inputText value="1" id="pass_sha1"/>
+
+
+</f:view>
+</body>
+</html>

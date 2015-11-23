@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich">
+
+
+    <h:outputStylesheet>
+        .top {
+            vertical-align: top;
+            width: 33%;
+            border: 1px;
+        }
+
+        .rf-trn-sel {
+            background: #33ff2b;
+        }
+        .rf-trn-lbl:hover{
+            background: green;
+        }
+
+    </h:outputStylesheet>
+
+    <h:panelGrid columns="3" columnClasses="top,top,top" width="100%">
+        <h:form>
+
+            <rich:tree id="menu1" nodeType="#{item.type}" var="item" value="#{menuFooterBean.rootNodes1}" toggleType="client" selectionType="ajax">
+                <rich:treeNode type="simple" expanded="#{true}" iconLeaf="/resources/images/menu/simple.png" iconExpanded = "/resources/images/menu/simple.png" iconCollapsed= "/resources/images/menu/simple.png">
+                    <h:outputLink value="#{item.link}" style="text-decoration:none;color:black;">#{item.name}</h:outputLink>
+                </rich:treeNode>
+                <rich:treeNode type="lesson" iconExpanded="/resources/images/menu/lesson_e.png" iconCollapsed="/resources/images/menu/lesson_c.png" iconLeaf="/resources/images/menu/lesson_i.png">
+                    <h:outputLink value="#{item.link}" style="text-decoration:none;color:black;">#{item.name}</h:outputLink>
+                </rich:treeNode>
+                <rich:treeNode type="practice" iconExpanded="/resources/images/menu/practices_c_e.png" iconCollapsed="/resources/images/menu/practices_c_e.png" iconLeaf="/resources/images/menu/practices_i.png">
+                    <h:outputLink value="#{item.link}" style="text-decoration:none;color:black;">#{item.name}</h:outputLink>
+                </rich:treeNode>
+            </rich:tree>
+        </h:form>
+        <h:form>
+            <rich:tree id="menu2" nodeType="#{item.type}" var="item" value="#{menuFooterBean.rootNodes2}" toggleType="client" selectionType="ajax">
+                <rich:treeNode type="simple" iconLeaf="/resources/images/menu/simple.png">
+                    <h:outputLink value="#{item.link}" style="text-decoration:none;color:black;">#{item.name}</h:outputLink>
+                </rich:treeNode>
+            </rich:tree>
+        </h:form>
+
+    <h:panelGrid columns="2" border="1">
+        <h:outputLabel value="1" />
+        <h:outputLabel value="2" />
+        <h:outputLabel value="3" />
+        <h:outputLabel value="4" />
+        <h:outputLabel value="5" />
+        </h:panelGrid>
+    </h:panelGrid>
+
+
+
+</ui:composition>

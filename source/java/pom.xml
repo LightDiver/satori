@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>satori.lightdiver</groupId>
+	<artifactId>satori</artifactId>
+	<version>1.0</version>
+	<packaging>war</packaging>
+
+        <developers>
+		<developer>
+			<name>Serg Izumrud</name>
+			<id>1</id>
+			<email>light.diver.10@gmail.com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+<build>
+<plugins>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-dependency-plugin</artifactId>
+		<version>2.4</version>
+		<executions>
+			<execution>
+				<id>copy</id>
+				<phase>install</phase>
+				<goals>
+					<goal>copy-dependencies</goal>
+				</goals>
+				<configuration>
+					<outputDirectory>
+						${project.basedir}/lib
+					</outputDirectory>
+				</configuration>
+			</execution>
+		</executions>
+	</plugin>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-war-plugin</artifactId>
+		<version>2.5</version>
+		<configuration>
+			<webXml>web\WEB-INF\web.xml</webXml>
+		</configuration>
+	</plugin>
+    <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+            <source>1.7</source>
+            <target>1.7</target>
+        </configuration>
+    </plugin>
+</plugins>
+	<sourceDirectory>${project.basedir}/src</sourceDirectory>
+	<testSourceDirectory>${project.basedir}/test</testSourceDirectory>
+
+</build>
+
+
+
+</project>

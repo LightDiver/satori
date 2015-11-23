@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="satori:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="satori-1.0.war">
+      <element id="artifact" artifact-name="satori:war exploded" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="ojdbc6" />
+          <element id="library" level="project" name="PrimeFaces-5.2" />
+          <element id="library" level="project" name="javax.faces-2.2.12" />
+          <element id="library" level="project" name="richfaces-a4j-4.5.10.Final" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
