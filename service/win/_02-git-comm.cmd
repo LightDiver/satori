@@ -4,7 +4,7 @@ cls
 call cfg\setvars_scripts.cmd
 
 REM Commit to local repository
-"%git_install%\bin\git" add .
+"%git_install%\bin\git" add ..\..\.
 start /wait "¬ведите комментарий" "%git_editor%" cfg\message_commits.txt
 "%git_install%\bin\git" commit -a -F cfg\message_commits.txt
 
