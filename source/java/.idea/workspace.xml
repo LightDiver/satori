@@ -54,15 +54,16 @@
       <file leaf-file-name="userHeader.xhtml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/templates/userHeader.xhtml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="12.269231">
-              <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+            <state vertical-scroll-proportion="-6.076923">
+              <caret line="29" column="5" selection-start-line="29" selection-start-column="5" selection-end-line="29" selection-end-column="5" />
               <folding>
-                <marker date="1448304949101" expanded="true" signature="311:406" placeholder="{...}" />
-                <marker date="1448304949101" expanded="true" signature="421:507" placeholder="{...}" />
-                <marker date="1448304949101" expanded="true" signature="522:608" placeholder="{...}" />
-                <marker date="1448304949101" expanded="true" signature="637:722" placeholder="{...}" />
-                <marker date="1448304949101" expanded="true" signature="750:862" placeholder="{...}" />
-                <marker date="1448304949101" expanded="true" signature="891:1005" placeholder="{...}" />
+                <marker date="1448312532332" expanded="true" signature="311:428" placeholder="{...}" />
+                <marker date="1448312532332" expanded="true" signature="443:538" placeholder="{...}" />
+                <marker date="1448312532332" expanded="true" signature="553:639" placeholder="{...}" />
+                <marker date="1448312532332" expanded="true" signature="665:750" placeholder="{...}" />
+                <marker date="1448312532332" expanded="true" signature="779:864" placeholder="{...}" />
+                <marker date="1448312532332" expanded="true" signature="892:1004" placeholder="{...}" />
+                <marker date="1448312532332" expanded="true" signature="1033:1147" placeholder="{...}" />
               </folding>
             </state>
           </provider>
@@ -101,15 +102,12 @@
       <file leaf-file-name="userLogin.xhtml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/templates/userLogin.xhtml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4831081">
-              <caret line="51" column="28" selection-start-line="51" selection-start-column="28" selection-end-line="51" selection-end-column="28" />
+            <state vertical-scroll-proportion="-0.07094595">
+              <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
               <folding>
-                <marker date="1448305955275" expanded="true" signature="881:1004" placeholder="{...}" />
-                <marker date="1448305955275" expanded="true" signature="1041:1081" placeholder="{...}" />
-                <marker date="1448305955275" expanded="true" signature="1112:1213" placeholder="{...}" />
-                <marker date="1448305955275" expanded="true" signature="1247:1348" placeholder="{...}" />
-                <marker date="1448305955275" expanded="true" signature="1380:1512" placeholder="{...}" />
-                <marker date="1448305955275" expanded="true" signature="1545:1679" placeholder="{...}" />
+                <marker date="1448312534704" expanded="true" signature="881:1007" placeholder="{...}" />
+                <marker date="1448312534704" expanded="true" signature="1044:1084" placeholder="{...}" />
+                <marker date="1448312534704" expanded="true" signature="1113:1148" placeholder="{...}" />
               </folding>
             </state>
           </provider>
@@ -350,6 +348,42 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="satori" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="view" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="satori" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="templates" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -989,12 +1023,12 @@
       <workItem from="1448012634253" duration="38220000" />
       <workItem from="1448121264799" duration="22546000" />
       <workItem from="1448189369394" duration="10900000" />
-      <workItem from="1448269805748" duration="25520000" />
+      <workItem from="1448269805748" duration="32536000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="336637000" />
+    <option name="totallyTimeSpent" value="343653000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1007,7 +1041,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32843137" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1019,7 +1053,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33963692" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32829046" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.42810458" sideWeight="0.49394855" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42810458" sideWeight="0.49394855" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2677761" sideWeight="0.684466" order="0" side_tool="false" content_ui="combo" />
@@ -1472,30 +1506,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web/templates/userHeader.xhtml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="12.269231">
-          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+        <state vertical-scroll-proportion="-6.076923">
+          <caret line="29" column="5" selection-start-line="29" selection-start-column="5" selection-end-line="29" selection-end-column="5" />
           <folding>
-            <marker date="1448304949101" expanded="true" signature="311:406" placeholder="{...}" />
-            <marker date="1448304949101" expanded="true" signature="421:507" placeholder="{...}" />
-            <marker date="1448304949101" expanded="true" signature="522:608" placeholder="{...}" />
-            <marker date="1448304949101" expanded="true" signature="637:722" placeholder="{...}" />
-            <marker date="1448304949101" expanded="true" signature="750:862" placeholder="{...}" />
-            <marker date="1448304949101" expanded="true" signature="891:1005" placeholder="{...}" />
+            <marker date="1448312532332" expanded="true" signature="311:428" placeholder="{...}" />
+            <marker date="1448312532332" expanded="true" signature="443:538" placeholder="{...}" />
+            <marker date="1448312532332" expanded="true" signature="553:639" placeholder="{...}" />
+            <marker date="1448312532332" expanded="true" signature="665:750" placeholder="{...}" />
+            <marker date="1448312532332" expanded="true" signature="779:864" placeholder="{...}" />
+            <marker date="1448312532332" expanded="true" signature="892:1004" placeholder="{...}" />
+            <marker date="1448312532332" expanded="true" signature="1033:1147" placeholder="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/templates/userLogin.xhtml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4831081">
-          <caret line="51" column="28" selection-start-line="51" selection-start-column="28" selection-end-line="51" selection-end-column="28" />
+        <state vertical-scroll-proportion="-0.07094595">
+          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
           <folding>
-            <marker date="1448305955275" expanded="true" signature="881:1004" placeholder="{...}" />
-            <marker date="1448305955275" expanded="true" signature="1041:1081" placeholder="{...}" />
-            <marker date="1448305955275" expanded="true" signature="1112:1213" placeholder="{...}" />
-            <marker date="1448305955275" expanded="true" signature="1247:1348" placeholder="{...}" />
-            <marker date="1448305955275" expanded="true" signature="1380:1512" placeholder="{...}" />
-            <marker date="1448305955275" expanded="true" signature="1545:1679" placeholder="{...}" />
+            <marker date="1448312534704" expanded="true" signature="881:1007" placeholder="{...}" />
+            <marker date="1448312534704" expanded="true" signature="1044:1084" placeholder="{...}" />
+            <marker date="1448312534704" expanded="true" signature="1113:1148" placeholder="{...}" />
           </folding>
         </state>
       </provider>
