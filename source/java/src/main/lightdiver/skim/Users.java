@@ -5,8 +5,10 @@ import main.lightdiver.skim.exceptions.BaseNotConnect;
 import main.lightdiver.skim.exceptions.ErrorInBase;
 import main.lightdiver.skim.exceptions.FileNotRead;
 import main.lightdiver.skim.exceptions.InvalidParameter;
+import main.lightdiver.skim.model.SessionBean;
 
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -30,7 +32,7 @@ public class Users {
                 ipAddress = request.getRemoteAddr();
             }
 
-            RequestInfoToLog();//Закинути інфу у лог
+            RequestInfoToLog();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ
 
             res = new UsersDAO().login(user_login, pass, ipAddress, request.getHeader("user-agent"));
         } catch (BaseNotConnect baseNotConnect) {
@@ -56,6 +58,36 @@ public class Users {
         } catch (ErrorInBase errorInBase) {
             errorInBase.printStackTrace();
         }
+    }
+
+    public String registr(String userLogin, String userPass, String userName, String userEmail, String userSex, String userLang){
+        String res = null;
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            String ipAddress = request.getHeader("X-FORWARDED-FOR");
+            if ( ipAddress == null ) {
+                ipAddress = request.getRemoteAddr();
+            }
+
+            RequestInfoToLog();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ
+            logger.info("(String)externalContext.getSessionMap().get(\"userSession\") " + (String)externalContext.getSessionMap().get("userSession"));
+            logger.info("(String)externalContext.getSessionMap().get(\"userKey\") " + (String)externalContext.getSessionMap().get("userKey"));
+
+            res = new UsersDAO().registr((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, userLogin, userPass, userName, userEmail, userSex, userLang);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+            res = "baseNotConnect";
+        } catch (InvalidParameter invalidParameter) {
+            invalidParameter.printStackTrace();
+            res = "InvalidParameter";
+        } catch (FileNotRead fileNotRead) {
+            fileNotRead.printStackTrace();
+            res = "fileNotRead";
+        } catch (ErrorInBase errorInBase) {
+            errorInBase.printStackTrace();
+            res = "errorInBase";
+        }
+        return res;
     }
 
     private void RequestInfoToLog(){
@@ -92,5 +124,7 @@ public class Users {
             logger.info("e.nextElement() = " + s + " Value = " + request.getHeader(s));
         }
     }
+
+
 
 }

@@ -74,10 +74,12 @@ create table USERS (
    USER_NAME            VARCHAR2(55)          null,
    USER_EMAIL           VARCHAR2(55)          null,
    STATE_ID             NUMBER(2)           not null,
+   USER_SEX             VARCHAR2(1)         not null,
    LANG_ID		VARCHAR2(2) DEFAULT 'UA' not null,
    R_DATE               DATE                 not null,
    constraint USERS_PK primary key (USER_ID)
 );
+comment on column USERS.user_sex is 'M - Мужчина W - Жінка. Підарам тут не місце. ';
 
 create table ROLES (
    ROLE_ID              NUMBER(5)          not null,
@@ -91,7 +93,7 @@ comment on column ROLES.translate_pls_id is 'Дивиться на довідник TRANSLATE_DICT
 create table USERS_ROLE (
    USER_ID              NUMBER(18)          not null,
    ROLE_ID              NUMBER(5)          not null,
-   R_DATE               DATE                 not null
+   R_DATE               DATE         default localtimestamp        not null
 );
 
 create table ACTION_TYPE (

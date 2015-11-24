@@ -53,7 +53,7 @@ public class UsersDAO {
         res.put("lang_id", cs.getObject(8));
         res.put("err_id", cs.getObject(1));
         if (cs.getInt(1) != 0){
-            res.put("err_text", "Some troubles(Локализованый текст прочитать с базы)");
+            res.put("err_text", "Some troubles(Р’РёРІРѕРґРёС‚Рё РЅР° РјРѕРІС– РєРѕСЂРёСЃС‚СѓРІР°С‡Р°)");
         }
         } catch (SQLException e) {
             logger.log(Level.SEVERE,"Don't login, Critical dbase error", e);
@@ -71,10 +71,37 @@ public class UsersDAO {
             cs.setString(3, user_key);
             cs.execute();
         } catch (SQLException e) {
-            logger.log(Level.SEVERE,"Don't logout", e);
+            logger.log(Level.SEVERE, "Don't logout", e);
             e.printStackTrace();
             throw new ErrorInBase();
         }
+    }
+    public static String registr(String userSession, String userKey, String ipAddress, String userLogin, String userPass, String userName, String userEmail, String userSex, String userLang) throws ErrorInBase {
+        CallableStatement cs;
+        String res = null;
+     try {
+         cs = con.prepareCall("{? = call pkg_users.registr(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+         cs.registerOutParameter(1, Types.INTEGER);
+         cs.setString(2, userSession);
+         cs.setString(3, userKey);
+         cs.setString(4, ipAddress);
+         cs.setString(5, userLogin);
+         cs.setString(6, userPass);
+         cs.setString(7, userName);
+         cs.setString(8, userEmail);
+         cs.setString(9, userSex);
+         cs.setString(10, userLang);
+         cs.execute();
+         if (cs.getInt(1) != 0) {
+             res = "Some troubles: "+ cs.getInt(1) + "(Р’РёРІРѕРґРёС‚Рё РЅР° РјРѕРІС– РєРѕСЂРёСЃС‚СѓРІР°С‡Р°)";
+         }
+
+     }catch (SQLException e) {
+         logger.log(Level.SEVERE, "Don't register", e);
+         e.printStackTrace();
+         throw new ErrorInBase();
+     }
+        return res;
     }
 
 

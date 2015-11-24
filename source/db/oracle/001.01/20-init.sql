@@ -64,6 +64,9 @@ VALUES(2,'GUEST',
        'пароль невикористовується',
        'Гість',NULL, 1, localtimestamp, 'UA'
        );
+--assign role
+INSERT INTO users_role(user_id, role_id) VALUES(1, 1);
+INSERT INTO users_role(user_id, role_id) VALUES(2, 3);
        
 INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
 VALUES (translate_dict_id_seq.nextval,10,'UA','1001','Помилковий логін або пароль');      
@@ -82,31 +85,36 @@ VALUES (translate_dict_id_seq.nextval,13,'UA','1004','Недостатньо повноважень');
 INSERT INTO error_desc (error_desc_id, error_desc, translate_pls_id)
 VALUES (1004, 'Недостатньо повноважень',13);
 
---Ще одна дія
+--Ще дії
 INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
 VALUES (translate_dict_id_seq.nextval,14,'UA','Список дій користувачів в системі',NULL);
 INSERT INTO action_type(action_type_id, action_name, action_description, translate_pls_id)
 VALUES(4, 'Список дій користувачів в системі',NULL,14);
+INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
+VALUES (translate_dict_id_seq.nextval,15,'UA','Реєстрація нового користувача в системі',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description, translate_pls_id)
+VALUES(5, 'Реєстрація нового користувача в системі',NULL,15);
 --ADMIN
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,4);
 --REGISTERED
 --GUEST
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,5);
 
 --Ще одна помилка
 INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
-VALUES (translate_dict_id_seq.nextval,15,'UA','1005','Невірно вказані дата початку або дата кінця');      
+VALUES (translate_dict_id_seq.nextval,16,'UA','1005','Невірно вказані дата початку або дата кінця');      
 INSERT INTO error_desc (error_desc_id, error_desc, translate_pls_id)
-VALUES (1005, 'Невірно вказані дата початку або дата кінця',15);
+VALUES (1005, 'Невірно вказані дата початку або дата кінця',16);
 
 --довідничок 
 INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
-VALUES (translate_dict_id_seq.nextval,16,'UA','Успіх',NULL);
+VALUES (translate_dict_id_seq.nextval,17,'UA','Успіх',NULL);
 INSERT INTO user_sess_success(is_success_id, is_success_name, translate_pls_id)
-VALUES(1, 'Успіх', 16);
+VALUES(1, 'Успіх', 17);
 INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
-VALUES (translate_dict_id_seq.nextval,17,'UA','Відмовлено',NULL);
+VALUES (translate_dict_id_seq.nextval,18,'UA','Відмовлено',NULL);
 INSERT INTO user_sess_success(is_success_id, is_success_name, translate_pls_id)
-VALUES(0, 'Відмовлено', 17);
+VALUES(0, 'Відмовлено', 18);
 
 
 COMMIT;

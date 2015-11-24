@@ -42,8 +42,9 @@ public class SessionBean implements Serializable {
         return userName;
     }
 
-    public String login() throws Throwable {
-        try {
+    public String login() /*throws Throwable*/ {
+
+       // try {
             userInfo = new Users().login(userName, hashPass);
             if (userInfo.get("err_id") == 0) {
                 userSession = userInfo.get("session_id").toString();
@@ -51,6 +52,9 @@ public class SessionBean implements Serializable {
                 if (userName.equals("GUEST")){uLogin = false;}else {
                     uLogin = true;
                 }
+                ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+                externalContext.getSessionMap().put("userSession",userSession);
+                externalContext.getSessionMap().put("userKey",userKey);
                 return "#";
             } else {
 
@@ -60,14 +64,17 @@ public class SessionBean implements Serializable {
                 //throw new Throwable();
                 return "#";
             }
-        }
+       /* }
         catch (Throwable e){
             e.printStackTrace();
             throw new Throwable();
-        }
-/*            request.setAttribute("username", userName);
+        }*/
+        /*    request.setAttribute("username", userName);
             request.setAttribute("sessionid", userSession);
-            request.setAttribute("keyid", userKey);*/
+            request.setAttribute("keyid", userKey);
+            */
+
+
     }
     public String logout() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();

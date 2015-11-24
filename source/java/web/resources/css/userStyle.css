@@ -1,10 +1,4 @@
 @charset "utf-8";
-.st_test {
-	background-color: #CCC;
-	width: 720px;
-	margin: 0px;
-	height: 50px;
-}
 .wrapper {
 	width: 720px;
 	margin: 0 auto;

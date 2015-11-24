@@ -335,6 +335,69 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       v_error_id := 1004;
       RETURN v_error_id;
   END list_users_action;
+
+  FUNCTION registr(i_session_id  user_session.session_id%TYPE,
+                   i_key_id      user_session.key_id%TYPE,
+                   i_terminal_ip user_session.terminal_ip%TYPE,
+                   
+                   i_newuser_login users.user_login%TYPE,
+                   i_newuser_pass  users.user_pass%TYPE,
+                   i_user_name     users.user_name%TYPE,
+                   i_user_email    users.user_email%TYPE,
+                   i_user_sex      users.user_sex%TYPE,
+                   i_lang_id       users.lang_id%TYPE)
+    RETURN error_desc.error_desc_id%TYPE AS
+  
+    /* Реєстрація нового користувача
+          Помилки:
+                  1004 - Недостатньо повноважень
+    */
+  
+    v_error_id error_desc.error_desc_id%TYPE;
+    c_perm_act action_type.action_type_id%TYPE := 5;
+  BEGIN
+    v_error_id := active_session(i_session_id,
+                                 i_key_id,
+                                 i_terminal_ip,
+                                 c_perm_act);
+  
+    IF v_error_id = 0 THEN
+      INSERT INTO users
+        (user_id,
+         user_login,
+         user_pass,
+         user_name,
+         user_email,
+         state_id,
+         r_date,
+         user_sex,
+         lang_id)
+      VALUES
+        (users_id_seq.nextval,
+         i_newuser_login,
+         i_newuser_pass,
+         i_user_name,
+         i_user_email,
+         1,
+         localtimestamp,
+         i_user_sex,
+         i_lang_id);
+    END IF;
+
+    INSERT INTO users_role
+      (user_id, role_id)
+    VALUES
+      (users_id_seq.currval, 2);
+  
+    RETURN v_error_id;
+  
+  EXCEPTION
+    WHEN insufficient_privileges THEN
+      v_error_id := 1004;
+      RETURN v_error_id;
+    
+  END registr;
+
   --BEGIN
 -- Initialization
 --< STATEMENT >;

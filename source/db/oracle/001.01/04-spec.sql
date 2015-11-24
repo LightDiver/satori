@@ -75,5 +75,21 @@ CREATE OR REPLACE PACKAGE pkg_users IS
                              o_items        OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE;
 
+    /* Реєстрація нового користувача
+          Помилки:
+                  1004 - Недостатньо повноважень
+    */      
+  FUNCTION registr(i_session_id  user_session.session_id%TYPE,
+                   i_key_id      user_session.key_id%TYPE,
+                   i_terminal_ip user_session.terminal_ip%TYPE,
+                   
+                   i_newuser_login users.user_login%TYPE,
+                   i_newuser_pass  users.user_pass%TYPE,
+                   i_user_name     users.user_name%TYPE,
+                   i_user_email    users.user_email%TYPE,
+                   i_user_sex      users.user_sex%TYPE,
+                   i_lang_id       users.lang_id%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
 END pkg_users;
 /
