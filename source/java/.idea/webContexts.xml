@@ -6,6 +6,7 @@
         <entry key="file://$PROJECT_DIR$/web/index.xhtml" value="file://$PROJECT_DIR$/web" />
         <entry key="file://$PROJECT_DIR$/web/login.xhtml" value="file://$PROJECT_DIR$/web" />
         <entry key="file://$PROJECT_DIR$/web/templates/Footer.xhtml" value="file://$PROJECT_DIR$/web/templates" />
+        <entry key="file://$PROJECT_DIR$/web/view/register.xhtml" value="file://$PROJECT_DIR$/web/view" />
       </map>
     </option>
   </component>
