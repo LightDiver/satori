@@ -61,7 +61,7 @@ public class RegistrationNewUser {
         if(!matcher.matches()){
             ((UIInput) comp).setValid(false);
 
-            FacesMessage message = new FacesMessage("E-mail validation failed.",
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,"E-mail validation failed.",
                     "Invalid E-mail format");
             context.addMessage(comp.getClientId(context), message);
         }
@@ -72,7 +72,7 @@ public class RegistrationNewUser {
         if (username.length() < 5) {
             ((UIInput) comp).setValid(false);
 
-            FacesMessage message = new FacesMessage("User Login validation failed.",
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Login validation failed.",
                     "User Name length must more 5 symbols");
             context.addMessage(comp.getClientId(context), message);
         }

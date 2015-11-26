@@ -25,28 +25,34 @@
                 <rich:message for="username" />
 
                 <h:outputLabel value="Пароль: " />
-                <h:inputSecret id="password" value="#{registrationNewUser.userPass}" required="true" requiredMessage="Не вказано!"/>
-                <h:message for="password" style="color: #ff2514;font-size: 14px;"/>
+                <h:inputSecret id="password" value="#{registrationNewUser.userPass}" required="true" requiredMessage="Не вказано!" validatorMessage="Секрет має бути більше ніж 3 символи">
+                    <f:validateLength minimum="3" maximum="100" />
+                    <rich:validator />
+                </h:inputSecret>
+                <rich:message for="password"/>
 
                 <h:outputLabel value="Підтвердити пароль: " />
-                <h:inputSecret id="passwordrepeat" value="#{registrationNewUser.userPassRepeat}" required="true" requiredMessage="Не вказано!"/>
-                <h:message for="passwordrepeat" style="color: #ff2514;font-size: 14px;"/>
+                <h:inputSecret id="passwordrepeat" value="#{registrationNewUser.userPassRepeat}" required="true" requiredMessage="Не вказано!">
+                    <rich:validator/>
+                </h:inputSecret>
+                <rich:message for="passwordrepeat"/>
 
                 <h:outputLabel value="Ім'я та Прізвище: " />
                 <h:inputText id="userpib" value="#{registrationNewUser.userPIB}" required="true" requiredMessage="Не вказано!"/>
-                <h:message for="userpib" style="color: #ff2514;font-size: 14px;"/>
+                <rich:message for="userpib" />
 
                 <h:outputLabel value="Електрона адреса: " />
-                <h:inputText id="useremail" value="#{registrationNewUser.userEMail}" required="true" requiredMessage="Не вказано!" validator="#{registrationNewUser.validUserEMail}"/>
-
-                <h:message for="useremail" style="color: #ff2514;font-size: 14px;"/>
+                <h:inputText id="useremail" value="#{registrationNewUser.userEMail}" required="true" requiredMessage="Не вказано!" validator="#{registrationNewUser.validUserEMail}">
+                    <rich:validator />
+                </h:inputText>
+                <rich:message for="useremail" />
 
                 <h:outputLabel value="Стать: " />
                 <h:selectOneRadio  id="sex" value="#{registrationNewUser.sex}" required="true" requiredMessage="Не вказано!">
                     <f:selectItem itemLabel="Муж" itemValue="M" />
                     <f:selectItem itemLabel="Жін" itemValue="W" />
                 </h:selectOneRadio>
-                <h:message for="sex" style="color: #ff2514;font-size: 14px;"/>
+                <rich:message for="sex"/>
 
                 <h:outputLabel value="Мова: " />
                 <h:outputText id="userlang" value="#{registrationNewUser.userLang}"/>
