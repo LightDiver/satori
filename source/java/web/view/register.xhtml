@@ -4,63 +4,84 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:rich="http://richfaces.org/rich"
+                xmlns:a4j="http://richfaces.org/a4j"
                 template="../templates/userTemplate1.xhtml">
     <ui:define name="content">
         <h:outputScript library="javascript" name="sha1.js" target="head"/>
         <script type="text/javascript">
             function hash_pass_reg() {
-                document.getElementById('formr:hashpass').value = hex_sha1(document.getElementById('formr:username').value+document.getElementById('formr:password').value);
-                if (document.getElementById('formr:password').value != "") {document.getElementById('formr:password').value = "usernamepass";}
+                document.getElementById('formr:hashpass').value = hex_sha1(document.getElementById('username').value+document.getElementById('password').value);
+                if (document.getElementById('password').value != "") {document.getElementById('password').value = "usernamepass";}
             }
         </script>
         <h:outputLink value="../index.xhtml" styleClass="ui-commandlink">Передумав реєструватися</h:outputLink>
         <h2>Form Register New User</h2>
-        <h:form id="formr">
-            <p:growl id="msg1" showSummary="true" showDetail="true" globalOnly="true" life="6000" />
+
+
             <h:panelGrid columns="3">
+
                 <h:outputLabel value="Логін: " />
-                <h:inputText id="username" value="#{registrationNewUser.userName}" required="true" requiredMessage="Не вказано!" validator="#{registrationNewUser.validUserName}">
-                    <rich:validator />
-                </h:inputText>
-                <rich:message for="username" />
+                <h:inputText id="username" onblur="validusername(this.value)" value="#{registrationNewUser.userName}" required="true" requiredMessage="Не вказано!"/>
+                <rich:message id="mes_username" for="username" />
+
 
                 <h:outputLabel value="Пароль: " />
-                <h:inputSecret id="password" value="#{registrationNewUser.userPass}" required="true" requiredMessage="Не вказано!" validatorMessage="Секрет має бути більше ніж 3 символи">
-                    <f:validateLength minimum="3" maximum="100" />
-                    <rich:validator />
-                </h:inputSecret>
-                <rich:message for="password"/>
+                <h:inputSecret id="password" value="#{registrationNewUser.userPass}" required="true" requiredMessage="Не вказано!" />
+                <rich:message id = "mes_password" for="password"/>
 
                 <h:outputLabel value="Підтвердити пароль: " />
-                <h:inputSecret id="passwordrepeat" value="#{registrationNewUser.userPassRepeat}" required="true" requiredMessage="Не вказано!">
-                    <rich:validator/>
-                </h:inputSecret>
-                <rich:message for="passwordrepeat"/>
+                <h:inputSecret id="passwordrepeat" value="#{registrationNewUser.userPassRepeat}" required="true" requiredMessage="Не вказано!"/>
+                <rich:message id = "mes_passwordrepeat" for="passwordrepeat"/>
 
                 <h:outputLabel value="Ім'я та Прізвище: " />
-                <h:inputText id="userpib" value="#{registrationNewUser.userPIB}" required="true" requiredMessage="Не вказано!"/>
-                <rich:message for="userpib" />
+                <h:inputText id="userpib" onblur="validpib(this.value)" value="#{registrationNewUser.userPIB}" required="true" requiredMessage="Не вказано!"/>
+                <rich:message id="mes_userpib" for="userpib" />
 
                 <h:outputLabel value="Електрона адреса: " />
-                <h:inputText id="useremail" value="#{registrationNewUser.userEMail}" required="true" requiredMessage="Не вказано!" validator="#{registrationNewUser.validUserEMail}">
-                    <rich:validator />
-                </h:inputText>
-                <rich:message for="useremail" />
+                <h:inputText id="useremail" onblur="validemail(this.value)" value="#{registrationNewUser.userEMail}" required="true" requiredMessage="Не вказано!"/>
+                <rich:message id="mes_useremail" for="useremail" />
 
                 <h:outputLabel value="Стать: " />
-                <h:selectOneRadio  id="sex" value="#{registrationNewUser.sex}" required="true" requiredMessage="Не вказано!">
+                <h:selectOneRadio  id="sex" onblur="validsex(this.value)" value="#{registrationNewUser.sex}" required="true" requiredMessage="Не вказано!">
                     <f:selectItem itemLabel="Муж" itemValue="M" />
                     <f:selectItem itemLabel="Жін" itemValue="W" />
                 </h:selectOneRadio>
-                <rich:message for="sex"/>
+                <rich:message id="mes_sex" for="sex"/>
 
                 <h:outputLabel value="Мова: " />
                 <h:outputText id="userlang" value="#{registrationNewUser.userLang}"/>
             </h:panelGrid>
-            <h:commandLink id="reg" value="Registration" onclick="hash_pass_reg()" action="#{registrationNewUser.registr}" update="msgreg" ajax="false" styleClass="ui-commandlink"/>
-            <h:inputHidden id="hashpass" value="#{registrationNewUser.hashPass}"/>
-            <p:messages globalOnly="true" autoUpdate="true"/>
+            <h:form id="formr">
+                <p:growl id="msgreg" showSummary="true" showDetail="true" globalOnly="true" life="6000" />
+                <h:inputText id="test1" value="#{registrationNewUser.userPIB}"/>
+                <h:commandLink id="reg" value="Registration" onclick="hash_pass_reg()" action="#{registrationNewUser.registr}" update="msgreg" ajax="false" styleClass="ui-commandlink"/>
+                <h:messages />
+                <h:inputHidden id="hashpass" value="#{registrationNewUser.hashPass}"/>
+                <p:messages globalOnly="true"/>
+            </h:form>
+
+
+        <h:form id="t1">
+            <a4j:jsFunction name="validemail"  action = "#{registrationNewUser.validUserEMailAjax}" limitRender="true" render="mes_useremail">
+                <a4j:param name="p1" assignTo="#{registrationNewUser.userEMail}" />
+            </a4j:jsFunction>
         </h:form>
+        <h:form id="t2">
+            <a4j:jsFunction name="validusername"  action = "#{registrationNewUser.validUserNameAjax}"  limitRender="true" render="mes_username">
+                <a4j:param name="p1" assignTo="#{registrationNewUser.userName}" />
+            </a4j:jsFunction>
+        </h:form>
+        <h:form id="t3">
+            <a4j:jsFunction name="validpib"  action = "#{registrationNewUser.validUserPIBAjax}"  limitRender="true" render="mes_userpib">
+                <a4j:param name="p1" assignTo="#{registrationNewUser.userPIB}" />
+            </a4j:jsFunction>
+        </h:form>
+        <h:form id="t4">
+            <a4j:jsFunction name="validsex"  action = "#{registrationNewUser.validSexAjax}"  limitRender="true" render="mes_sex">
+                <a4j:param name="p1" assignTo="#{registrationNewUser.sex}" />
+            </a4j:jsFunction>
+        </h:form>
+
     </ui:define>
 
 </ui:composition>

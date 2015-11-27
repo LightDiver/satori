@@ -1,3 +1,4 @@
 setvars_scripts.cmd
 message_commits.txt
 /source/java/target/*
+/source/java/.idea/workspace.xml

@@ -1,14 +1,13 @@
 package main.lightdiver.skim.model;
 
 import main.lightdiver.skim.Users;
+import main.lightdiver.skim.exceptions.ErrorInBase;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,25 +16,28 @@ import java.util.regex.Pattern;
  */
 @ManagedBean
 @SessionScoped
-public class RegistrationNewUser {
+public class RegistrationNewUser implements Serializable{
     protected String userName;
     protected transient String userPass;
     protected transient String userPassRepeat;
     protected String hashPass = "abc";
     protected String userPIB;
     protected String userEMail;
-    protected String sex;
+    protected String sex = "M";
     protected String userLang = "UA";
 
-    public String registr(){
-       /* if (sex.equals("Муж")){
-            sex = "M";
+    public String registr() throws ErrorInBase {
+        String res = null;
+        String check;
+        if(0==0) throw new ErrorInBase();
+        System.out.println("userName="+userName+" hashPass="+hashPass+" sex="+sex);
+        if ( (check=validUserEMailAjax()) !=null){res=res+check;}
+        if ( (check=validUserNameAjax())  !=null){res=res+check;}
+        if ( (check=validSexAjax())  !=null){res=res+check;}
+        if ( (check=validUserPIBAjax())  !=null){res=res+check;}
+        if (res==null) {
+            res = new Users().registr(userName, hashPass, userPIB, userEMail, sex, userLang);
         }
-        else {
-            sex = "W";
-        }
-        */
-        String res = new Users().registr(userName, hashPass, userPIB, userEMail, sex, userLang);
         if (res == null) {
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "OK", "New User Rigestered"));}
@@ -43,10 +45,10 @@ public class RegistrationNewUser {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Refused", res));
         }
+        System.out.println("res = " + res);
         return "#";
     }
-    public void validUserEMail(FacesContext context, UIComponent comp,
-                                Object value) {
+    public String validUserEMailAjax() {
         final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\." +
                 "[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*" +
                 "(\\.[A-Za-z]{2,})$";
@@ -54,29 +56,66 @@ public class RegistrationNewUser {
         Pattern pattern;
         Matcher matcher;
         pattern = Pattern.compile(EMAIL_PATTERN);
-        String email = (String)value;
-        matcher = pattern.matcher(email);
+
+        matcher = pattern.matcher(userEMail);
 
 
         if(!matcher.matches()){
-            ((UIInput) comp).setValid(false);
+            FacesContext.getCurrentInstance().addMessage("useremail",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "E-mail validation failed.", "Invalid E-mail format"));
+            System.out.println("userEMail:" + userEMail+ " userName:" + this.userName);
+            return "InvalidUserEMailAjax!";
+        }
+        else {
+            FacesContext.getCurrentInstance().addMessage("useremail",
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.", "Ok "));
+            System.out.println("userEMail:" + userEMail+ " userName:" + this.userName);
+            return null;
+        }
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,"E-mail validation failed.",
-                    "Invalid E-mail format");
-            context.addMessage(comp.getClientId(context), message);
+    }
+
+
+    public String validUserNameAjax(){
+
+        if (userName.length() < 5) {
+            FacesContext.getCurrentInstance().addMessage("username",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Login validation failed.",
+                    "User Name length must more 5 symbols " + this.userPass + " : " + this.userPassRepeat));
+            return "InvalidUserNameAjax!";
+        }
+        else{
+            FacesContext.getCurrentInstance().addMessage("username", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
+                    "Ok " + this.userPass + " : " + this.userPassRepeat));
+            return null;
+        }
+
+    }
+    public String validSexAjax(){
+        if (! (sex.equals("M") || sex.equals("W")) ) {
+            FacesContext.getCurrentInstance().addMessage("sex",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Sex validation failed.",
+                    "User Sex required " + this.userPass + " : " + this.userPassRepeat));
+            return "InvalidUserSex!";
+        }
+        else{
+            FacesContext.getCurrentInstance().addMessage("sex", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
+                    "Ok " + this.userPass + " : " + this.userPassRepeat));
+            return null;
         }
     }
-    public void validUserName(FacesContext context, UIComponent comp,
-                               Object value) {
-        String username = (String)value;
-        if (username.length() < 5) {
-            ((UIInput) comp).setValid(false);
-
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Login validation failed.",
-                    "User Name length must more 5 symbols");
-            context.addMessage(comp.getClientId(context), message);
+    public String validUserPIBAjax(){
+        if (userPIB.length() < 5) {
+            FacesContext.getCurrentInstance().addMessage("userpib",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User PIB validation failed.",
+                    "User Name length must more 5 symbols " + this.userPass + " : " + this.userPassRepeat));
+            return "InvalidUserPIBAjax!";
+        }
+        else{
+            FacesContext.getCurrentInstance().addMessage("userpib", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
+                    "Ok " + this.userPass + " : " + this.userPassRepeat));
+            return null;
         }
     }
+
+
     public String getUserName() {
         return userName;
     }
