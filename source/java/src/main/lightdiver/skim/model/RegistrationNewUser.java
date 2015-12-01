@@ -26,10 +26,14 @@ public class RegistrationNewUser implements Serializable{
     protected String sex = "M";
     protected String userLang = "UA";
 
-    public String registr() throws ErrorInBase {
+    public String registr() {
         String res = null;
         String check;
-        if(0==0) throw new ErrorInBase();
+        if(0==0) try {
+            throw new ErrorInBase();
+        } catch (ErrorInBase errorInBase) {
+            errorInBase.printStackTrace();
+        }
         System.out.println("userName="+userName+" hashPass="+hashPass+" sex="+sex);
         if ( (check=validUserEMailAjax()) !=null){res=res+check;}
         if ( (check=validUserNameAjax())  !=null){res=res+check;}
