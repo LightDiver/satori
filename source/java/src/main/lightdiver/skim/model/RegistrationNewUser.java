@@ -23,7 +23,7 @@ public class RegistrationNewUser implements Serializable{
     protected String hashPass = "abc";
     protected String userPIB;
     protected String userEMail;
-    protected String sex = "M";
+    protected String sex = "W";
     protected String userLang = "UA";
 
     public String registr() {
@@ -103,7 +103,8 @@ public class RegistrationNewUser implements Serializable{
 
     }
     public String validSexAjax(){
-        if (! (sex.equals("M") || sex.equals("W")) ) {
+        System.out.println(sex);
+        if (sex == null || !( sex.equals("M") || sex.equals("W")) ) {
             FacesContext.getCurrentInstance().addMessage("r_sex",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Sex validation failed.",
                     "User Sex required "));
             return "#";

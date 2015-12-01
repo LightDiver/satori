@@ -4,8 +4,10 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="../templates/userTemplate1.xhtml"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+        >
     <ui:define name="content">
     <c:if test = "#{sessionBean.uLogin}">
         Ви вже зареєстровані
@@ -57,8 +59,12 @@
                 <rich:message id="r_mes_useremail" for="r_useremail" />
 
                 <h:outputLabel value="Стать: " />
-                <h:outputText id="r_sex" value="#{registrationNewUser.sex}"/>
+                <rich:inplaceSelect id="r_sex" saveOnSelect="true" defaultLabel="Click here to edit" openOnEdit="true" value="#{registrationNewUser.sex}" onblur="validsex(this.value);">
+                    <f:selectItem itemValue="M" itemLabel="Чол" />
+                    <f:selectItem itemValue="W" itemLabel="Жін" />
+                </rich:inplaceSelect>
                 <rich:message id="r_mes_sex" for="r_sex"/>
+                <h:outputText id="r_ot" value="Output: #{registrationNewUser.sex}" />
 
                 <h:outputLabel value="Мова: " />
                 <h:outputText id="r_userlang" value="#{registrationNewUser.userLang}"/>
@@ -89,7 +95,8 @@
             </a4j:jsFunction>
         </h:form>
         <h:form id="t4">
-            <a4j:jsFunction name="validsex"  action = "#{registrationNewUser.validSexAjax}"  limitRender="true" render="r_mes_sex">
+            <a4j:jsFunction name="validsex"  action = "#{registrationNewUser.validSexAjax}"  limitRender="true"
+                            render="r_ot,r_mes_sex" reRender="r_ot">
                 <a4j:param name="p1" assignTo="#{registrationNewUser.sex}" />
             </a4j:jsFunction>
         </h:form>
