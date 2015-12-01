@@ -27,6 +27,12 @@ public class ConnectionPool {
     private static String  DBPort;
 
 
+    public ConnectionPool() throws BaseNotConnect {
+        if (urlstr == null){
+            throw new BaseNotConnect();
+        }
+    }
+
     public ConnectionPool(Properties props) throws InvalidParameter {
         DBBase = props.getProperty("DBBase");
         DBUser = props.getProperty("DBUser");
@@ -61,7 +67,7 @@ public class ConnectionPool {
     public static Connection OpenConnect() throws BaseNotConnect {
         try {
             Class.forName(DBDriver);
-            Connection connection = DriverManager.getConnection(urlstr,DBUser,DBPassword);
+            Connection connection = DriverManager.getConnection(urlstr, DBUser, DBPassword);
             if (rdbms.equals("Postgresql")){
                 connection.setAutoCommit(false);
             }

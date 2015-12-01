@@ -5,7 +5,7 @@ import main.lightdiver.skim.exceptions.ErrorInBase;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * Created by Serj on 24.11.2015.
  */
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class RegistrationNewUser implements Serializable{
     protected String userName;
     protected transient String userPass;
@@ -35,7 +35,7 @@ public class RegistrationNewUser implements Serializable{
             errorInBase.printStackTrace();
         }
         */
-        System.out.println("userName="+userName+" hashPass="+hashPass+" sex="+sex);
+        //System.out.println("userName="+userName+" hashPass="+hashPass+" sex="+sex);
         if ( (check=validUserEMailAjax()) !=null){res=res+check;}
         if ( (check=validUserNameAjax())  !=null){res=res+check;}
         if ( (check=validSexAjax())  !=null){res=res+check;}
@@ -45,13 +45,16 @@ public class RegistrationNewUser implements Serializable{
         }
         if (res == null) {
         FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "OK", "New User Rigestered"));}
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "OK", "New User Rigestered"));
+            return "register_done";
+        }
         else {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Refused", res));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Refused", "Error Validation"));
+            return "#";
         }
-        System.out.println("res = " + res);
-        return "#";
+        //System.out.println("res = " + res);
+
     }
     public String validUserEMailAjax() {
         final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\." +
@@ -62,14 +65,20 @@ public class RegistrationNewUser implements Serializable{
         Matcher matcher;
         pattern = Pattern.compile(EMAIL_PATTERN);
 
+        if (userEMail == "" || userEMail == null){
+            FacesContext.getCurrentInstance().addMessage("r_useremail",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "E-mail validation failed.", "E-mail empty"));
+            return "#";
+        }
+
         matcher = pattern.matcher(userEMail);
-        System.out.println("validUserEMailAjax: userEMail:" + userEMail+ " userName:" + this.userName);
+        //System.out.println("validUserEMailAjax: userEMail:" + userEMail+ " userName:" + this.userName);
 
 
         if(!matcher.matches()){
             FacesContext.getCurrentInstance().addMessage("r_useremail",
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "E-mail validation failed.", "Invalid E-mail format"));
-            return "InvalidUserEMailAjax!";
+            return "#";
         }
         else {
             FacesContext.getCurrentInstance().addMessage("r_useremail",
@@ -84,12 +93,11 @@ public class RegistrationNewUser implements Serializable{
 
         if (userName.length() < 5) {
             FacesContext.getCurrentInstance().addMessage("r_username",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Login validation failed.",
-                    "User Name length must more 5 symbols " + this.userPass + " : " + this.userPassRepeat));
-            return "InvalidUserNameAjax!";
+                    "User Name length must more 5 symbols "));
+            return "#";
         }
         else{
-            FacesContext.getCurrentInstance().addMessage("r_username", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
-                    "Ok " + this.userPass + " : " + this.userPassRepeat));
+            FacesContext.getCurrentInstance().addMessage("r_username", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.", "Ok " ));
             return null;
         }
 
@@ -97,24 +105,24 @@ public class RegistrationNewUser implements Serializable{
     public String validSexAjax(){
         if (! (sex.equals("M") || sex.equals("W")) ) {
             FacesContext.getCurrentInstance().addMessage("r_sex",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Sex validation failed.",
-                    "User Sex required " + this.userPass + " : " + this.userPassRepeat));
-            return "InvalidUserSex!";
+                    "User Sex required "));
+            return "#";
         }
         else{
             FacesContext.getCurrentInstance().addMessage("r_sex", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
-                    "Ok " + this.userPass + " : " + this.userPassRepeat));
+                    "Ok "));
             return null;
         }
     }
     public String validUserPIBAjax(){
         if (userPIB.length() < 5) {
             FacesContext.getCurrentInstance().addMessage("r_userpib",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User PIB validation failed.",
-                    "User Name length must more 5 symbols " + this.userPass + " : " + this.userPassRepeat));
-            return "InvalidUserPIBAjax!";
+                    "User Name length must more 5 symbols " ));
+            return "#";
         }
         else{
             FacesContext.getCurrentInstance().addMessage("r_userpib", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
-                    "Ok " + this.userPass + " : " + this.userPassRepeat));
+                    "Ok "));
             return null;
         }
     }

@@ -76,16 +76,13 @@ public class Users {
             res = new UsersDAO().registr((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, userLogin, userPass, userName, userEmail, userSex, userLang);
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
-            res = "baseNotConnect";
+            res = "BaseNotConnect";
         } catch (InvalidParameter invalidParameter) {
             invalidParameter.printStackTrace();
             res = "InvalidParameter";
         } catch (FileNotRead fileNotRead) {
             fileNotRead.printStackTrace();
-            res = "fileNotRead";
-        } catch (ErrorInBase errorInBase) {
-            errorInBase.printStackTrace();
-            res = "errorInBase";
+            res = "FileNotRead";
         }
         return res;
     }

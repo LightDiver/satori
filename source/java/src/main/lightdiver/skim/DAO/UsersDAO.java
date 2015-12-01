@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * Created by Serj on 05.11.2015.
  */
 public class UsersDAO {
-    private final static Logger logger = Logger.getLogger(Conf.class.getName());
+    private final static Logger logger = Logger.getLogger(UsersDAO.class.getName());
     private static Properties props = null;
     private static Connection con;
     private static ConnectionPool cp;
@@ -27,12 +27,12 @@ public class UsersDAO {
     public UsersDAO() throws BaseNotConnect, FileNotRead, InvalidParameter {
         if (props == null) {
             props = new Conf().getProps();
-            cp = new ConnectionPool(props);
-            con = cp.OpenConnect();
+            this.cp = new ConnectionPool(props);
+            this.con = cp.OpenConnect();
         }
     }
 
-    public static HashMap<String, Object> login(String user_login, String pass, String terminal_ip, String terminal_client) throws ErrorInBase {
+    public HashMap<String, Object> login(String user_login, String pass, String terminal_ip, String terminal_client) throws ErrorInBase {
         HashMap<String, Object> res = new HashMap<String, Object>();
         CallableStatement cs = null;
         try {
@@ -62,7 +62,7 @@ public class UsersDAO {
         }
         return res;
     }
-    public static void logout(String user_session, String user_key) throws ErrorInBase {
+    public void logout(String user_session, String user_key) throws ErrorInBase {
         CallableStatement cs = null;
         try {
             cs = con.prepareCall("{? = call pkg_users.logout(?, ?)}");
@@ -76,7 +76,7 @@ public class UsersDAO {
             throw new ErrorInBase();
         }
     }
-    public static String registr(String userSession, String userKey, String ipAddress, String userLogin, String userPass, String userName, String userEmail, String userSex, String userLang) throws ErrorInBase {
+    public String registr(String userSession, String userKey, String ipAddress, String userLogin, String userPass, String userName, String userEmail, String userSex, String userLang) {
         CallableStatement cs;
         String res = null;
      try {
@@ -93,13 +93,16 @@ public class UsersDAO {
          cs.setString(10, userLang);
          cs.execute();
          if (cs.getInt(1) != 0) {
-             res = "Some troubles: "+ cs.getInt(1) + "(Виводити на мові користувача)";
+             res = "Some troubles: "+ cs.getInt(1) + "-" + SystemInfo.getDescError(cs.getInt(1),"UA");
          }
 
      }catch (SQLException e) {
          logger.log(Level.SEVERE, "Don't register", e);
          e.printStackTrace();
-         throw new ErrorInBase();
+         res = "SQLException";
+     } catch (BaseNotConnect baseNotConnect) {
+         baseNotConnect.printStackTrace();
+         res = "baseNotConnect";
      }
         return res;
     }

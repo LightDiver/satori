@@ -1,18 +1,27 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:a4j="http://richfaces.org/a4j"
-                template="../templates/userTemplate1.xhtml">
+                template="../templates/userTemplate1.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <ui:define name="content">
+    <c:if test = "#{sessionBean.uLogin}">
+        Ви вже зареєстровані
+    </c:if>
+    <c:if test = "#{!sessionBean.uLogin}">
         <h:outputScript library="javascript" name="sha1.js" target="head"/>
         <script type="text/javascript">
             function hash_pass_reg() {
 
-                if (document.getElementById('r_password').value == "" || document.getElementById('r_passwordrepeat').value == "") {
+                if (document.getElementById('r_password').value == "" || document.getElementById('r_passwordrepeat').value == "" ||
+                    document.getElementById('r_username').value == "" || document.getElementById('r_userpib').value == "")  {
                     document.getElementById('mes_empty').innerHTML = "Заповніть всі поля";
+                    return false;
+                }
+                if (document.getElementById('r_password').value != document.getElementById('r_passwordrepeat').value){
+                    document.getElementById('mes_empty').innerHTML = "Паролі не співпадають";
                     return false;
                 }
 
@@ -27,7 +36,7 @@
             <h:panelGrid columns="3">
 
                 <h:outputLabel value="Логін: " />
-                <h:inputText id="r_username" onblur="validusername(this.value)" value="#{registrationNewUser.userName}" required="true" requiredMessage="Не вказано!"/>
+                <h:inputText id="r_username" onblur="document.getElementById('mes_empty').innerHTML = '';validusername(this.value)" value="#{registrationNewUser.userName}" required="true" requiredMessage="Не вказано!"/>
                 <rich:message id="r_mes_username" for="r_username" />
 
 
@@ -84,7 +93,7 @@
                 <a4j:param name="p1" assignTo="#{registrationNewUser.sex}" />
             </a4j:jsFunction>
         </h:form>
-
+    </c:if>
     </ui:define>
 
 </ui:composition>

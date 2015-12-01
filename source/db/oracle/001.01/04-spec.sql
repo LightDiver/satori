@@ -93,3 +93,16 @@ CREATE OR REPLACE PACKAGE pkg_users IS
 
 END pkg_users;
 /
+
+CREATE OR REPLACE PACKAGE pkg_systeminfo IS
+
+  -- Author  : SERJ
+  -- Created : 01.12.2015 14:28:40
+  -- Purpose : 
+
+  FUNCTION get_description_error(i_error_id error_desc.error_desc_id%TYPE,
+                                 i_lang_id  users.lang_id%TYPE DEFAULT 'UA')
+    RETURN VARCHAR2;
+
+END pkg_systeminfo;
+/
