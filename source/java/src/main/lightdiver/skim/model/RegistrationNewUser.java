@@ -29,11 +29,12 @@ public class RegistrationNewUser implements Serializable{
     public String registr() {
         String res = null;
         String check;
-        if(0==0) try {
+       /* if(0==0) try {
             throw new ErrorInBase();
         } catch (ErrorInBase errorInBase) {
             errorInBase.printStackTrace();
         }
+        */
         System.out.println("userName="+userName+" hashPass="+hashPass+" sex="+sex);
         if ( (check=validUserEMailAjax()) !=null){res=res+check;}
         if ( (check=validUserNameAjax())  !=null){res=res+check;}
@@ -62,18 +63,17 @@ public class RegistrationNewUser implements Serializable{
         pattern = Pattern.compile(EMAIL_PATTERN);
 
         matcher = pattern.matcher(userEMail);
+        System.out.println("validUserEMailAjax: userEMail:" + userEMail+ " userName:" + this.userName);
 
 
         if(!matcher.matches()){
-            FacesContext.getCurrentInstance().addMessage("useremail",
+            FacesContext.getCurrentInstance().addMessage("r_useremail",
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "E-mail validation failed.", "Invalid E-mail format"));
-            System.out.println("userEMail:" + userEMail+ " userName:" + this.userName);
             return "InvalidUserEMailAjax!";
         }
         else {
-            FacesContext.getCurrentInstance().addMessage("useremail",
+            FacesContext.getCurrentInstance().addMessage("r_useremail",
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.", "Ok "));
-            System.out.println("userEMail:" + userEMail+ " userName:" + this.userName);
             return null;
         }
 
@@ -83,12 +83,12 @@ public class RegistrationNewUser implements Serializable{
     public String validUserNameAjax(){
 
         if (userName.length() < 5) {
-            FacesContext.getCurrentInstance().addMessage("username",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Login validation failed.",
+            FacesContext.getCurrentInstance().addMessage("r_username",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Login validation failed.",
                     "User Name length must more 5 symbols " + this.userPass + " : " + this.userPassRepeat));
             return "InvalidUserNameAjax!";
         }
         else{
-            FacesContext.getCurrentInstance().addMessage("username", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
+            FacesContext.getCurrentInstance().addMessage("r_username", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
                     "Ok " + this.userPass + " : " + this.userPassRepeat));
             return null;
         }
@@ -96,24 +96,24 @@ public class RegistrationNewUser implements Serializable{
     }
     public String validSexAjax(){
         if (! (sex.equals("M") || sex.equals("W")) ) {
-            FacesContext.getCurrentInstance().addMessage("sex",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Sex validation failed.",
+            FacesContext.getCurrentInstance().addMessage("r_sex",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Sex validation failed.",
                     "User Sex required " + this.userPass + " : " + this.userPassRepeat));
             return "InvalidUserSex!";
         }
         else{
-            FacesContext.getCurrentInstance().addMessage("sex", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
+            FacesContext.getCurrentInstance().addMessage("r_sex", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
                     "Ok " + this.userPass + " : " + this.userPassRepeat));
             return null;
         }
     }
     public String validUserPIBAjax(){
         if (userPIB.length() < 5) {
-            FacesContext.getCurrentInstance().addMessage("userpib",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User PIB validation failed.",
+            FacesContext.getCurrentInstance().addMessage("r_userpib",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User PIB validation failed.",
                     "User Name length must more 5 symbols " + this.userPass + " : " + this.userPassRepeat));
             return "InvalidUserPIBAjax!";
         }
         else{
-            FacesContext.getCurrentInstance().addMessage("userpib", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
+            FacesContext.getCurrentInstance().addMessage("r_userpib", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
                     "Ok " + this.userPass + " : " + this.userPassRepeat));
             return null;
         }
