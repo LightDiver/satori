@@ -59,10 +59,12 @@
                 <rich:message id="r_mes_useremail" for="r_useremail" />
 
                 <h:outputLabel value="Стать: " />
-                <rich:inplaceSelect id="r_sex" saveOnSelect="true" defaultLabel="Click here to edit" openOnEdit="true" value="#{registrationNewUser.sex}" onblur="validsex(this.value);">
-                    <f:selectItem itemValue="M" itemLabel="Чол" />
-                    <f:selectItem itemValue="W" itemLabel="Жін" />
+                <rich:inplaceSelect id="r_sex" saveOnSelect="true" defaultLabel="Click here to edit" openOnEdit="true" value="#{registrationNewUser.sex}" onblur="validsex(document.getElementById('r_sexselValue').value);alert(document.getElementById('r_sexselValue').value);">
+                    <f:selectItem itemValue="M" itemLabel="Чол"/>
+                    <f:selectItem itemValue="W" itemLabel="Жін"/>
+
                 </rich:inplaceSelect>
+
                 <rich:message id="r_mes_sex" for="r_sex"/>
                 <h:outputText id="r_ot" value="Output: #{registrationNewUser.sex}" />
 

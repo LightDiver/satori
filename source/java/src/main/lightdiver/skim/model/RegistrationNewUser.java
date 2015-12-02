@@ -23,7 +23,7 @@ public class RegistrationNewUser implements Serializable{
     protected String hashPass = "abc";
     protected String userPIB;
     protected String userEMail;
-    protected String sex = "W";
+    protected String sex;
     protected String userLang = "UA";
 
     public String registr() {
