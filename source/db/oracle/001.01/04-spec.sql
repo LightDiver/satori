@@ -91,6 +91,8 @@ CREATE OR REPLACE PACKAGE pkg_users IS
                    i_lang_id       users.lang_id%TYPE)
     RETURN error_desc.error_desc_id%TYPE;
 
+  FUNCTION is_user_exist(i_user_login VARCHAR2) RETURN NUMBER;
+
 END pkg_users;
 /
 
@@ -103,6 +105,8 @@ CREATE OR REPLACE PACKAGE pkg_systeminfo IS
   FUNCTION get_description_error(i_error_id error_desc.error_desc_id%TYPE,
                                  i_lang_id  users.lang_id%TYPE DEFAULT 'UA')
     RETURN VARCHAR2;
+
+  FUNCTION get_langs RETURN SYS_REFCURSOR;    
 
 END pkg_systeminfo;
 /

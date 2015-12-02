@@ -398,6 +398,16 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     
   END registr;
 
+  FUNCTION is_user_exist(i_user_login VARCHAR2) RETURN NUMBER AS
+    v_is NUMBER(1);
+  BEGIN
+    SELECT COUNT(1)
+      INTO v_is
+      FROM users
+     WHERE lower(TRIM(user_login)) = lower(TRIM(i_user_login));
+    RETURN v_is;
+  END is_user_exist;
+
   --BEGIN
 -- Initialization
 --< STATEMENT >;

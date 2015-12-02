@@ -1,5 +1,6 @@
 package main.lightdiver.skim.model;
 
+import main.lightdiver.skim.DAO.UsersDAO;
 import main.lightdiver.skim.Users;
 import main.lightdiver.skim.exceptions.ErrorInBase;
 
@@ -96,10 +97,16 @@ public class RegistrationNewUser implements Serializable{
                     "User Name length must more 5 symbols "));
             return "#";
         }
-        else{
-            FacesContext.getCurrentInstance().addMessage("r_username", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.", "Ok " ));
-            return null;
+
+        if (UsersDAO.isUserExist(userName) == 1){
+            FacesContext.getCurrentInstance().addMessage("r_username",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Login validation failed.",
+                    "User Name occupations. Вибиріть інше"));
+            return "#";
         }
+
+        FacesContext.getCurrentInstance().addMessage("r_username", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.", "Ok " ));
+        return null;
+
 
     }
     public String validSexAjax(){

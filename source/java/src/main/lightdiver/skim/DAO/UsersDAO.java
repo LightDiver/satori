@@ -93,7 +93,7 @@ public class UsersDAO {
          cs.setString(10, userLang);
          cs.execute();
          if (cs.getInt(1) != 0) {
-             res = "Some troubles: "+ cs.getInt(1) + "-" + SystemInfo.getDescError(cs.getInt(1),"UA");
+             res = "Some troubles: "+ cs.getInt(1) + "-" + SystemInfoDAO.getDescError(cs.getInt(1), "UA");
          }
 
      }catch (SQLException e) {
@@ -107,6 +107,21 @@ public class UsersDAO {
         return res;
     }
 
+    public static int isUserExist(String userLogin){
+        CallableStatement cs;
+        try {
+            cs = con.prepareCall("{? = call pkg_users.is_user_exist(?)}");
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2,userLogin);
+            cs.execute();
+            return cs.getInt(1);
+        } catch (SQLException e) {
+            logger.severe("" + e);
+            e.printStackTrace();
+            return 1;//Тіпа завжди є
+        }
+
+    }
 
 
 }

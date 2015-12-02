@@ -1,14 +1,18 @@
 package main.lightdiver.skim.model;
 
+import main.lightdiver.skim.LoadMenu;
 import main.lightdiver.skim.Users;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Serj on 08.11.2015.
@@ -22,6 +26,7 @@ public class SessionBean implements Serializable {
     protected String hashPass = "abc";
     protected String userSession;
     protected String userKey;
+    protected List<SelectItem> langs;
     protected boolean uLogin = false;
 
     public boolean isuLogin() {
@@ -119,5 +124,19 @@ public class SessionBean implements Serializable {
 
     public void setHashPass(String hashPass) {
         this.hashPass = hashPass;
+    }
+
+    public List<SelectItem> getLangs() {
+        if (langs == null){
+            langs = new ArrayList<SelectItem>();
+            for (Map.Entry<String, String> me : LoadMenu.getLangs().entrySet() ) {
+                langs.add(new SelectItem(me.getKey(), me.getValue()));
+            }
+        }
+        return langs;
+    }
+
+    public void setLangs(List<SelectItem> langs) {
+        this.langs = langs;
     }
 }

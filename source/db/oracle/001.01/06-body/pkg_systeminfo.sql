@@ -20,5 +20,14 @@ CREATE OR REPLACE PACKAGE BODY pkg_systeminfo IS
   
     RETURN v_error_desc;
   END get_description_error;
+
+  FUNCTION get_langs RETURN SYS_REFCURSOR AS
+    v_res SYS_REFCURSOR;
+  BEGIN
+    OPEN v_res FOR
+      SELECT l.lang_id, l.lang_name FROM supp_lang l;
+    RETURN v_res;
+  END get_langs;
+
 END pkg_systeminfo;
 /

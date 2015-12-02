@@ -2,14 +2,20 @@ package main.lightdiver.skim;
 
 
 
+import main.lightdiver.skim.DAO.SystemInfoDAO;
+import main.lightdiver.skim.exceptions.BaseNotConnect;
+
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by Serj on 20.11.2015.
  */
 public class LoadMenu {
+    private final static Logger logger = Logger.getLogger(LoadMenu.class.getName());
     private static List<TreeNode> footerMenu1 = null;
     private static List<TreeNode> footerMenu2 = null;
 
@@ -53,5 +59,16 @@ public class LoadMenu {
             footerMenu2.add(treeNode4);
         }
         return footerMenu2;
+    }
+    public static HashMap<String, String> getLangs(){
+        HashMap<String, String> langs;
+        try {
+            return SystemInfoDAO.getLangs();
+        } catch (BaseNotConnect baseNotConnect) {
+            logger.severe("Don't get support lang. Set UA Default");
+            langs = new HashMap<>();
+            langs.put("UA", "Українська");
+            return langs;
+        }
     }
 }
