@@ -110,7 +110,7 @@ public class RegistrationNewUser implements Serializable{
 
     }
     public String validSexAjax(){
-        System.out.println(sex);
+        //System.out.println(sex);
         if (sex == null || !( sex.equals("M") || sex.equals("W")) ) {
             FacesContext.getCurrentInstance().addMessage("r_sex",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Sex validation failed.",
                     "User Sex required "));
