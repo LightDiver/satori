@@ -374,9 +374,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
          lang_id)
       VALUES
         (users_id_seq.nextval,
-         i_newuser_login,
+         trim(i_newuser_login),
          i_newuser_pass,
-         i_user_name,
+         trim(i_user_name),
          i_user_email,
          1,
          localtimestamp,

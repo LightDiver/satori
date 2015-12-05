@@ -14,7 +14,6 @@
         }
 
         .section2 {
-            text-align: right;
             margin: 0px;
             padding: 0px;
             width: 50%;
@@ -55,7 +54,9 @@
     </h:outputStylesheet>
     <h:panelGrid columns="3" columnClasses="section1,section2,section3" width="100%" style="border-collapse:collapse;border-spacing:0;">
     <h:graphicImage value="/resources/images/header/skim.png" title="Читай швидше, запом'ятовуй більше" />
-    <h:outputLabel value="Menu" />
+
+    <ui:include src="userHeaderMenu.xhtml"/>
+
     <h:panelGroup>
         <c:if test = "#{!sessionBean.uLogin}">
             <ui:include src = "userLogin.xhtml" />

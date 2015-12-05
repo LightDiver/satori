@@ -5,8 +5,9 @@
     http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
     <application>
         <locale-config>
-            <default-locale>ua</default-locale>
+            <default-locale>uk</default-locale>
             <supported-locale>en</supported-locale>
+            <supported-locale>ru</supported-locale>
         </locale-config>
     </application>
 </faces-config>

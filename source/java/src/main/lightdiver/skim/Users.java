@@ -32,7 +32,7 @@ public class Users {
                 ipAddress = request.getRemoteAddr();
             }
 
-            RequestInfoToLog();//�������� ���� � ���
+            //RequestInfoToLog();//�������� ���� � ���
 
             res = new UsersDAO().login(user_login, pass, ipAddress, request.getHeader("user-agent"));
         } catch (BaseNotConnect baseNotConnect) {
@@ -69,7 +69,7 @@ public class Users {
                 ipAddress = request.getRemoteAddr();
             }
 
-            RequestInfoToLog();//�������� ���� � ���
+            //RequestInfoToLog();//�������� ���� � ���
             logger.info("(String)externalContext.getSessionMap().get(\"userSession\") " + (String)externalContext.getSessionMap().get("userSession"));
             logger.info("(String)externalContext.getSessionMap().get(\"userKey\") " + (String)externalContext.getSessionMap().get("userKey"));
 

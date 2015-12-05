@@ -91,10 +91,22 @@ public class RegistrationNewUser implements Serializable{
 
 
     public String validUserNameAjax(){
+        //final String PATTERN_LOGIN = "^[\\w_]{3,25}$";
+        final String PATTERN_LOGIN = "^[а-яА-ЯёЁa-zA-Z0-9_іІїЇєЄҐґ']{3,30}$";
+        Pattern pattern;
+        Matcher matcher;
+        pattern = Pattern.compile(PATTERN_LOGIN);
 
-        if (userName.length() < 5) {
+        if (userName.length() < 3) {
             FacesContext.getCurrentInstance().addMessage("r_username",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User Login validation failed.",
-                    "User Name length must more 5 symbols "));
+                    "User Login length must more 3 symbols "));
+            return "#";
+        }
+
+        matcher = pattern.matcher(userName);
+        if (!matcher.matches()){
+            FacesContext.getCurrentInstance().addMessage("r_username",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "User Login validation failed.", "Логін може складатись з букв, цифр та знаку _"));
             return "#";
         }
 
@@ -123,16 +135,28 @@ public class RegistrationNewUser implements Serializable{
         }
     }
     public String validUserPIBAjax(){
+        final String PATTERN_LOGIN = "^[а-яА-ЯёЁa-zA-Z0-9 іІїЇєЄҐґ']{1,55}$";
+        Pattern pattern;
+        Matcher matcher;
+        pattern = Pattern.compile(PATTERN_LOGIN);
+
         if (userPIB.length() < 5) {
             FacesContext.getCurrentInstance().addMessage("r_userpib",new FacesMessage(FacesMessage.SEVERITY_ERROR,"User PIB validation failed.",
                     "User Name length must more 5 symbols " ));
             return "#";
         }
-        else{
-            FacesContext.getCurrentInstance().addMessage("r_userpib", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
-                    "Ok "));
-            return null;
+
+        matcher = pattern.matcher(userPIB);
+        if (!matcher.matches()){
+            FacesContext.getCurrentInstance().addMessage("r_userpib",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "User Name validation failed.", "Ім'я може складатись з букв та цифр"));
+            return "#";
         }
+
+        FacesContext.getCurrentInstance().addMessage("r_userpib", new FacesMessage(FacesMessage.SEVERITY_INFO, "Ok.",
+                    "Ok "));
+        return null;
+
     }
 
 

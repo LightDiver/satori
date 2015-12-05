@@ -25,16 +25,22 @@ public class LoadMenu {
 
             TreeNodeMenu treeNode11 = new TreeNodeMenu("lesson", "Lessons", "#", false);
             TreeNodeMenu treeNode111 = new TreeNodeMenu("lesson", "Lessons 1", "#", true);
-            TreeNodeMenu treeNode112 = new TreeNodeMenu("lesson", "Lessons 2", "#", true);
+            TreeNodeMenu treeNode112 = new TreeNodeMenu("lesson", "Lessons 2", "#", false);
             treeNode11.addChild(treeNode111);
             treeNode11.addChild(treeNode112);
 
-            TreeNodeMenu treeNode12 = new TreeNodeMenu("practice", "Practices", "#", false);
-            TreeNodeMenu treeNode121 = new TreeNodeMenu("practice", "Practice 1", "#", true);
-            treeNode12.addChild(treeNode121);
+            TreeNodeMenu treeNode112p = new TreeNodeMenu("practice", "Practices", "#", false);
+            TreeNodeMenu treeNode112p1 = new TreeNodeMenu("practice", "Practice 1", "#", true);
+            treeNode112p.addChild(treeNode112p1);
+
+            treeNode112.addChild(treeNode112p);
+
+            TreeNodeMenu treeNode12 = new TreeNodeMenu("test", "Тестування", "#", true);
+
 
             treeNode1.addChild(treeNode11);
             treeNode1.addChild(treeNode12);
+
 
             TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", "Article", "#", true);
 

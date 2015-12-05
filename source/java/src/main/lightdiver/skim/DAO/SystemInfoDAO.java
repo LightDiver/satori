@@ -44,9 +44,9 @@ public class SystemInfoDAO {
             ResultSet rset = (ResultSet)cs.getObject(1);
             while (rset.next ()){
                 langs.put(rset.getString(1), rset.getString(2));
-                System.out.println(rset.getString(1) + "|" + rset.getString(2));
+                //System.out.println(rset.getString(1) + "|" + rset.getString(2));
             }
-            System.out.println(langs.size());
+            //System.out.println(langs.size());
         } catch (SQLException e) {
             e.printStackTrace();
             logger.severe("Don't read description error from base: " + e);

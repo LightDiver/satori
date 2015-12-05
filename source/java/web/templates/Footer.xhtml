@@ -36,6 +36,9 @@
                 <rich:treeNode type="practice" iconExpanded="/resources/images/menu/practices_c_e.png" iconCollapsed="/resources/images/menu/practices_c_e.png" iconLeaf="/resources/images/menu/practices_i.png">
                     <h:outputLink value="#{item.link}" style="text-decoration:none;color:black;">#{item.name}</h:outputLink>
                 </rich:treeNode>
+                <rich:treeNode type="test" iconLeaf="/resources/images/menu/test.png">
+                    <h:outputLink value="#{item.link}" style="text-decoration:none;color:black;">#{item.name}</h:outputLink>
+                </rich:treeNode>
             </rich:tree>
         </h:form>
         <h:form>

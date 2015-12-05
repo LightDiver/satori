@@ -63,6 +63,7 @@
             <h:inputSecret id="password" value="#{sessionBean.userPass}" required="true" requiredMessage="Не вказано!" size = "10"/>
             -->
             <br/>
+            <h:outputLabel id="lang" value="#{sessionBean.locale}"/>
             <h:commandLink id="login" value="Login" onclick="hash_pass()" action="#{sessionBean.login}" update="msg1" ajax="false" styleClass="ui-commandlink"/>
             <h:inputHidden id="hashpass" value="#{sessionBean.hashPass}"/>
         </h:form>

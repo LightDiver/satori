@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:rich="http://richfaces.org/rich">
+    <h:outputStylesheet>
+    .pic {
+    margin-bottom: -4px;
+    margin-right: 2px;
+    }
+    .search .rf-ddm-itm-sel {
+        background-color: transparent;
+        background-image:none;
+        border-color: transparent;
+        cursor: default;
+    }
+    </h:outputStylesheet>
+    <h:panelGrid columns="1" width="100%" style="border-spacing:0;margin: 0; padding: 0">
+    <h:graphicImage value="/resources/images/header/headerbanner.png" title="Дивись які гарні" height="24px" width="100%" style="box-sizing: border-box; border: dotted 1px; border-color:#d8ddd8; box-shadow: 1px 2px 5px #333033;"/>
+    <h:form>
+    <rich:toolbar height="24px">
+        <rich:dropDownMenu mode="ajax">
+            <f:facet name="label">
+                <h:panelGroup>
+                    <h:graphicImage value="/resources/images/menu/direction.png" styleClass="pic" />
+                    <h:outputText value="Направлення" />
+                </h:panelGroup>
+            </f:facet>
+            <rich:menuGroup label="Швидке читання...">
+                <rich:menuItem label="Заняття" icon="/resources/images/menu/lesson_e.png" />
+                <rich:menuItem label="Тестування">
+                    <f:facet name="icon">
+                        <h:graphicImage value="/resources/images/menu/test.png"/>
+                    </f:facet>
+                </rich:menuItem>
+            </rich:menuGroup>
+        </rich:dropDownMenu>
+        <rich:dropDownMenu mode="ajax">
+            <f:facet name="label">
+                <h:panelGrid cellpadding="0" cellspacing="0" columns="2" style="vertical-align:middle">
+                    <h:outputText value="Тести" />
+                </h:panelGrid>
+            </f:facet>
+            <rich:menuItem submitMode="client" onclick="document.location.href='http://richfaces.org/'">
+                <h:outputText value="RichFaces Home Page" />
+            </rich:menuItem>
+            <rich:menuItem submitMode="client" onclick="document.location.href='https://developer.jboss.org/en/richfaces/content'">
+                <h:outputText value="RichFaces Forum" />
+            </rich:menuItem>
+        </rich:dropDownMenu>
+
+        <rich:toolbarGroup location="right">
+            <h:inputText size="10"/>
+            <h:commandButton onclick="return false;" value="Search" />
+        </rich:toolbarGroup>
+
+    </rich:toolbar>
+    </h:form>
+    </h:panelGrid>
+</ui:composition>

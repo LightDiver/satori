@@ -28,6 +28,7 @@ public class SessionBean implements Serializable {
     protected String userKey;
     protected List<SelectItem> langs;
     protected boolean uLogin = false;
+    protected String locale = FacesContext.getCurrentInstance().getViewRoot().getLocale().toString();
 
     public boolean isuLogin() {
         return uLogin;
@@ -138,5 +139,13 @@ public class SessionBean implements Serializable {
 
     public void setLangs(List<SelectItem> langs) {
         this.langs = langs;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 }
