@@ -17,7 +17,7 @@
 
     <h:outputStylesheet>
         .section {
-            text-align: right;
+            text-align: center;
             vertical-align: top;
             margin: 0px;
             padding: 0px;
@@ -27,20 +27,40 @@
             font-size: 12px;
         }
 
-
-        .ui-messages-error{
+        .ui-messages-error {
             margin: 0px
         }
+
         .ui-inputfield {
             font-weight: normal;
             margin: 0;
             outline: medium none;
             padding: 1px;
         }
-        .ui-inplace{
+
+        .ui-inplace {
             font-size: 12px;
         }
 
+        .ui-state-default {
+            background: #738078;
+        }
+
+        .ui-state-hover {
+            background: green;
+        }
+        .ui-selectonemenu-label {
+            background: gray;
+        }
+        .ui-panelgrid .ui-panelgrid-cell {
+            text-align:center;
+            padding:0;
+            padding-left: 5px;
+            border: none !important;
+            background: #999 ;
+            border-style: hidden !important;
+            vertical-align: top;
+        }
 
     </h:outputStylesheet>
 
@@ -63,8 +83,20 @@
             <h:inputSecret id="password" value="#{sessionBean.userPass}" required="true" requiredMessage="Не вказано!" size = "10"/>
             -->
             <br/>
-            <h:outputLabel id="lang" value="#{sessionBean.locale}"/>
+
+            <p:panelGrid id="pg" columns="2" style="border-spacing:0;">
+            <p:selectOneMenu id="selLang" value="{#sessionBean.language}" panelStyle="width:100px" effect="fade" var="l" style="width:40px;font-size:12px;">
+                <f:selectItems value="#{sessionBean.selectedLanguage}" var="language" itemLabel="#{language.langName}" itemValue="#{language}" />
+                <p:column>
+                    <p:graphicImage value="/resources/images/menu/#{l.langPict}" />
+                </p:column>
+                <p:column>
+                    #{l.langName}
+                </p:column>
+            </p:selectOneMenu>
+
             <h:commandLink id="login" value="Login" onclick="hash_pass()" action="#{sessionBean.login}" update="msg1" ajax="false" styleClass="ui-commandlink"/>
+            </p:panelGrid>
             <h:inputHidden id="hashpass" value="#{sessionBean.hashPass}"/>
         </h:form>
         </h:panelGroup>

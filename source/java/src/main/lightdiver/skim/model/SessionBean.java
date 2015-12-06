@@ -1,5 +1,6 @@
 package main.lightdiver.skim.model;
 
+import main.lightdiver.skim.Language;
 import main.lightdiver.skim.LoadMenu;
 import main.lightdiver.skim.Users;
 import javax.faces.application.FacesMessage;
@@ -29,6 +30,8 @@ public class SessionBean implements Serializable {
     protected List<SelectItem> langs;
     protected boolean uLogin = false;
     protected String locale = FacesContext.getCurrentInstance().getViewRoot().getLocale().toString();
+    protected Language language;
+    protected List<Language> selectedLanguage;
 
     public boolean isuLogin() {
         return uLogin;
@@ -44,6 +47,11 @@ public class SessionBean implements Serializable {
             userName = "GUEST";
             login();
             userName = "";
+            System.out.println("LangInit");
+            selectedLanguage = new ArrayList<>();
+            selectedLanguage.add(new Language("ua", "ua.png"));
+            selectedLanguage.add(new Language("en", "en.png"));
+            selectedLanguage.add(new Language("ru", "ru.png"));
         }
         return userName;
     }
@@ -147,5 +155,21 @@ public class SessionBean implements Serializable {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public List<Language> getSelectedLanguage() {
+        return selectedLanguage;
+    }
+
+    public void setSelectedLanguage(List<Language> selectedLanguage) {
+        this.selectedLanguage = selectedLanguage;
     }
 }
