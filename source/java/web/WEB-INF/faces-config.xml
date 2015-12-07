@@ -9,5 +9,9 @@
             <supported-locale>en</supported-locale>
             <supported-locale>ru</supported-locale>
         </locale-config>
+        <resource-bundle>
+            <base-name>locale.text</base-name>
+            <var>text</var>
+        </resource-bundle>
     </application>
 </faces-config>

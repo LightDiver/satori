@@ -21,6 +21,7 @@ public class LoadMenu {
 
     public static List<TreeNode> getFooterMenu1(){
         if (footerMenu1 == null) {
+            System.out.println("Load getFooterMenu1");
             TreeNodeMenu treeNode1 = new TreeNodeMenu("simple", "Skim Read", "#", false);
 
             TreeNodeMenu treeNode11 = new TreeNodeMenu("lesson", "Lessons", "#", false);
@@ -52,6 +53,7 @@ public class LoadMenu {
     }
     public static List<TreeNode> getFooterMenu2(){
         if (footerMenu2 == null) {
+            System.out.println("Load getFooterMenu2");
 
             TreeNodeMenu treeNode1 = new TreeNodeMenu("simple", "About", "about.xhtml", true);
             TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", "Contacts", "#", true);

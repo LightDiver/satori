@@ -1,18 +1,22 @@
 package main.lightdiver.skim;
 
+import java.util.Locale;
+
 /**
  * Created by Serj on 06.12.2015.
  */
 public class Language {
     String langName;
+    String langISO;
     String langPict;
 
     public Language(){
 
     }
-    public Language(String name, String pict){
+    public Language(String name, String pict, String iso){
         langName = name;
         langPict= pict;
+        langISO = iso;
     }
 
     public String getLangName() {
@@ -29,5 +33,13 @@ public class Language {
 
     public void setLangPict(String langPict) {
         this.langPict = langPict;
+    }
+
+    public String getLangISO() {
+        return langISO;
+    }
+
+    public void setLangISO(String langISO) {
+        this.langISO = langISO;
     }
 }
