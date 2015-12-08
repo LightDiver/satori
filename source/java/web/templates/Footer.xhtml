@@ -26,7 +26,7 @@
     <h:panelGrid columns="3" columnClasses="top,top,top" width="100%">
         <h:form>
 
-            <rich:tree id="menu1" nodeType="#{item.type}" var="item" value="#{menuFooterBean.rootNodes1}" toggleType="client" selectionType="ajax">
+            <rich:tree id="menu1" nodeType="#{item.type}" var="item" value="#{menuBean.rootNodes1}" toggleType="client" selectionType="ajax">
                 <rich:treeNode type="simple" expanded="#{true}" iconLeaf="/resources/images/menu/simple.png" iconExpanded = "/resources/images/menu/simple.png" iconCollapsed= "/resources/images/menu/simple.png">
                     <h:outputLink value="#{item.link}" style="text-decoration:none;color:black;">#{item.name}</h:outputLink>
                 </rich:treeNode>
@@ -42,7 +42,7 @@
             </rich:tree>
         </h:form>
         <h:form>
-            <rich:tree id="menu2" nodeType="#{item.type}" var="item" value="#{menuFooterBean.rootNodes2}" toggleType="client" selectionType="ajax">
+            <rich:tree id="menu2" nodeType="#{item.type}" var="item" value="#{menuBean.rootNodes2}" toggleType="client" selectionType="ajax">
                 <rich:treeNode type="simple" iconLeaf="/resources/images/menu/simple.png">
                     <h:outputLink value="#{item.link}" style="text-decoration:none;color:black;">#{item.name}</h:outputLink>
                 </rich:treeNode>

@@ -1,10 +1,12 @@
 package main.lightdiver.skim.model;
 
 import main.lightdiver.skim.Language;
+import main.lightdiver.skim.LoadMenu;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.io.*;
 import java.util.*;
@@ -17,18 +19,21 @@ public class LocalizationBean implements Serializable {
     private String electLocale = locale;
 
     protected Language language;
-    protected List<Language> selectedLanguage;
+    protected static List<Language> selectedLanguage;
 
-    private static ResourceBundle textDependLang;
+    private static HashMap<String, ResourceBundle> textDependLangList;
+    private LoadMenu loadMenu = new LoadMenu();
 
     @PostConstruct
     public void init() {
-        System.out.println("LangInit");
         System.out.println("locale="+locale);
-        selectedLanguage = new ArrayList<>();
-        selectedLanguage.add(new Language("ua", "ua.png","uk"));
-        selectedLanguage.add(new Language("en", "en.png","en"));
-        selectedLanguage.add(new Language("ru", "ru.png","ru"));
+        if (selectedLanguage == null) {
+            System.out.println("LangInit");
+            selectedLanguage = new ArrayList<>();
+            selectedLanguage.add(new Language("ua", "ua.png", "uk"));
+            selectedLanguage.add(new Language("en", "en.png", "en"));
+            selectedLanguage.add(new Language("ru", "ru.png", "ru"));
+        }
         switch (locale) {
             case "uk":
                 language = selectedLanguage.get(0);
@@ -43,8 +48,15 @@ public class LocalizationBean implements Serializable {
                 language = selectedLanguage.get(0);
                 break;
         }
-        System.out.println(language.getLangName());
-        loadNewTextLang(locale);
+        System.out.println("locale="+ locale +" langname="+language.getLangName());
+        if (textDependLangList == null) {
+            System.out.println("Load locale.text");
+            textDependLangList = new HashMap<>();
+            textDependLangList.put("uk", ResourceBundle.getBundle("locale.text", new Locale("uk")) );
+            textDependLangList.put("en", ResourceBundle.getBundle("locale.text", new Locale("en")) );
+            textDependLangList.put("ru", ResourceBundle.getBundle("locale.text", new Locale("ru")) );
+        }
+        setElectLocale(language.getLangISO());
     }
 
 
@@ -63,8 +75,10 @@ public class LocalizationBean implements Serializable {
 
     public void setElectLocale(String electLocale) {
         this.electLocale = electLocale;
-        loadNewTextLang(electLocale);
-        //System.out.println(textDependLang.getString("err.login.invalid"));
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        externalContext.getSessionMap().put("electLocale",electLocale);
+
+        loadMenu.LoadMenuFooter();
     }
 
     public Language getLanguage() {
@@ -83,37 +97,20 @@ public class LocalizationBean implements Serializable {
         this.selectedLanguage = selectedLanguage;
     }
 
-    private static void loadNewTextLang(String lang){
-        textDependLang = ResourceBundle.getBundle("locale.text", new Locale(lang));
-        //System.out.println(textDependLang.getString("err.login.invalid"));
-        /*ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-        String fileName = servletContext.getRealPath(File.separator + "WEB-INF" + File.separator + "classes" + File.separator + "locale"+File.separator + "textlang." + lang);
-        textDependLang = new Properties();
 
-        try {
-            FileInputStream ins = new FileInputStream(fileName);
-            textDependLang.load(ins);
-            System.out.println("Load lang text ok: " + lang);
-        } catch (FileNotFoundException e) {
-            logger.log(Level.SEVERE, "Uvaga (FileNotFoundException) ", e);
-            e.printStackTrace();
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Uvaga! (IOException) ", e);
-            e.printStackTrace();
-        }
-        catch (Throwable e){
-            logger.log(Level.SEVERE, "Uvaga! (Throwable) " , e);
-            e.printStackTrace();
-        }
-        */
-
+    public static HashMap<String, ResourceBundle> getTextDependLangList() {
+        return textDependLangList;
     }
 
-    public static ResourceBundle getTextDependLang() {
-        return textDependLang;
+    public static void setTextDependLangList(HashMap<String, ResourceBundle> textDependLangList) {
+        textDependLangList = textDependLangList;
     }
 
-    public static void setTextDependLang(ResourceBundle textDependLang) {
-        LocalizationBean.textDependLang = textDependLang;
+    public LoadMenu getLoadMenu() {
+        return loadMenu;
+    }
+
+    public void setLoadMenu(LoadMenu loadMenu) {
+        this.loadMenu = loadMenu;
     }
 }

@@ -25,12 +25,12 @@
             <f:facet name="label">
                 <h:panelGroup>
                     <h:graphicImage value="/resources/images/menu/direction.png" styleClass="pic" />
-                    <h:outputText value="Направлення" />
+                    <h:outputText value="#{text['menu.header.direction']}" />
                 </h:panelGroup>
             </f:facet>
-            <rich:menuGroup label="Швидке читання...">
-                <rich:menuItem label="Заняття" icon="/resources/images/menu/lesson_e.png" />
-                <rich:menuItem label="Тестування">
+            <rich:menuGroup label="#{text['menu.header.skimread']}">
+                <rich:menuItem label="#{text['menu.header.lessons']}" icon="/resources/images/menu/lesson_e.png" />
+                <rich:menuItem label="#{text['menu.header.testing']}">
                     <f:facet name="icon">
                         <h:graphicImage value="/resources/images/menu/test.png"/>
                     </f:facet>

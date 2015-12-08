@@ -47,7 +47,7 @@ public class SessionBean implements Serializable {
     }
 
     public String login() /*throws Throwable*/ {
-        ResourceBundle msg = LocalizationBean.getTextDependLang();
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
        // try {
             userInfo = new Users().login(userName, hashPass);
             if (userInfo.get("err_id") == 0) {
@@ -56,12 +56,13 @@ public class SessionBean implements Serializable {
                 if (userName.equals("GUEST")){uLogin = false;}else {
                     uLogin = true;
                 }
-                ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+
                 externalContext.getSessionMap().put("userSession",userSession);
                 externalContext.getSessionMap().put("userKey",userKey);
                 return "#";
             } else {
 
+                ResourceBundle msg = LocalizationBean.getTextDependLangList().get(externalContext.getSessionMap().get("electLocale"));
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.refused"), msg.getString("err.login.invalid")));
                 uLogin = false;
@@ -73,12 +74,6 @@ public class SessionBean implements Serializable {
             e.printStackTrace();
             throw new Throwable();
         }*/
-        /*    request.setAttribute("username", userName);
-            request.setAttribute("sessionid", userSession);
-            request.setAttribute("keyid", userKey);
-            */
-
-
     }
     public String logout() {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();

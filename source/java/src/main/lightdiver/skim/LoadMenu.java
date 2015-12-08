@@ -4,11 +4,15 @@ package main.lightdiver.skim;
 
 import main.lightdiver.skim.DAO.SystemInfoDAO;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
+import main.lightdiver.skim.model.LocalizationBean;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 /**
@@ -16,55 +20,64 @@ import java.util.logging.Logger;
  */
 public class LoadMenu {
     private final static Logger logger = Logger.getLogger(LoadMenu.class.getName());
-    private static List<TreeNode> footerMenu1 = null;
-    private static List<TreeNode> footerMenu2 = null;
+    private List<TreeNode> footerMenu1 = null;
+    private List<TreeNode> footerMenu2 = null;
 
-    public static List<TreeNode> getFooterMenu1(){
-        if (footerMenu1 == null) {
-            System.out.println("Load getFooterMenu1");
-            TreeNodeMenu treeNode1 = new TreeNodeMenu("simple", "Skim Read", "#", false);
+    public void LoadMenuFooter(){
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        ResourceBundle msg = LocalizationBean.getTextDependLangList().get(externalContext.getSessionMap().get("electLocale"));
 
-            TreeNodeMenu treeNode11 = new TreeNodeMenu("lesson", "Lessons", "#", false);
-            TreeNodeMenu treeNode111 = new TreeNodeMenu("lesson", "Lessons 1", "#", true);
-            TreeNodeMenu treeNode112 = new TreeNodeMenu("lesson", "Lessons 2", "#", false);
-            treeNode11.addChild(treeNode111);
-            treeNode11.addChild(treeNode112);
+        System.out.println("Load getFooterMenu1");
+        TreeNodeMenu treeNode1 = new TreeNodeMenu("simple", msg.getString("menu.footer1.skimread"), "#", false);
 
-            TreeNodeMenu treeNode112p = new TreeNodeMenu("practice", "Practices", "#", false);
-            TreeNodeMenu treeNode112p1 = new TreeNodeMenu("practice", "Practice 1", "#", true);
-            treeNode112p.addChild(treeNode112p1);
+        TreeNodeMenu treeNode11 = new TreeNodeMenu("lesson", msg.getString("menu.footer1.lessons"), "#", false);
+        TreeNodeMenu treeNode111 = new TreeNodeMenu("lesson", msg.getString("menu.footer1.lesson1"), "#", true);
+        TreeNodeMenu treeNode112 = new TreeNodeMenu("lesson", msg.getString("menu.footer1.lesson2"), "#", false);
+        treeNode11.addChild(treeNode111);
+        treeNode11.addChild(treeNode112);
 
-            treeNode112.addChild(treeNode112p);
+        TreeNodeMenu treeNode112p = new TreeNodeMenu("practice", msg.getString("menu.footer1.practices"), "#", false);
+        TreeNodeMenu treeNode112p1 = new TreeNodeMenu("practice", msg.getString("menu.footer1.practice1"), "#", true);
+        treeNode112p.addChild(treeNode112p1);
 
-            TreeNodeMenu treeNode12 = new TreeNodeMenu("test", "Тестування", "#", true);
+        treeNode112.addChild(treeNode112p);
 
-
-            treeNode1.addChild(treeNode11);
-            treeNode1.addChild(treeNode12);
+        TreeNodeMenu treeNode12 = new TreeNodeMenu("test", msg.getString("menu.footer1.testing"), "#", true);
 
 
-            TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", "Article", "#", true);
+        treeNode1.addChild(treeNode11);
+        treeNode1.addChild(treeNode12);
 
-            footerMenu1 = new ArrayList<>();
-            footerMenu1.add(treeNode1);
-            footerMenu1.add(treeNode2);
+        if (footerMenu1==null) { footerMenu1 = new ArrayList<>();}
+        else{footerMenu1.clear();}
+        footerMenu1.add(treeNode1);
+
+
+        System.out.println("Load getFooterMenu2");
+        TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", msg.getString("menu.footer2.article"), "#", true);
+        TreeNodeMenu treeNode3 = new TreeNodeMenu("simple", msg.getString("menu.footer2.about"), "about.xhtml", true);
+        TreeNodeMenu treeNode4 = new TreeNodeMenu("simple", msg.getString("menu.footer2.contacts"), "#", true);
+        TreeNodeMenu treeNode5 = new TreeNodeMenu("simple", msg.getString("menu.footer2.registration"), "register.xhtml", true);
+        TreeNodeMenu treeNode6 = new TreeNodeMenu("simple", msg.getString("menu.footer2.literature"), "#", true);
+
+
+        footerMenu2 = new ArrayList<>();
+        footerMenu2.add(treeNode2);
+        footerMenu2.add(treeNode3);
+        footerMenu2.add(treeNode4);
+        footerMenu2.add(treeNode5);
+        footerMenu2.add(treeNode6);
+    }
+
+    public  List<TreeNode> getFooterMenu1(){
+        if (footerMenu1 == null ) {
+            LoadMenuFooter();
         }
         return footerMenu1;
     }
-    public static List<TreeNode> getFooterMenu2(){
+    public  List<TreeNode> getFooterMenu2(){
         if (footerMenu2 == null) {
-            System.out.println("Load getFooterMenu2");
-
-            TreeNodeMenu treeNode1 = new TreeNodeMenu("simple", "About", "about.xhtml", true);
-            TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", "Contacts", "#", true);
-            TreeNodeMenu treeNode3 = new TreeNodeMenu("simple", "Registration", "register.xhtml", true);
-            TreeNodeMenu treeNode4 = new TreeNodeMenu("simple", "Literature", "#", true);
-
-            footerMenu2 = new ArrayList<>();
-            footerMenu2.add(treeNode1);
-            footerMenu2.add(treeNode2);
-            footerMenu2.add(treeNode3);
-            footerMenu2.add(treeNode4);
+            LoadMenuFooter();
         }
         return footerMenu2;
     }
