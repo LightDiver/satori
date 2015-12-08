@@ -9,10 +9,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Serj on 08.11.2015.
@@ -50,7 +47,7 @@ public class SessionBean implements Serializable {
     }
 
     public String login() /*throws Throwable*/ {
-
+        ResourceBundle msg = LocalizationBean.getTextDependLang();
        // try {
             userInfo = new Users().login(userName, hashPass);
             if (userInfo.get("err_id") == 0) {
@@ -66,7 +63,7 @@ public class SessionBean implements Serializable {
             } else {
 
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Refused", "Invalid Login or Password. Please Try Again!"));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.refused"), msg.getString("err.login.invalid")));
                 uLogin = false;
                 //throw new Throwable();
                 return "#";

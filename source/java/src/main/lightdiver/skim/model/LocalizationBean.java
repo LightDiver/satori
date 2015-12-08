@@ -6,7 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 @ManagedBean(eager = true)
@@ -18,6 +18,8 @@ public class LocalizationBean implements Serializable {
 
     protected Language language;
     protected List<Language> selectedLanguage;
+
+    private static ResourceBundle textDependLang;
 
     @PostConstruct
     public void init() {
@@ -42,6 +44,7 @@ public class LocalizationBean implements Serializable {
                 break;
         }
         System.out.println(language.getLangName());
+        loadNewTextLang(locale);
     }
 
 
@@ -60,6 +63,8 @@ public class LocalizationBean implements Serializable {
 
     public void setElectLocale(String electLocale) {
         this.electLocale = electLocale;
+        loadNewTextLang(electLocale);
+        //System.out.println(textDependLang.getString("err.login.invalid"));
     }
 
     public Language getLanguage() {
@@ -78,5 +83,37 @@ public class LocalizationBean implements Serializable {
         this.selectedLanguage = selectedLanguage;
     }
 
+    private static void loadNewTextLang(String lang){
+        textDependLang = ResourceBundle.getBundle("locale.text", new Locale(lang));
+        //System.out.println(textDependLang.getString("err.login.invalid"));
+        /*ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        String fileName = servletContext.getRealPath(File.separator + "WEB-INF" + File.separator + "classes" + File.separator + "locale"+File.separator + "textlang." + lang);
+        textDependLang = new Properties();
 
+        try {
+            FileInputStream ins = new FileInputStream(fileName);
+            textDependLang.load(ins);
+            System.out.println("Load lang text ok: " + lang);
+        } catch (FileNotFoundException e) {
+            logger.log(Level.SEVERE, "Uvaga (FileNotFoundException) ", e);
+            e.printStackTrace();
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Uvaga! (IOException) ", e);
+            e.printStackTrace();
+        }
+        catch (Throwable e){
+            logger.log(Level.SEVERE, "Uvaga! (Throwable) " , e);
+            e.printStackTrace();
+        }
+        */
+
+    }
+
+    public static ResourceBundle getTextDependLang() {
+        return textDependLang;
+    }
+
+    public static void setTextDependLang(ResourceBundle textDependLang) {
+        LocalizationBean.textDependLang = textDependLang;
+    }
 }

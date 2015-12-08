@@ -70,8 +70,10 @@
         </p:selectOneMenu>
             <br/>
             <p:graphicImage value="/resources/images/menu/#{localizationBean.language.langPict}" />
+            <ui:remove><!--
             <br/>
             <h:outputLabel value="#{localizationBean.locale} | #{localizationBean.electLocale}"/>
+            --></ui:remove>
         </h:form>
 
         <h:panelGroup>
