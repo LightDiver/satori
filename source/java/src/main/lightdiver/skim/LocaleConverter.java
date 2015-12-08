@@ -1,6 +1,8 @@
 package main.lightdiver.skim;
 
 
+import main.lightdiver.skim.model.LocalizationBean;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -23,6 +25,8 @@ public class LocaleConverter implements Converter, Serializable {
             for (Language p : localizationBean.getSelectedLanguage()) {
                 if (p.getLangName().equals(submittedValue)) {
                     FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(p.getLangISO()));
+                    localizationBean.setElectLocale(p.getLangISO());
+                    System.out.println("Set locale to "+ p.getLangISO());
                     return p;
                 }
             }

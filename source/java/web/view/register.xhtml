@@ -10,7 +10,7 @@
         >
     <ui:define name="content">
     <c:if test = "#{sessionBean.uLogin}">
-        Ви вже зареєстровані
+        #{text['hint.alreadyreg']}
     </c:if>
     <c:if test = "#{!sessionBean.uLogin}">
         <h:outputScript library="javascript" name="sha1.js" target="head"/>
@@ -19,11 +19,11 @@
 
                 if (document.getElementById('r_password').value == "" || document.getElementById('r_passwordrepeat').value == "" ||
                     document.getElementById('r_username').value == "" || document.getElementById('r_userpib').value == "")  {
-                    document.getElementById('mes_empty').innerHTML = "Заповніть всі поля";
+                    document.getElementById('mes_empty').innerHTML = "#{text['err.emptymany']}";
                     return false;
                 }
                 if (document.getElementById('r_password').value != document.getElementById('r_passwordrepeat').value){
-                    document.getElementById('mes_empty').innerHTML = "Паролі не співпадають";
+                    document.getElementById('mes_empty').innerHTML = "#{text['err.passnoteq']}";
                     return false;
                 }
 
@@ -31,43 +31,43 @@
                 if (document.getElementById('r_password').value != "") {document.getElementById('r_password').value = "usernamepass";}
             }
         </script>
-        <h:outputLink value="../index.xhtml" styleClass="ui-commandlink">Передумав реєструватися</h:outputLink>
-        <h2>Form Register New User</h2>
+        <h:outputLink value="../index.xhtml" styleClass="ui-commandlink">#{text['butt.decidednotreq']}</h:outputLink>
+        <h2>#{text['head.formregnewuser']}</h2>
 
 
             <h:panelGrid columns="3">
 
-                <h:outputLabel value="Логін: " />
-                <h:inputText id="r_username" onblur="document.getElementById('mes_empty').innerHTML = '';validusername(this.value)" value="#{registrationNewUser.userName}" required="true" requiredMessage="Не вказано!"/>
+                <h:outputLabel value="#{text['input.login']}: " />
+                <h:inputText id="r_username" onblur="document.getElementById('mes_empty').innerHTML = '';validusername(this.value)" value="#{registrationNewUser.userName}" required="true" requiredMessage="#{text['err.empty']}"/>
                 <rich:message id="r_mes_username" for="r_username" />
 
 
-                <h:outputLabel value="Пароль: " />
-                <h:inputSecret id="r_password" value="#{registrationNewUser.userPass}" required="true" requiredMessage="Не вказано!" />
+                <h:outputLabel value="#{text['input.pass']}: " />
+                <h:inputSecret id="r_password" value="#{registrationNewUser.userPass}" required="true" requiredMessage="#{text['err.empty']}" />
                 <rich:message id = "r_mes_password" for="r_password"/>
 
-                <h:outputLabel value="Підтвердити пароль: " />
-                <h:inputSecret id="r_passwordrepeat" value="#{registrationNewUser.userPassRepeat}" required="true" requiredMessage="Не вказано!"/>
+                <h:outputLabel value="#{text['input.confirmpass']}: " />
+                <h:inputSecret id="r_passwordrepeat" value="#{registrationNewUser.userPassRepeat}" required="true" requiredMessage="#{text['err.empty']}"/>
                 <rich:message id = "r_mes_passwordrepeat" for="r_passwordrepeat"/>
 
-                <h:outputLabel value="Ім'я та Прізвище: " />
-                <h:inputText id="r_userpib" onblur="validpib(this.value)" value="#{registrationNewUser.userPIB}" required="true" requiredMessage="Не вказано!"/>
+                <h:outputLabel value="#{text['input.name']}: " />
+                <h:inputText id="r_userpib" onblur="validpib(this.value)" value="#{registrationNewUser.userPIB}" required="true" requiredMessage="#{text['err.empty']}"/>
                 <rich:message id="r_mes_userpib" for="r_userpib" />
 
-                <h:outputLabel value="Електрона адреса: " />
-                <h:inputText id="r_useremail" onblur="validemail(this.value)" value="#{registrationNewUser.userEMail}" required="true" requiredMessage="Не вказано!"/>
+                <h:outputLabel value="#{text['input.email']}: " />
+                <h:inputText id="r_useremail" onblur="validemail(this.value)" value="#{registrationNewUser.userEMail}" required="true" requiredMessage="#{text['err.empty']}"/>
                 <rich:message id="r_mes_useremail" for="r_useremail" />
 
-                <h:outputLabel value="Стать: " />
-                <rich:inplaceSelect id="r_sex" saveOnSelect="true" defaultLabel="Click here to edit" openOnEdit="true" value="#{registrationNewUser.sex}"
+                <h:outputLabel value="#{text['input.sex']}: " />
+                <rich:inplaceSelect id="r_sex" saveOnSelect="true" defaultLabel="#{text['hint.edit']}" openOnEdit="true" value="#{registrationNewUser.sex}"
                                     onblur="validsex( #{rich:component('r_sex')}.getValue() )">
-                    <f:selectItem itemValue="M" itemLabel="Чол"/>
-                    <f:selectItem itemValue="W" itemLabel="Жін"/>
+                    <f:selectItem itemValue="M" itemLabel="#{text['input.labelman']}"/>
+                    <f:selectItem itemValue="W" itemLabel="#{text['input.labelwoman']}"/>
                 </rich:inplaceSelect>
                 <rich:message id="r_mes_sex" for="r_sex"/>
 
-                <h:outputLabel value="Мова: " />
-                <rich:inplaceSelect id = "r_userlang" saveOnSelect="true" defaultLabel="Click here to edit" openOnEdit="true" value="#{registrationNewUser.userLang}"
+                <h:outputLabel value="#{text['input.lang']}: " />
+                <rich:inplaceSelect id = "r_userlang" saveOnSelect="true" defaultLabel="#{text['hint.edit']}" openOnEdit="true" value="#{registrationNewUser.userLang}"
                                     onblur="validlang( #{rich:component('r_userlang')}.getValue() )">
                     <f:selectItems value="#{sessionBean.langs}"/>
                 </rich:inplaceSelect>
@@ -77,7 +77,7 @@
         <p:growl id="msgreg" showSummary="true" showDetail="true" globalOnly="true" life="6000" />
 
         <h:form id="formr" onsubmit="return hash_pass_reg()">
-            <h:commandLink value="Registration" action="#{registrationNewUser.registr}" update="msgreg" ajax="false" styleClass="ui-commandlink"/>
+            <h:commandLink value="#{text['butt.reg']}" action="#{registrationNewUser.registr}" update="msgreg" ajax="false" styleClass="ui-commandlink"/>
             <h:inputHidden id="r_hashpass" value="#{registrationNewUser.hashPass}"/>
         </h:form>
         <h:outputLabel id="mes_empty" styleClass="rf-msg-err" value=""/>

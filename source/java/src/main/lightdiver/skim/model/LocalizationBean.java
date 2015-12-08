@@ -1,4 +1,6 @@
-package main.lightdiver.skim;
+package main.lightdiver.skim.model;
+
+import main.lightdiver.skim.Language;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -12,6 +14,7 @@ import java.util.*;
 public class LocalizationBean implements Serializable {
 
     private String locale = FacesContext.getCurrentInstance().getViewRoot().getLocale().toString();
+    private String electLocale = locale;
 
     protected Language language;
     protected List<Language> selectedLanguage;
@@ -38,12 +41,12 @@ public class LocalizationBean implements Serializable {
                 language = selectedLanguage.get(0);
                 break;
         }
-        System.out.println(language.langName);
+        System.out.println(language.getLangName());
     }
 
 
     public String getLocale() {
-        return locale;
+        return FacesContext.getCurrentInstance().getViewRoot().getLocale().toString();
     }
 
 
@@ -51,6 +54,13 @@ public class LocalizationBean implements Serializable {
         this.locale = locale;
     }
 
+    public String getElectLocale() {
+        return electLocale;
+    }
+
+    public void setElectLocale(String electLocale) {
+        this.electLocale = electLocale;
+    }
 
     public Language getLanguage() {
         return language;

@@ -3,14 +3,13 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:rich="http://richfaces.org/rich">
+                xmlns:p="http://primefaces.org/ui">
 
     <h:outputScript library="javascript" name="sha1.js" target="head"/>
     <script type="text/javascript">
         function hash_pass() {
             document.getElementById('form:hashpass').value = hex_sha1(document.getElementById('form:username').value+document.getElementById('form:password').value);
-            if (document.getElementById('form:password').value != "") {document.getElementById('form:password').value = "Введіть пароль";}
+            if (document.getElementById('form:password').value != "") {document.getElementById('form:password').value = "#{text['hint.enterpass']}";}
         }
     </script>
     <h:outputScript library="javascript" name="jquery.easing.min.js" target="head"/>
@@ -71,17 +70,19 @@
         </p:selectOneMenu>
             <br/>
             <p:graphicImage value="/resources/images/menu/#{localizationBean.language.langPict}" />
+            <br/>
+            <h:outputLabel value="#{localizationBean.locale} | #{localizationBean.electLocale}"/>
         </h:form>
 
         <h:panelGroup>
         <h:form id="form">
             <p:growl id="msg1" showSummary="true" showDetail="true" globalOnly="true" sticky="true" />
 
-            <p:inplace  emptyLabel="Введіть логін" >
+            <p:inplace  emptyLabel="#{text['hint.enterlogin']}" >
                 <p:inputText id="username" value="#{sessionBean.userName}" required="true" requiredMessage="#{text['err.empty']}" label="text" size = "10"/>
             </p:inplace>
             <br/>
-            <p:inplace emptyLabel="Введіть пароль" >
+            <p:inplace emptyLabel="#{text['hint.enterpass']}" >
                 <p:password id="password" value="#{sessionBean.userPass}" required="true" requiredMessage="#{text['err.empty']}" size = "10"/>
             </p:inplace>
 
@@ -98,7 +99,7 @@
             <br/>
         </h:panelGroup>
         <h:panelGroup>
-            <h:graphicImage value="/resources/images/users/noauthuser.png" title="Незарєгестрований користувач"/>
+            <h:graphicImage value="/resources/images/users/noauthuser.png" title="#{text['hint.notreg']}"/>
         </h:panelGroup>
     </h:panelGrid>
 </ui:composition>

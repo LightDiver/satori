@@ -1,6 +1,5 @@
 package main.lightdiver.skim;
 
-import java.util.Locale;
 
 /**
  * Created by Serj on 06.12.2015.
