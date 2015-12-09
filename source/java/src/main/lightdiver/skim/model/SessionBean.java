@@ -25,6 +25,7 @@ public class SessionBean implements Serializable {
     protected String userKey;
     protected List<SelectItem> langs;
     protected boolean uLogin = false;
+    protected boolean uAdmin = false;
 
 
 
@@ -36,6 +37,9 @@ public class SessionBean implements Serializable {
         this.uLogin = uLogin;
     }
 
+    public boolean isuAdmin() {
+        return uAdmin;
+    }
 
     public String getUserName() throws Throwable {
         if (userName == null ){
@@ -53,8 +57,13 @@ public class SessionBean implements Serializable {
             if (userInfo.get("err_id") == 0) {
                 userSession = userInfo.get("session_id").toString();
                 userKey = userInfo.get("key_id").toString();
-                if (userName.equals("GUEST")){uLogin = false;}else {
+                if (userName.equals("GUEST")){
+                    uLogin = false;
+                }
+                else {
                     uLogin = true;
+                    uAdmin = (Boolean)userInfo.get("is_admin");
+
                 }
 
                 externalContext.getSessionMap().put("userSession",userSession);

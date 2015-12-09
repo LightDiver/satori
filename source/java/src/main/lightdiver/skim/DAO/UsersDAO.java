@@ -6,10 +6,7 @@ import main.lightdiver.skim.exceptions.FileNotRead;
 import main.lightdiver.skim.exceptions.InvalidParameter;
 import main.lightdiver.skim.settings.Conf;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -48,13 +45,23 @@ public class UsersDAO {
         cs.registerOutParameter(8, Types.VARCHAR);
         cs.registerOutParameter(9, cp.TypeCursor());
         cs.execute();
-        res.put("session_id", cs.getObject(6));
-        res.put("key_id", cs.getObject(7));
-        res.put("lang_id", cs.getObject(8));
         res.put("err_id", cs.getObject(1));
         if (cs.getInt(1) != 0){
             res.put("err_text", "Some troubles(Виводити на мові користувача)");
+            return res;
         }
+        res.put("session_id", cs.getObject(6));
+        res.put("key_id", cs.getObject(7));
+        res.put("lang_id", cs.getObject(8));
+
+        res.put("is_admin",false);
+        ResultSet rset = (ResultSet)cs.getObject(9);
+        while (rset.next ()){
+            if(rset.getString(3).equals("ADMIN")){
+                res.put("is_admin",true);
+            }
+        }
+
         } catch (SQLException e) {
             logger.log(Level.SEVERE,"Don't login, Critical dbase error", e);
             e.printStackTrace();

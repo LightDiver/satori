@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 @ManagedBean
 @ViewScoped
-public class RegistrationNewUser implements Serializable{
+public class RegistrationNewUserBean implements Serializable{
     protected String userName;
     protected transient String userPass;
     protected transient String userPassRepeat;

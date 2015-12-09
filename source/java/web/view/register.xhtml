@@ -38,28 +38,28 @@
             <h:panelGrid columns="3">
 
                 <h:outputLabel value="#{text['input.login']}: " />
-                <h:inputText id="r_username" onblur="document.getElementById('mes_empty').innerHTML = '';validusername(this.value)" value="#{registrationNewUser.userName}" required="true" requiredMessage="#{text['err.empty']}"/>
+                <h:inputText id="r_username" onblur="document.getElementById('mes_empty').innerHTML = '';validusername(this.value)" value="#{registrationNewUserBean.userName}" required="true" requiredMessage="#{text['err.empty']}"/>
                 <rich:message id="r_mes_username" for="r_username" />
 
 
                 <h:outputLabel value="#{text['input.pass']}: " />
-                <h:inputSecret id="r_password" value="#{registrationNewUser.userPass}" required="true" requiredMessage="#{text['err.empty']}" />
+                <h:inputSecret id="r_password" value="#{registrationNewUserBean.userPass}" required="true" requiredMessage="#{text['err.empty']}" />
                 <rich:message id = "r_mes_password" for="r_password"/>
 
                 <h:outputLabel value="#{text['input.confirmpass']}: " />
-                <h:inputSecret id="r_passwordrepeat" value="#{registrationNewUser.userPassRepeat}" required="true" requiredMessage="#{text['err.empty']}"/>
+                <h:inputSecret id="r_passwordrepeat" value="#{registrationNewUserBean.userPassRepeat}" required="true" requiredMessage="#{text['err.empty']}"/>
                 <rich:message id = "r_mes_passwordrepeat" for="r_passwordrepeat"/>
 
                 <h:outputLabel value="#{text['input.name']}: " />
-                <h:inputText id="r_userpib" onblur="validpib(this.value)" value="#{registrationNewUser.userPIB}" required="true" requiredMessage="#{text['err.empty']}"/>
+                <h:inputText id="r_userpib" onblur="validpib(this.value)" value="#{registrationNewUserBean.userPIB}" required="true" requiredMessage="#{text['err.empty']}"/>
                 <rich:message id="r_mes_userpib" for="r_userpib" />
 
                 <h:outputLabel value="#{text['input.email']}: " />
-                <h:inputText id="r_useremail" onblur="validemail(this.value)" value="#{registrationNewUser.userEMail}" required="true" requiredMessage="#{text['err.empty']}"/>
+                <h:inputText id="r_useremail" onblur="validemail(this.value)" value="#{registrationNewUserBean.userEMail}" required="true" requiredMessage="#{text['err.empty']}"/>
                 <rich:message id="r_mes_useremail" for="r_useremail" />
 
                 <h:outputLabel value="#{text['input.sex']}: " />
-                <rich:inplaceSelect id="r_sex" saveOnSelect="true" defaultLabel="#{text['hint.edit']}" openOnEdit="true" value="#{registrationNewUser.sex}"
+                <rich:inplaceSelect id="r_sex" saveOnSelect="true" defaultLabel="#{text['hint.edit']}" openOnEdit="true" value="#{registrationNewUserBean.sex}"
                                     onblur="validsex( #{rich:component('r_sex')}.getValue() )">
                     <f:selectItem itemValue="M" itemLabel="#{text['input.labelman']}"/>
                     <f:selectItem itemValue="W" itemLabel="#{text['input.labelwoman']}"/>
@@ -67,7 +67,7 @@
                 <rich:message id="r_mes_sex" for="r_sex"/>
 
                 <h:outputLabel value="#{text['input.lang']}: " />
-                <rich:inplaceSelect id = "r_userlang" saveOnSelect="true" defaultLabel="#{text['hint.edit']}" openOnEdit="true" value="#{registrationNewUser.userLang}"
+                <rich:inplaceSelect id = "r_userlang" saveOnSelect="true" defaultLabel="#{text['hint.edit']}" openOnEdit="true" value="#{registrationNewUserBean.userLang}"
                                     onblur="validlang( #{rich:component('r_userlang')}.getValue() )">
                     <f:selectItems value="#{sessionBean.langs}"/>
                 </rich:inplaceSelect>
@@ -77,36 +77,36 @@
         <p:growl id="msgreg" showSummary="true" showDetail="true" globalOnly="true" life="6000" />
 
         <h:form id="formr" onsubmit="return hash_pass_reg()">
-            <h:commandLink value="#{text['butt.reg']}" action="#{registrationNewUser.registr}" update="msgreg" ajax="false" styleClass="ui-commandlink"/>
-            <h:inputHidden id="r_hashpass" value="#{registrationNewUser.hashPass}"/>
+            <h:commandLink value="#{text['butt.reg']}" action="#{registrationNewUserBean.registr}" update="msgreg" ajax="false" styleClass="ui-commandlink"/>
+            <h:inputHidden id="r_hashpass" value="#{registrationNewUserBean.hashPass}"/>
         </h:form>
         <h:outputLabel id="mes_empty" styleClass="rf-msg-err" value=""/>
 
 
         <h:form id="t1">
-            <a4j:jsFunction name="validemail"  action = "#{registrationNewUser.validUserEMailAjax}" limitRender="true" render="r_mes_useremail">
-                <a4j:param name="p1" assignTo="#{registrationNewUser.userEMail}" />
+            <a4j:jsFunction name="validemail"  action = "#{registrationNewUserBean.validUserEMailAjax}" limitRender="true" render="r_mes_useremail">
+                <a4j:param name="p1" assignTo="#{registrationNewUserBean.userEMail}" />
             </a4j:jsFunction>
         </h:form>
         <h:form id="t2">
-            <a4j:jsFunction name="validusername"  action = "#{registrationNewUser.validUserNameAjax}"  limitRender="true" render="r_mes_username">
-                <a4j:param name="p1" assignTo="#{registrationNewUser.userName}" />
+            <a4j:jsFunction name="validusername"  action = "#{registrationNewUserBean.validUserNameAjax}"  limitRender="true" render="r_mes_username">
+                <a4j:param name="p1" assignTo="#{registrationNewUserBean.userName}" />
             </a4j:jsFunction>
         </h:form>
         <h:form id="t3">
-            <a4j:jsFunction name="validpib"  action = "#{registrationNewUser.validUserPIBAjax}"  limitRender="true" render="r_mes_userpib">
-                <a4j:param name="p1" assignTo="#{registrationNewUser.userPIB}" />
+            <a4j:jsFunction name="validpib"  action = "#{registrationNewUserBean.validUserPIBAjax}"  limitRender="true" render="r_mes_userpib">
+                <a4j:param name="p1" assignTo="#{registrationNewUserBean.userPIB}" />
             </a4j:jsFunction>
         </h:form>
         <h:form id="t4">
-            <a4j:jsFunction name="validsex"  action = "#{registrationNewUser.validSexAjax}"  limitRender="true"
+            <a4j:jsFunction name="validsex"  action = "#{registrationNewUserBean.validSexAjax}"  limitRender="true"
                             render="r_mes_sex">
-                <a4j:param name="p1" assignTo="#{registrationNewUser.sex}" />
+                <a4j:param name="p1" assignTo="#{registrationNewUserBean.sex}" />
             </a4j:jsFunction>
         </h:form>
         <h:form id="t5">
             <a4j:jsFunction name="validlang"  limitRender="true">
-                <a4j:param name="p1" assignTo="#{registrationNewUser.userLang}" />
+                <a4j:param name="p1" assignTo="#{registrationNewUserBean.userLang}" />
             </a4j:jsFunction>
         </h:form>
     </c:if>

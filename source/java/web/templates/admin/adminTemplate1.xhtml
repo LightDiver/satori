@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+<c:if test = "#{!sessionBean.uAdmin}">
+    Тіпа помилка 404
+</c:if>
+<c:if test = "#{sessionBean.uAdmin}">
+<f:view locale="#{localizationBean.electLocale}">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="adminStyle.css" library="css" />
+        <h:outputStylesheet>
+        .ui-commandlink:link {
+        text-decoration: none;
+        color: black;
+        background: #738078;
+        font-size: 12px;
+        }
+
+        .ui-commandlink:visited {
+        text-decoration: none;
+        color: black;
+        font-size: 12px;
+        }
+
+        .ui-commandlink:hover {
+        text-decoration: none;
+        color: black;
+        background: green;
+        font-size: 12px;
+        }
+
+        .ui-commandlink:active {
+        text-decoration: none;
+        color: black;
+        background: #33ff2b;
+        font-size: 12px;
+        }
+        </h:outputStylesheet>
+    </h:head>
+
+    <h:body>
+        <div class="wrapper">
+            <div class="header">
+                <ui:insert name="header" >
+                    <ui:include src="adminHeader.xhtml" />
+                </ui:insert>
+                <ui:debug hotkey="e"/>
+            </div>
+            <div class="middle">
+                <div class="container">
+                    <div class="content">
+                        <ui:insert name="content" >
+                        Content in block ui_insert
+                        </ui:insert>
+                    </div>
+                </div>
+                    <div class="left-sidebar">
+                        <ui:insert name="left" >
+                            <ui:include src="adminLeft.xhtml" />
+                        </ui:insert>
+                    </div><!-- .left-sidebar -->
+            </div>
+        </div>
+        <div class="footer">
+            <ui:insert name="footer" >
+                <ui:include src="adminFooter.xhtml" />
+            </ui:insert>
+        </div><!-- .footer -->
+    </h:body>
+</f:view>
+</c:if>
+</html>

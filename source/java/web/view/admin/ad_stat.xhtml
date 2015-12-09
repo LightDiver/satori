@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="../../templates/admin/adminTemplate1.xhtml">
+    <h:outputStylesheet>
+        .even-row {
+            background-color: #FCFFFE;
+        }
+
+        .odd-row {
+            background-color: #ECF3FE;
+        }
+
+        .even-row:hover,
+        .odd-row:hover {
+            background-color: #FFEBDA;
+            cursor: pointer;
+        }
+    </h:outputStylesheet>
+    <ui:define name="content">
+        <rich:tabPanel switchType="client">
+            <rich:tab header="Всі дії">
+                <h:form id="form">
+                  
+                </h:form>
+            </rich:tab>
+            <rich:tab header="JSF 2 and RichFaces 4">
+                <p>We are working hard on RichFaces 4.0 which will have full JSF 2 integration. That is not all though, here is
+                    a summary of updates and features:</p>
+                <ul>
+                    <li>Redesigned modular repository and build system.</li>
+                    <li>Simplified Component Development Kit with annotations, faces-config extensions, advanced templates
+                        support and more..</li>
+                    <li>Ajax framework improvements extending the JSF 2 specification.</li>
+                    <li>Component review for consistency, usability, and redesign following semantic HTML principles where
+                        possible.</li>
+                    <li>Both server-side and client-side performance optimization.</li>
+                    <li>Strict code clean-up and review.</li>
+                </ul>
+            </rich:tab>
+        </rich:tabPanel>
+    </ui:define>
+</ui:composition>

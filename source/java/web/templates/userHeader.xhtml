@@ -2,7 +2,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://java.sun.com/jsf/html">
 
     <h:outputStylesheet>
         .section1 {
@@ -20,9 +21,23 @@
         }
 
         .section3 {
-            vertical-align: bottom;
+            vertical-align: top;
             text-align: right;
             width: 40%;
+        }
+
+        .section4{
+            vertical-align: top;
+            padding-top: 2px;
+            text-align: right;
+            width: 30%;
+        }
+        .section5{
+            margin: 0;
+            padding: 0;
+            vertical-align: top;
+            text-align: right;
+            width: 70%;
         }
 
         .ui-commandlink:link {
@@ -62,13 +77,22 @@
             <ui:include src = "userLogin.xhtml" />
         </c:if>
         <c:if test = "#{sessionBean.uLogin}">
-            <h:graphicImage id = "userauthpic" value="/resources/images/users/authman1.png"
+            <p:panelGrid columns="2" columnClasses="section4,section5" width="100%" style="border-collapse:collapse;border-spacing:0;">
+                <c:if test = "#{sessionBean.uAdmin}">
+                    <ui:include src = "userAdminHeaderMenu.xhtml" />
+                </c:if>
+                <h:panelGroup>
+                    <h:graphicImage id = "userauthpic" value="/resources/images/users/authman1.png"
                             onmouseover="document.getElementById('userauthpic').src='/satori/resources/images/users/authman2.png'"
                             onmouseout="document.getElementById('userauthpic').src='/satori/resources/images/users/authman1.png'"/>
-            <h:outputLabel value="#{sessionBean.userName}" />
-            <h:form>
-                <h:commandLink id="logout" action="#{sessionBean.logout}" value="[Logout]" styleClass="ui-commandlink"/>
-            </h:form>
+                    <h:outputLabel value="#{sessionBean.userName}" />
+
+                    <br/>
+                    <h:form>
+                        <h:commandLink id="logout" action="#{sessionBean.logout}" value="[Logout]" styleClass="ui-commandlink"/>
+                    </h:form>
+                </h:panelGroup>
+            </p:panelGrid>
         </c:if>
     </h:panelGroup>
     </h:panelGrid>
