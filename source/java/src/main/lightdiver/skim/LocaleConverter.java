@@ -1,6 +1,7 @@
 package main.lightdiver.skim;
 
 
+import main.lightdiver.skim.entity.Language;
 import main.lightdiver.skim.model.LocalizationBean;
 
 import javax.faces.component.UIComponent;

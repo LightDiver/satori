@@ -6,15 +6,14 @@
                 template="../../templates/admin/adminTemplate1.xhtml">
     <h:outputStylesheet>
         .even-row {
-            background-color: #FCFFFE;
+            background-color: #8dfffd;
         }
 
         .odd-row {
-            background-color: #ECF3FE;
+            background-color: #fbf9fe;
         }
 
-        .even-row:hover,
-        .odd-row:hover {
+        .even-row:hover .odd-row:hover {
             background-color: #FFEBDA;
             cursor: pointer;
         }
@@ -22,7 +21,55 @@
     <ui:define name="content">
         <rich:tabPanel switchType="client">
             <rich:tab header="Всі дії">
-                <h:form id="form">
+                <h:outputLabel value="#{adminStatisticBean.startDate} - #{adminStatisticBean.endDate}" />;
+                <h:form id="formUserAction">
+                    <rich:dataTable value="#{adminStatisticBean.allUsersAction}" var="user_action" id="table" rows="25" rowClasses="odd-row, even-row" styleClass="stable">
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Логін" />
+                            </f:facet>
+                            <h:outputText value="#{user_action.userName}" />
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="IP" />
+                            </f:facet>
+                            <h:outputText value="#{user_action.userTerminalIP}" />
+                        </rich:column>
+                        <rich:column filter="#{adminStatisticFilterBean.userTerminalClientFilterImpl}" filterValue="#{adminStatisticFilterBean.userTerminalClientFilter}">
+                            <f:facet name="header">
+                                <h:outputText value="Terminal(Browser) " />
+                            </f:facet>
+                            <h:outputText value="#{user_action.userTerminalClient}" />
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Дія" />
+                            </f:facet>
+                            <h:outputText value="#{user_action.userLastActionName}" />
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Час події" />
+                            </f:facet>
+                            <h:outputText value="#{user_action.userLastActionDate}" />
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Увійшов в систему" />
+                            </f:facet>
+                            <h:outputText value="#{user_action.userRegistSessionDate}" />
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Статус діїї" />
+                            </f:facet>
+                            <h:outputText value="#{user_action.userLastActionStatusName}" />
+                        </rich:column>
+                        <f:facet name="footer">
+                            <rich:dataScroller />
+                        </f:facet>
+                    </rich:dataTable>
                   
                 </h:form>
             </rich:tab>

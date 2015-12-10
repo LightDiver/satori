@@ -53,7 +53,7 @@ public class SessionBean implements Serializable {
     public String login() /*throws Throwable*/ {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
        // try {
-            userInfo = new Users().login(userName, hashPass);
+            userInfo = Users.login(userName, hashPass);
             if (userInfo.get("err_id") == 0) {
                 userSession = userInfo.get("session_id").toString();
                 userKey = userInfo.get("key_id").toString();

@@ -1,6 +1,6 @@
 package main.lightdiver.skim.model;
 
-import main.lightdiver.skim.Language;
+import main.lightdiver.skim.entity.Language;
 import main.lightdiver.skim.LoadMenu;
 
 import javax.annotation.PostConstruct;

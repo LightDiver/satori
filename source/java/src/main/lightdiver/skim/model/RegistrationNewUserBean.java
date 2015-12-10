@@ -42,7 +42,7 @@ public class RegistrationNewUserBean implements Serializable{
         if ( (check=validSexAjax())  !=null){res=res+check;}
         if ( (check=validUserPIBAjax())  !=null){res=res+check;}
         if (res==null) {
-            res = new Users().registr(userName, hashPass, userPIB, userEMail, sex, userLang);
+            res = Users.registr(userName, hashPass, userPIB, userEMail, sex, userLang);
         }
         if (res == null) {
         FacesContext.getCurrentInstance().addMessage(null,

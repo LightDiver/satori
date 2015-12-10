@@ -303,7 +303,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
                     WHERE td.translate_pls_id = at.translate_pls_id
                       AND td.lang_id = i_lang_id)
                END) AS action_name,
-               ush.a_date,
+               ush.r_date,
                (CASE
                  WHEN i_lang_id = 'UA' OR i_lang_id IS NULL THEN
                   uss.is_success_name

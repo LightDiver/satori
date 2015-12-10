@@ -1,4 +1,4 @@
-package main.lightdiver.skim;
+package main.lightdiver.skim.entity;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;

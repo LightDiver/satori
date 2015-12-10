@@ -1,18 +1,20 @@
 package main.lightdiver.skim;
 
 import main.lightdiver.skim.DAO.UsersDAO;
+import main.lightdiver.skim.entity.UsersAction;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
 import main.lightdiver.skim.exceptions.ErrorInBase;
 import main.lightdiver.skim.exceptions.FileNotRead;
 import main.lightdiver.skim.exceptions.InvalidParameter;
-import main.lightdiver.skim.model.SessionBean;
 
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -21,11 +23,10 @@ import java.util.logging.Logger;
  */
 public class Users {
     private final static Logger logger = Logger.getLogger(Users.class.getName());
-    private HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 
-
-    public HashMap<String, Object> login(String user_login, String pass){
+    public static HashMap<String, Object> login(String user_login, String pass){
         HashMap<String, Object> res = null;
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         try {
             String ipAddress = request.getHeader("X-FORWARDED-FOR");
             if ( ipAddress == null ) {
@@ -60,9 +61,10 @@ public class Users {
         }
     }
 
-    public String registr(String userLogin, String userPass, String userName, String userEmail, String userSex, String userLang){
+    public static String registr(String userLogin, String userPass, String userName, String userEmail, String userSex, String userLang){
         String res = null;
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         try {
             String ipAddress = request.getHeader("X-FORWARDED-FOR");
             if ( ipAddress == null ) {
@@ -87,7 +89,28 @@ public class Users {
         return res;
     }
 
+    public static List<UsersAction> getUsersAction(Date startDate, Date endDate, Integer userId, Integer isSuccess){
+        List<UsersAction> usersActionList = null;
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if ( ipAddress == null ) {
+            ipAddress = request.getRemoteAddr();
+        }
+        try {
+            usersActionList = new UsersDAO().getUsersAction((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, "UA", new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime()), userId, isSuccess);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+        } catch (FileNotRead fileNotRead) {
+            fileNotRead.printStackTrace();
+        } catch (InvalidParameter invalidParameter) {
+            invalidParameter.printStackTrace();
+        }
+        return usersActionList;
+    }
+
     private void RequestInfoToLog(){
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         logger.info("request.getAuthType() " + request.getAuthType());
         logger.info("request.getContextPath() " + request.getContextPath());
         logger.info("request.getMethod()  " + request.getMethod());

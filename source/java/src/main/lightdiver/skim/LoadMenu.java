@@ -3,6 +3,7 @@ package main.lightdiver.skim;
 
 
 import main.lightdiver.skim.DAO.SystemInfoDAO;
+import main.lightdiver.skim.entity.TreeNodeMenu;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
 import main.lightdiver.skim.model.LocalizationBean;
 

@@ -1,5 +1,6 @@
 package main.lightdiver.skim.DAO;
 
+import main.lightdiver.skim.entity.UsersAction;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
 import main.lightdiver.skim.exceptions.ErrorInBase;
 import main.lightdiver.skim.exceptions.FileNotRead;
@@ -7,7 +8,9 @@ import main.lightdiver.skim.exceptions.InvalidParameter;
 import main.lightdiver.skim.settings.Conf;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +32,7 @@ public class UsersDAO {
         }
     }
 
-    public HashMap<String, Object> login(String user_login, String pass, String terminal_ip, String terminal_client) throws ErrorInBase {
+    public static HashMap<String, Object> login(String user_login, String pass, String terminal_ip, String terminal_client) throws ErrorInBase {
         HashMap<String, Object> res = new HashMap<String, Object>();
         CallableStatement cs = null;
         try {
@@ -61,13 +64,14 @@ public class UsersDAO {
                 res.put("is_admin",true);
             }
         }
-
+            cs.close();
+            return res;
         } catch (SQLException e) {
             logger.log(Level.SEVERE,"Don't login, Critical dbase error", e);
             e.printStackTrace();
             throw new ErrorInBase();
         }
-        return res;
+
     }
     public void logout(String user_session, String user_key) throws ErrorInBase {
         CallableStatement cs = null;
@@ -77,6 +81,7 @@ public class UsersDAO {
             cs.setString(2, user_session);
             cs.setString(3, user_key);
             cs.execute();
+            cs.close();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Don't logout", e);
             e.printStackTrace();
@@ -102,6 +107,7 @@ public class UsersDAO {
          if (cs.getInt(1) != 0) {
              res = "Some troubles: "+ cs.getInt(1) + "-" + SystemInfoDAO.getDescError(cs.getInt(1), "UA");
          }
+         cs.close();
 
      }catch (SQLException e) {
          logger.log(Level.SEVERE, "Don't register", e);
@@ -114,21 +120,66 @@ public class UsersDAO {
         return res;
     }
 
-    public static int isUserExist(String userLogin){
+    public static int isUserExist(String userLogin) {
         CallableStatement cs;
         try {
+            int res;
             cs = con.prepareCall("{? = call pkg_users.is_user_exist(?)}");
             cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2,userLogin);
+            cs.setString(2, userLogin);
             cs.execute();
-            return cs.getInt(1);
+            res = cs.getInt(1);
+            cs.close();
+            return res;
         } catch (SQLException e) {
             logger.severe("" + e);
             e.printStackTrace();
             return 1;//Тіпа завжди є
         }
-
     }
+    public static List<UsersAction> getUsersAction(String userSession, String userKey, String ipAddress, String userLang, Date startDate, Date endDate, Integer userId, Integer isSuccess){
+        List<UsersAction> usersActionList = new ArrayList<>();
+        CallableStatement cs;
+        try {
+            cs = con.prepareCall("{? = call pkg_users.list_users_action(?,?,?,?,?,?,?,?,?)}");
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2, userSession);
+            cs.setString(3, userKey);
+            cs.setString(4, ipAddress);
+            cs.setString(5, userLang);
+            cs.setDate(6,startDate);
+            cs.setDate(7,endDate);
+            if(userId==null) cs.setNull(8,Types.INTEGER); else cs.setInt(8,userId);
+            if(isSuccess==null) cs.setNull(9,Types.INTEGER) ;else cs.setInt(9, isSuccess);
+            cs.registerOutParameter(10, cp.TypeCursor());
+            cs.execute();
+            if (cs.getInt(1) != 0){
+                logger.severe("Refused execute getUsersAction (session= "+userSession+";key="+userKey+")");
+            }
+            ResultSet rset = (ResultSet)cs.getObject(10);
+            while (rset.next ()){
+                UsersAction usersAction = new UsersAction();
+                usersAction.setUserId(rset.getInt(1));
+                usersAction.setUserName(rset.getString(2));
+                usersAction.setUserState(rset.getString(3));
+                usersAction.setUserTerminalIP(rset.getString(4));
+                usersAction.setUserTerminalClient(rset.getString(5));
+                usersAction.setUserLastActionDate(rset.getDate(6));
+                usersAction.setUserLastActionName(rset.getString(7));
+                usersAction.setUserRegistSessionDate(rset.getDate(8));
+                usersAction.setUserLastActionStatusName(rset.getString(9));
+
+                usersActionList.add(usersAction);
+            }
+            cs.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usersActionList;
+    }
+
+
 
 
 }
