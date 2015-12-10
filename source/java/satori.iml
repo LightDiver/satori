@@ -31,6 +31,6 @@
     <orderEntry type="library" name="ojdbc6" level="project" />
     <orderEntry type="library" name="PrimeFaces-5.2" level="project" />
     <orderEntry type="library" name="javax.faces-2.2.12" level="project" />
-    <orderEntry type="library" name="richfaces-a4j-4.5.10.Final" level="project" />
+    <orderEntry type="library" name="richfaces-rich-4.5.11.Final" level="project" />
   </component>
 </module>

@@ -1,8 +1,5 @@
 package main.lightdiver.skim.model;
 
-import main.lightdiver.skim.LoadMenu;
-
-import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
