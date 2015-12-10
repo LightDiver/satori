@@ -1,77 +1,86 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:rich="http://richfaces.org/rich"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:a4j="http://richfaces.org/a4j"
                 template="../../templates/admin/adminTemplate1.xhtml">
-    <h:outputStylesheet>
-        .even-row {
-            background-color: #8dfffd;
-        }
-
-        .odd-row {
-            background-color: #fbf9fe;
-        }
-
-        .even-row:hover .odd-row:hover {
-            background-color: #FFEBDA;
-            cursor: pointer;
-        }
-    </h:outputStylesheet>
     <ui:define name="content">
+        <h:outputStylesheet>
+            .even-row {
+                background-color: #8dfffd;
+            }
+
+            .odd-row {
+                background-color: #febc43;
+            }
+
+            .even-row:hover, .odd-row:hover {
+                background-color: #FFEBDA;
+                cursor: pointer;
+            }
+        </h:outputStylesheet>
         <rich:tabPanel switchType="client">
             <rich:tab header="Всі дії">
+
                 <h:outputLabel value="#{adminStatisticBean.startDate} - #{adminStatisticBean.endDate}" />;
+
                 <h:form id="formUserAction">
-                    <rich:dataTable value="#{adminStatisticBean.allUsersAction}" var="user_action" id="table" rows="25" rowClasses="odd-row, even-row" styleClass="stable">
+                    <rich:dataTable value="#{adminStatisticBean.allUsersAction}" var="useraction" id="table" rows="25" rowClasses="odd-row, even-row" styleClass="stable">
                         <rich:column>
                             <f:facet name="header">
                                 <h:outputText value="Логін" />
                             </f:facet>
-                            <h:outputText value="#{user_action.userName}" />
+                            <h:outputText value="#{useraction.userName}" />
                         </rich:column>
                         <rich:column>
                             <f:facet name="header">
                                 <h:outputText value="IP" />
                             </f:facet>
-                            <h:outputText value="#{user_action.userTerminalIP}" />
+                            <h:outputText value="#{useraction.userTerminalIP}" />
                         </rich:column>
-                        <rich:column filter="#{adminStatisticFilterBean.userTerminalClientFilterImpl}" filterValue="#{adminStatisticFilterBean.userTerminalClientFilter}">
+                        <rich:column filter="#{adminStatisticFilterBean.userTerminalClientFilterImpl}" filterType="custom">
                             <f:facet name="header">
-                                <h:outputText value="Terminal(Browser) " />
+                                <h:panelGroup>
+                                    <h:outputText value="Terminal(Browser) " />
+                                    <h:inputText value="#{adminStatisticFilterBean.userTerminalClientFilter}">
+                                        <a4j:ajax event="blur" render="table" execute="@this"/>
+                                    </h:inputText>
+                                </h:panelGroup>
+
                             </f:facet>
-                            <h:outputText value="#{user_action.userTerminalClient}" />
+                            <h:outputText value="#{useraction.userTerminalClient}" />
                         </rich:column>
                         <rich:column>
                             <f:facet name="header">
                                 <h:outputText value="Дія" />
                             </f:facet>
-                            <h:outputText value="#{user_action.userLastActionName}" />
+                            <h:outputText value="#{useraction.userLastActionName}" />
                         </rich:column>
                         <rich:column>
                             <f:facet name="header">
                                 <h:outputText value="Час події" />
                             </f:facet>
-                            <h:outputText value="#{user_action.userLastActionDate}" />
+                            <h:outputText value="#{useraction.userLastActionDate}" />
                         </rich:column>
                         <rich:column>
                             <f:facet name="header">
                                 <h:outputText value="Увійшов в систему" />
                             </f:facet>
-                            <h:outputText value="#{user_action.userRegistSessionDate}" />
+                            <h:outputText value="#{useraction.userRegistSessionDate}" />
                         </rich:column>
                         <rich:column>
                             <f:facet name="header">
                                 <h:outputText value="Статус діїї" />
                             </f:facet>
-                            <h:outputText value="#{user_action.userLastActionStatusName}" />
+                            <h:outputText value="#{useraction.userLastActionStatusName}" />
                         </rich:column>
                         <f:facet name="footer">
                             <rich:dataScroller />
                         </f:facet>
                     </rich:dataTable>
-                  
                 </h:form>
+
             </rich:tab>
             <rich:tab header="JSF 2 and RichFaces 4">
                 <p>We are working hard on RichFaces 4.0 which will have full JSF 2 integration. That is not all though, here is

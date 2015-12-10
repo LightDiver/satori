@@ -34,10 +34,13 @@ public class AdminStatisticBean implements Serializable{
     }
 
     public List<UsersAction> getAllUsersAction() {
-        if (allUsersAction == null){
-            allUsersAction = Users.getUsersAction(startDate, endDate, userId, successActionYes);
+        synchronized (this) {
+            if (allUsersAction == null) {
+                allUsersAction = Users.getUsersAction(startDate, endDate, userId, successActionYes);
+            }
+            //System.out.println("Size allUsersAction:" + allUsersAction.size());
+
         }
-        //System.out.println("Size allUsersAction:" + allUsersAction.size());
         return allUsersAction;
     }
 

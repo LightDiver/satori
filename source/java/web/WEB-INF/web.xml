@@ -11,7 +11,7 @@
         <param-name>javax.faces.FACELETS_DEVELOPMENT</param-name>
         <param-value>true</param-value>
     </context-param>
-    
+
     <context-param>
         <param-name>org.richfaces.resourceOptimization.enabled</param-name>
         <param-value>true</param-value>

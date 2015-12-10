@@ -20,7 +20,10 @@ public class AdminStatisticFilterBean implements Serializable{
 
             public boolean accept(UsersAction usersAction) {
                 String userTerminal = getUserTerminalClientFilter();
-                if (userTerminal == null || userTerminal.length() == 0 || usersAction.getUserTerminalClient().toLowerCase().contains(userTerminal.toLowerCase())){
+                if (userTerminal == null || userTerminal.length() == 0 ||
+                        usersAction.getUserTerminalClient().toLowerCase().contains(userTerminal.toLowerCase()))
+                    //userTerminal.equals(usersAction.getUserTerminalClient()))
+                {
                     return true;
                 }
                 return false;
