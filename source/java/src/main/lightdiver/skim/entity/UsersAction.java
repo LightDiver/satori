@@ -1,5 +1,7 @@
 package main.lightdiver.skim.entity;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -11,9 +13,9 @@ public class UsersAction {
     String userState;
     String userTerminalIP;
     String userTerminalClient;
-    Date userLastActionDate;
+    Timestamp userLastActionDate;
     String userLastActionName;
-    Date userRegistSessionDate;
+    Timestamp userRegistSessionDate;
     String userLastActionStatusName;
 
     public void setUserId(Integer userId) {
@@ -36,7 +38,7 @@ public class UsersAction {
         this.userTerminalClient = userTerminalClient;
     }
 
-    public void setUserLastActionDate(Date userLastActionDate) {
+    public void setUserLastActionDate(Timestamp userLastActionDate) {
         this.userLastActionDate = userLastActionDate;
     }
 
@@ -44,7 +46,7 @@ public class UsersAction {
         this.userLastActionName = userLastActionName;
     }
 
-    public void setUserRegistSessionDate(Date userRegistSessionDate) {
+    public void setUserRegistSessionDate(Timestamp userRegistSessionDate) {
         this.userRegistSessionDate = userRegistSessionDate;
     }
 

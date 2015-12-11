@@ -325,7 +325,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
            AND ush.a_date BETWEEN i_start_date AND i_end_date
            AND (i_user_id IS NULL OR ush.user_id = i_user_id)
            AND (i_l_is_success IS NULL OR
-               ush.l_action_type_id = i_l_is_success);
+               ush.l_action_type_id = i_l_is_success)
+		ORDER BY ush.l_date DESC;
     
     END IF;
     RETURN v_error_id;

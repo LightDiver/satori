@@ -1,5 +1,6 @@
 package main.lightdiver.skim.DAO;
 
+import main.lightdiver.skim.entity.UserEntity;
 import main.lightdiver.skim.entity.UsersAction;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
 import main.lightdiver.skim.exceptions.ErrorInBase;
@@ -164,12 +165,13 @@ public class UsersDAO {
                 usersAction.setUserState(rset.getString(3));
                 usersAction.setUserTerminalIP(rset.getString(4));
                 usersAction.setUserTerminalClient(rset.getString(5));
-                usersAction.setUserLastActionDate(rset.getDate(6));
+                usersAction.setUserLastActionDate(rset.getTimestamp(6));
                 usersAction.setUserLastActionName(rset.getString(7));
-                usersAction.setUserRegistSessionDate(rset.getDate(8));
+                usersAction.setUserRegistSessionDate(rset.getTimestamp(8));
                 usersAction.setUserLastActionStatusName(rset.getString(9));
 
                 usersActionList.add(usersAction);
+
             }
             cs.close();
 
@@ -179,7 +181,41 @@ public class UsersDAO {
         return usersActionList;
     }
 
+    public List<UserEntity> getUsersList(String userSession, String userKey, String ipAddress, String userLang){
+        List<UserEntity> usersList = new ArrayList<>();
 
+        CallableStatement cs;
+        try {
+            cs = con.prepareCall("{? = call pkg_users.list_users(?,?,?,?,?)}");
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2, userSession);
+            cs.setString(3, userKey);
+            cs.setString(4, ipAddress);
+            cs.setString(5, userLang);
+            cs.registerOutParameter(6, cp.TypeCursor());
+            cs.execute();
+            if (cs.getInt(1) != 0){
+                logger.severe("Refused execute getUsersList (session= "+userSession+";key="+userKey+")");
+            }
+            ResultSet rset = (ResultSet)cs.getObject(6);
+            while (rset.next ()){
+                UserEntity user = new UserEntity();
+                user.setUserId(rset.getInt(1));
+                user.setUserLogin(rset.getString(2));
+                user.setUserName(rset.getString(3));
+                user.setUserEMail(rset.getString(4));
+                user.setUserState(rset.getString(5));
+                user.setUserLang(rset.getString(6));
+                user.setUserRegDate(rset.getTimestamp(7));
+                usersList.add(user);
+
+            }
+            cs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usersList;
+    }
 
 
 }

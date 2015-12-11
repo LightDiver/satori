@@ -19,11 +19,50 @@
                 background-color: #FFEBDA;
                 cursor: pointer;
             }
+
+            .ecol {
+                vertical-align: top;
+                padding-right: 10px;
+            }
+
         </h:outputStylesheet>
         <rich:tabPanel switchType="client">
             <rich:tab header="Всі дії">
+            <rich:panel header="Параметри пошуку">
+                <h:form>
+                <h:panelGrid id="panel1" columns="2" columnClasses="ecol, ecol" >
+                    <h:panelGrid id="panel_1" columns="2" columnClasses="ecol, ecol" style="border-right: #ceab89 1px solid;">
+                        <h:outputLabel value="З "/>
+                        <rich:calendar value="#{adminStatisticBean.startDate}" id="calendarStart" locale="uk"
+                               popup="true" cellWidth="24px" cellHeight="22px" style="width:200px"
+                               required="true">
+                        </rich:calendar>
 
-                <h:outputLabel value="#{adminStatisticBean.startDate} - #{adminStatisticBean.endDate}" />;
+                        <h:outputLabel value="По "/>
+                        <rich:calendar value="#{adminStatisticBean.endDate}" id="calendarEnd" locale="uk"
+                               popup="true" cellWidth="24px" cellHeight="22px" style="width:200px"
+                               required="true">
+                        </rich:calendar>
+                    </h:panelGrid>
+                    <h:panelGrid id="panel_2" columns="2" columnClasses="ecol, ecol" style=" border-right: #ceab89 1px solid;">
+                        <h:outputLabel value="Статус дії "/>
+                        <h:selectOneMenu value="#{adminStatisticBean.successActionYes}">
+                            <f:selectItem itemLabel=" " itemValue="-1"/>
+                            <f:selectItem itemLabel="Успіх" itemValue="1"/>
+                            <f:selectItem itemLabel="Відмова" itemValue="0"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel value="Користувач "/>
+                        <rich:select enableManualInput="true" value="#{adminStatisticBean.userId}" defaultLabel="почніть вводити...">
+                            <f:selectItem itemLabel=" " itemValue="-2"/>
+                            <f:selectItems value="#{adminStatisticBean.usersList}" />
+                        </rich:select>
+                        <a4j:commandButton value="Запит" action="#{adminStatisticBean.loadListUsersAction}" render="formUserAction"/>
+                    </h:panelGrid>
+
+                </h:panelGrid>
+                </h:form>
+            </rich:panel>
+
 
                 <h:form id="formUserAction">
                     <rich:dataTable value="#{adminStatisticBean.allUsersAction}" var="useraction" id="table" rows="25" rowClasses="odd-row, even-row" styleClass="stable">
@@ -47,7 +86,6 @@
                                         <a4j:ajax event="blur" render="table" execute="@this"/>
                                     </h:inputText>
                                 </h:panelGroup>
-
                             </f:facet>
                             <h:outputText value="#{useraction.userTerminalClient}" />
                         </rich:column>
@@ -61,17 +99,21 @@
                             <f:facet name="header">
                                 <h:outputText value="Час події" />
                             </f:facet>
-                            <h:outputText value="#{useraction.userLastActionDate}" />
+                            <h:outputText  value="#{useraction.userLastActionDate}" >
+                                <f:convertDateTime  type="both" dateStyle="short"  locale="uk" timeZone="Europe/Kiev"/>
+                            </h:outputText>
                         </rich:column>
                         <rich:column>
                             <f:facet name="header">
                                 <h:outputText value="Увійшов в систему" />
                             </f:facet>
-                            <h:outputText value="#{useraction.userRegistSessionDate}" />
+                            <h:outputText value="#{useraction.userRegistSessionDate}" >
+                                <f:convertDateTime  type="both" dateStyle="short"  locale="uk" timeZone="Europe/Kiev"/>
+                            </h:outputText>
                         </rich:column>
-                        <rich:column>
+                        <rich:column sortBy="#{useraction.userLastActionStatusName}" id="state" sortOrder="#{adminStatisticSorting.actionStateOrder}" sortType="custom">
                             <f:facet name="header">
-                                <h:outputText value="Статус діїї" />
+                                <a4j:commandLink value="Статус дії" render="table" action="#{adminStatisticSorting.sortByActionState}" />
                             </f:facet>
                             <h:outputText value="#{useraction.userLastActionStatusName}" />
                         </rich:column>

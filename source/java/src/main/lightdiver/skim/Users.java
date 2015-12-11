@@ -1,6 +1,7 @@
 package main.lightdiver.skim;
 
 import main.lightdiver.skim.DAO.UsersDAO;
+import main.lightdiver.skim.entity.UserEntity;
 import main.lightdiver.skim.entity.UsersAction;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
 import main.lightdiver.skim.exceptions.ErrorInBase;
@@ -10,6 +11,7 @@ import main.lightdiver.skim.exceptions.InvalidParameter;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Enumeration;
@@ -107,6 +109,26 @@ public class Users {
             invalidParameter.printStackTrace();
         }
         return usersActionList;
+    }
+
+    public static List<UserEntity> getUsersList(){
+        List<UserEntity> usersList = null;
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if ( ipAddress == null ) {
+            ipAddress = request.getRemoteAddr();
+        }
+        try {
+            usersList = new UsersDAO().getUsersList((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, "UA");
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+        } catch (FileNotRead fileNotRead) {
+            fileNotRead.printStackTrace();
+        } catch (InvalidParameter invalidParameter) {
+            invalidParameter.printStackTrace();
+        }
+        return usersList;
     }
 
     private void RequestInfoToLog(){
