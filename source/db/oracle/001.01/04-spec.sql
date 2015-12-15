@@ -93,6 +93,24 @@ CREATE OR REPLACE PACKAGE pkg_users IS
 
   FUNCTION is_user_exist(i_user_login VARCHAR2) RETURN NUMBER;
 
+  /* Інфо користувача по сессії та ключу
+  Помилки:
+                   1004 - Недостатньо повноважень
+  */
+  FUNCTION user_info(i_session_id  user_session.session_id%TYPE,
+                     i_key_id      user_session.key_id%TYPE,
+                     i_terminal_ip user_session.terminal_ip%TYPE,
+                     o_user_id     OUT users.user_id%TYPE,
+                     o_user_login  OUT users.user_login%TYPE,
+                     o_user_name   OUT users.user_name%TYPE,
+                     o_user_email  OUT users.user_email%TYPE,
+                     o_state_name  OUT user_state.state_name%TYPE,
+                     o_r_date      OUT users.r_date%TYPE,
+                     o_user_sex    OUT users.user_sex%TYPE,
+                     o_lang_id     OUT supp_lang.lang_id%TYPE, 
+		o_roles       OUT SYS_REFCURSOR)
+    RETURN error_desc.error_desc_id%TYPE;
+
 END pkg_users;
 /
 

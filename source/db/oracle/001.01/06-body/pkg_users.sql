@@ -325,7 +325,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
            AND ush.a_date BETWEEN i_start_date AND i_end_date
            AND (i_user_id IS NULL OR ush.user_id = i_user_id)
            AND (i_l_is_success IS NULL OR
-               ush.l_action_type_id = i_l_is_success)
+               ush.l_is_success = i_l_is_success)
 		ORDER BY ush.l_date DESC;
     
     END IF;
@@ -408,6 +408,71 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
      WHERE lower(TRIM(user_login)) = lower(TRIM(i_user_login));
     RETURN v_is;
   END is_user_exist;
+
+  FUNCTION user_info(i_session_id  user_session.session_id%TYPE,
+                     i_key_id      user_session.key_id%TYPE,
+                     i_terminal_ip user_session.terminal_ip%TYPE,
+                     o_user_id     OUT users.user_id%TYPE,
+                     o_user_login  OUT users.user_login%TYPE,
+                     o_user_name   OUT users.user_name%TYPE,
+                     o_user_email  OUT users.user_email%TYPE,
+                     o_state_name  OUT user_state.state_name%TYPE,
+                     o_r_date      OUT users.r_date%TYPE,
+                     o_user_sex    OUT users.user_sex%TYPE,
+                     o_lang_id     OUT supp_lang.lang_id%TYPE, 
+			o_roles       OUT SYS_REFCURSOR)
+    RETURN error_desc.error_desc_id%TYPE AS
+    /* Інфо користувача по сессії та ключу
+    Помилки:
+                     1004 - Недостатньо повноважень
+    */
+    c_perm_act action_type.action_type_id%TYPE := 6;
+    v_error_id error_desc.error_desc_id%TYPE;
+  BEGIN
+    v_error_id := active_session(i_session_id,
+                                 i_key_id,
+                                 i_terminal_ip,
+                                 c_perm_act,
+                                 o_user_id);
+    IF v_error_id = 0 THEN
+      SELECT u.user_login,
+             u.user_name,
+             u.user_email,
+             (CASE
+               WHEN u.lang_id = 'UA' THEN
+                us.state_name
+               ELSE
+                (SELECT td.translate_name
+                   FROM translate_dict td
+                  WHERE td.translate_pls_id = us.translate_pls_id
+                    AND td.lang_id = u.lang_id)
+             END) AS state_name,
+             u.r_date,
+             u.user_sex,
+             u.lang_id
+        INTO o_user_login,
+             o_user_name,
+             o_user_email,
+             o_state_name,
+             o_r_date,
+             o_user_sex,
+             o_lang_id
+        FROM users u, user_state us
+       WHERE u.state_id = us.state_id
+         AND u.user_id = o_user_id;
+
+	v_error_id := get_roles_list(o_user_id, NULL, NULL, o_roles);
+
+    END IF;
+    RETURN v_error_id;
+  
+  EXCEPTION
+    WHEN insufficient_privileges THEN
+      v_error_id := 1004;
+      RETURN v_error_id;
+  END user_info;
+
+
 
   --BEGIN
 -- Initialization

@@ -151,6 +151,7 @@ public class UsersDAO {
             cs.setDate(6,startDate);
             cs.setDate(7,endDate);
             if(userId==null) cs.setNull(8,Types.INTEGER); else cs.setInt(8,userId);
+            //System.out.println("isSuccess="+isSuccess);
             if(isSuccess==null) cs.setNull(9,Types.INTEGER) ;else cs.setInt(9, isSuccess);
             cs.registerOutParameter(10, cp.TypeCursor());
             cs.execute();
@@ -217,5 +218,77 @@ public class UsersDAO {
         return usersList;
     }
 
+    public int checkUserSessActive(String userSession, String userKey, String ipAddress){
+        int res = -1;
+        CallableStatement cs;
+        try {
+            cs = con.prepareCall("{? = call pkg_users.active_session(?,?,?,?,?)}");
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2, userSession);
+            cs.setString(3, userKey);
+            cs.setString(4, ipAddress);
+            cs.setInt(5, 1);
+            cs.registerOutParameter(6,Types.INTEGER);
+            cs.execute();
+            res = cs.getInt(1);
+            cs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    public UserEntity getUserInfoBySess(String userSession, String userKey, String ipAddress){
+        UserEntity user = null;
+        CallableStatement cs;
+        try {
+            cs = con.prepareCall("{? = call pkg_users.user_info(?,?,?,?,?,?,?,?,?,?,?,?)}");
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2, userSession);
+            cs.setString(3, userKey);
+            cs.setString(4, ipAddress);
+            cs.registerOutParameter(5,Types.INTEGER);
+            cs.registerOutParameter(6,Types.VARCHAR);
+            cs.registerOutParameter(7,Types.VARCHAR);
+            cs.registerOutParameter(8,Types.VARCHAR);
+            cs.registerOutParameter(9,Types.VARCHAR);
+            cs.registerOutParameter(10,Types.TIMESTAMP);
+            cs.registerOutParameter(11,Types.VARCHAR);
+            cs.registerOutParameter(12,Types.VARCHAR);
+            cs.registerOutParameter(13,cp.TypeCursor());
+
+            cs.execute();
+
+            if (cs.getInt(1) == 0){
+                user = new UserEntity();
+
+                user.setUserId(cs.getInt(5));
+                user.setUserLogin(cs.getString(6));
+                user.setUserName(cs.getString(7));
+                user.setUserEMail(cs.getString(8));
+                user.setUserState(cs.getString(9));
+                user.setUserRegDate(cs.getTimestamp(10));
+                user.setUserSex(cs.getString(11));
+                user.setUserLang(cs.getString(12));
+
+
+                HashMap<String, String> userR = new HashMap<>();
+                ResultSet rset = (ResultSet)cs.getObject(13);
+                while (rset.next ()){
+                    userR.put(rset.getString(3), rset.getString(2));
+                }
+                user.setUserRoles(userR);
+            }
+            else {
+                logger.severe("Refused getUserInfoBySess error_id="+cs.getInt(1));
+            }
+
+            cs.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 
 }

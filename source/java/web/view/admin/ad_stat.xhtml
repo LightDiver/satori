@@ -56,7 +56,7 @@
                             <f:selectItem itemLabel=" " itemValue="-2"/>
                             <f:selectItems value="#{adminStatisticBean.usersList}" />
                         </rich:select>
-                        <a4j:commandButton value="Запит" action="#{adminStatisticBean.loadListUsersAction}" render="formUserAction"/>
+                        <a4j:commandButton value="Запит" action="#{adminStatisticBean.loadListUsersAction}" render="formUserAction, @form"/>
                     </h:panelGrid>
 
                 </h:panelGrid>

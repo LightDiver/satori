@@ -1,6 +1,8 @@
 package main.lightdiver.skim.entity;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Serj on 11.12.2015.
@@ -13,6 +15,8 @@ public class UserEntity {
     String userState;
     String userLang;
     Timestamp userRegDate;
+    String userSex;
+    HashMap<String, String> userRoles;
 
     public Integer getUserId() {
         return userId;
@@ -68,5 +72,21 @@ public class UserEntity {
 
     public void setUserRegDate(Timestamp userRegDate) {
         this.userRegDate = userRegDate;
+    }
+
+    public String getUserSex() {
+        return userSex;
+    }
+
+    public void setUserSex(String userSex) {
+        this.userSex = userSex;
+    }
+
+    public HashMap<String, String> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(HashMap<String, String> userRoles) {
+        this.userRoles = userRoles;
     }
 }

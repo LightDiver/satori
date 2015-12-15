@@ -11,7 +11,6 @@ import main.lightdiver.skim.exceptions.InvalidParameter;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Enumeration;
@@ -30,10 +29,7 @@ public class Users {
         HashMap<String, Object> res = null;
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         try {
-            String ipAddress = request.getHeader("X-FORWARDED-FOR");
-            if ( ipAddress == null ) {
-                ipAddress = request.getRemoteAddr();
-            }
+            String ipAddress = getIP();
 
             //RequestInfoToLog();//�������� ���� � ���
 
@@ -66,12 +62,8 @@ public class Users {
     public static String registr(String userLogin, String userPass, String userName, String userEmail, String userSex, String userLang){
         String res = null;
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         try {
-            String ipAddress = request.getHeader("X-FORWARDED-FOR");
-            if ( ipAddress == null ) {
-                ipAddress = request.getRemoteAddr();
-            }
+            String ipAddress = getIP();
 
             //RequestInfoToLog();//�������� ���� � ���
             logger.info("(String)externalContext.getSessionMap().get(\"userSession\") " + (String)externalContext.getSessionMap().get("userSession"));
@@ -92,13 +84,10 @@ public class Users {
     }
 
     public static List<UsersAction> getUsersAction(Date startDate, Date endDate, Integer userId, Integer isSuccess){
+        //System.out.println("isSuccess="+isSuccess);
         List<UsersAction> usersActionList = null;
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        String ipAddress = request.getHeader("X-FORWARDED-FOR");
-        if ( ipAddress == null ) {
-            ipAddress = request.getRemoteAddr();
-        }
+        String ipAddress = getIP();
         try {
             usersActionList = new UsersDAO().getUsersAction((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, "UA", new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime()), userId, isSuccess);
         } catch (BaseNotConnect baseNotConnect) {
@@ -114,11 +103,7 @@ public class Users {
     public static List<UserEntity> getUsersList(){
         List<UserEntity> usersList = null;
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        String ipAddress = request.getHeader("X-FORWARDED-FOR");
-        if ( ipAddress == null ) {
-            ipAddress = request.getRemoteAddr();
-        }
+        String ipAddress = getIP();
         try {
             usersList = new UsersDAO().getUsersList((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, "UA");
         } catch (BaseNotConnect baseNotConnect) {
@@ -129,6 +114,53 @@ public class Users {
             invalidParameter.printStackTrace();
         }
         return usersList;
+    }
+
+    public static int checkUserSessActive(String userSession, String userKey){
+        int res = -1;
+        String ipAddress = getIP();
+
+        try {
+            res = new UsersDAO().checkUserSessActive(userSession, userKey, ipAddress);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+        } catch (InvalidParameter invalidParameter) {
+            invalidParameter.printStackTrace();
+        } catch (FileNotRead fileNotRead) {
+            fileNotRead.printStackTrace();
+        }
+
+        return res;
+    }
+
+    public static UserEntity getUserInfoBySess(String userSession, String userKey){
+        UserEntity user = null;
+        String ipAddress = getIP();
+        try {
+            user = new UsersDAO().getUserInfoBySess(userSession, userKey, ipAddress);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+            logger.severe("baseNotConnect");
+        } catch (FileNotRead fileNotRead) {
+            fileNotRead.printStackTrace();
+            logger.severe("fileNotRead");
+        } catch (InvalidParameter invalidParameter) {
+            invalidParameter.printStackTrace();
+            logger.severe("invalidParameter");
+        }catch (Throwable e){
+            logger.severe("Throwable." + e);
+        }
+
+        return user;
+    }
+
+    private static String getIP(){
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if ( ipAddress == null ) {
+            ipAddress = request.getRemoteAddr();
+        }
+        return ipAddress;
     }
 
     private void RequestInfoToLog(){

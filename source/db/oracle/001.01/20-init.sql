@@ -116,5 +116,17 @@ VALUES (translate_dict_id_seq.nextval,18,'UA','Відмовлено',NULL);
 INSERT INTO user_sess_success(is_success_id, is_success_name, translate_pls_id)
 VALUES(0, 'Відмовлено', 18);
 
+--Дія
+INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
+VALUES (translate_dict_id_seq.nextval,19,'UA','Інформація про себе',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description, translate_pls_id)
+VALUES(6, 'Інформація про себе',NULL,19);
+--ADMIN
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,6);
+--REGISTERED
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,6);
+--GUEST
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,6);
+
 
 COMMIT;

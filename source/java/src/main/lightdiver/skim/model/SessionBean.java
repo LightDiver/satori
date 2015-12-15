@@ -2,12 +2,18 @@ package main.lightdiver.skim.model;
 
 import main.lightdiver.skim.LoadMenu;
 import main.lightdiver.skim.Users;
+import main.lightdiver.skim.entity.UserEntity;
+
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.*;
 
@@ -27,7 +33,35 @@ public class SessionBean implements Serializable {
     protected boolean uLogin = false;
     protected boolean uAdmin = false;
 
+    @PostConstruct
+    public void init(){
+        if (userName == null ){
+            userSession = getCookie("userSession")==null?null:getCookie("userSession").getValue();
+            if (userSession!=null) userKey = getCookie("userKey").getValue();
+            if (userSession == null || userKey == null || Users.checkUserSessActive(userSession, userKey) != 0) {
+                userName = "GUEST";
+                login();
+                userName = "";
+            }
+            else{
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userSession",userSession);
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userKey",userKey);
+                UserEntity user = Users.getUserInfoBySess(userSession, userKey);
+                if (user.getUserLogin().equals("GUEST")){
+                    uLogin = false;
+                }else {
+                    userName = user.getUserLogin();
+                    uLogin = true;
+                    uAdmin = user.getUserRoles().containsKey("ADMIN");
 
+                }
+
+                System.out.println("Restore user info " + userName);
+            }
+
+        }
+
+    }
 
     public boolean isuLogin() {
         return uLogin;
@@ -42,11 +76,6 @@ public class SessionBean implements Serializable {
     }
 
     public String getUserName() throws Throwable {
-        if (userName == null ){
-            userName = "GUEST";
-            login();
-            userName = "";
-        }
         return userName;
     }
 
@@ -68,6 +97,8 @@ public class SessionBean implements Serializable {
 
                 externalContext.getSessionMap().put("userSession",userSession);
                 externalContext.getSessionMap().put("userKey",userKey);
+                setCookie("userSession",userSession,60*60*24*30);
+                setCookie("userKey",userKey,60*60*24*30);
                 return "#";
             } else {
 
@@ -107,6 +138,55 @@ public class SessionBean implements Serializable {
 
     public void setUserSession(String userSession) {
         this.userSession = userSession;
+    }
+
+    public void setCookie(String name, String value, int expiry) {
+
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        Cookie cookie = null;
+
+        Cookie[] userCookies = request.getCookies();
+        if (userCookies != null && userCookies.length > 0 ) {
+            for (int i = 0; i < userCookies.length; i++) {
+                if (userCookies[i].getName().equals(name)) {
+                    cookie = userCookies[i];
+                    break;
+                }
+            }
+        }
+
+        if (cookie != null) {
+            cookie.setValue(value);
+        } else {
+            cookie = new Cookie(name, value);
+            cookie.setPath(request.getContextPath());
+        }
+
+        cookie.setMaxAge(expiry);
+
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+        response.addCookie(cookie);
+    }
+
+    public Cookie getCookie(String name) {
+
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        Cookie cookie = null;
+
+        Cookie[] userCookies = request.getCookies();
+        if (userCookies != null && userCookies.length > 0 ) {
+            for (int i = 0; i < userCookies.length; i++) {
+                if (userCookies[i].getName().equals(name)) {
+                    cookie = userCookies[i];
+                    return cookie;
+                }
+            }
+        }
+        return null;
     }
 
     public void setUserKey(String userKey) {
