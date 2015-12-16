@@ -2,52 +2,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
 <h:head>
-
+    <meta http-equiv="refresh" content="0;view/main.xhtml" />
 </h:head>
 <h:body>
-
-<p>
-<h:outputLink value="login.xhtml">login page</h:outputLink> |
-    <h:form>
-<h:commandLink id="logout" action="#{sessionBean.logout}">logout</h:commandLink>
-    </h:form>
-</p>
-   <f:view>
-      <h:outputLabel value="Hello, world"/>
-   </f:view>
-     satori...
-   <h:form>
-   <table>
-   <tr>
-       <td>Name:</td>
-       <td>
-           <h:inputText label="Name" id="fname" value="#{sessionBean.userName}" required="true"/>
-           <h:message for="fname" />
-       </td>
-   </tr>
-   <tr>
-       <td>Session:</td>
-       <td>
-           <h:inputText label="Session"
-                        id="sess" value="#{sessionBean.userSession}"
-                        required="true"/>
-           <h:message for="sess" />
-       </td>
-   </tr>
-   <tr>
-       <td>Key:</td>
-       <td>
-           <h:inputText label="Key"
-                        id="key" value="#{sessionBean.userKey}"
-                        required="true"/>
-           <h:message for="key" />
-       </td>
-   </tr>
-   </table>
-   </h:form>
+    <h:outputLabel value="Перехід на головну " />
+    <h:outputLink value="view/main.xhtml" />
 </h:body>
 </html>

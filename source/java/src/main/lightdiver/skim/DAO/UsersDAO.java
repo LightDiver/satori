@@ -56,7 +56,7 @@ public class UsersDAO {
         }
         res.put("session_id", cs.getObject(6));
         res.put("key_id", cs.getObject(7));
-        res.put("lang_id", cs.getObject(8));
+        res.put("lang_id", cs.getObject(8).toString().equals("UA")?"uk":cs.getObject(8).toString().toLowerCase());
 
         res.put("is_admin",false);
         ResultSet rset = (ResultSet)cs.getObject(9);

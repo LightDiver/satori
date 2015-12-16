@@ -34,6 +34,9 @@ public class LocalizationBean implements Serializable {
             selectedLanguage.add(new Language("en", "en.png", "en"));
             selectedLanguage.add(new Language("ru", "ru.png", "ru"));
         }
+        //Якщо є кука берем мову звідти
+        locale = SessionBean.getCookie("userLang")==null?"uk":SessionBean.getCookie("userLang").getValue();
+        System.out.println("try cookie. locale="+locale);
         switch (locale) {
             case "uk":
                 language = selectedLanguage.get(0);
@@ -77,6 +80,7 @@ public class LocalizationBean implements Serializable {
         this.electLocale = electLocale;
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         externalContext.getSessionMap().put("electLocale",electLocale);
+        SessionBean.setCookie("userLang", electLocale, SessionBean.CONST_expireCookie);
 
         loadMenu.LoadMenuFooter();
     }

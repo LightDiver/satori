@@ -53,11 +53,12 @@ public class LoadMenu {
 
 
         System.out.println("Load getFooterMenu2");
-        TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", msg.getString("menu.footer2.article"), "#", true);
-        TreeNodeMenu treeNode3 = new TreeNodeMenu("simple", msg.getString("menu.footer2.about"), "about.xhtml", true);
-        TreeNodeMenu treeNode4 = new TreeNodeMenu("simple", msg.getString("menu.footer2.contacts"), "#", true);
-        TreeNodeMenu treeNode5 = new TreeNodeMenu("simple", msg.getString("menu.footer2.registration"), "register.xhtml", true);
-        TreeNodeMenu treeNode6 = new TreeNodeMenu("simple", msg.getString("menu.footer2.literature"), "#", true);
+        TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", msg.getString("menu.footer2.main"), "main.xhtml", true);
+        TreeNodeMenu treeNode3 = new TreeNodeMenu("simple", msg.getString("menu.footer2.article"), "#", true);
+        TreeNodeMenu treeNode4 = new TreeNodeMenu("simple", msg.getString("menu.footer2.about"), "about.xhtml", true);
+        TreeNodeMenu treeNode5 = new TreeNodeMenu("simple", msg.getString("menu.footer2.contacts"), "#", true);
+        TreeNodeMenu treeNode6 = new TreeNodeMenu("simple", msg.getString("menu.footer2.registration"), "register.xhtml", true);
+        TreeNodeMenu treeNode7 = new TreeNodeMenu("simple", msg.getString("menu.footer2.literature"), "#", true);
 
 
         footerMenu2 = new ArrayList<>();
@@ -66,6 +67,7 @@ public class LoadMenu {
         footerMenu2.add(treeNode4);
         footerMenu2.add(treeNode5);
         footerMenu2.add(treeNode6);
+        footerMenu2.add(treeNode7);
     }
 
     public  List<TreeNode> getFooterMenu1(){

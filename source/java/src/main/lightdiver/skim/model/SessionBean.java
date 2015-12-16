@@ -24,6 +24,7 @@ import java.util.*;
 @SessionScoped
 public class SessionBean implements Serializable {
     private transient HashMap<String, Object> userInfo;
+    public static final int CONST_expireCookie = 60*60*24*30;
     protected String userName;
     protected transient String userPass;
     protected String hashPass = "abc";
@@ -81,6 +82,7 @@ public class SessionBean implements Serializable {
 
     public String login() /*throws Throwable*/ {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        LocalizationBean localizationBean = (LocalizationBean) externalContext.getSessionMap().get("localizationBean");
        // try {
             userInfo = Users.login(userName, hashPass);
             if (userInfo.get("err_id") == 0) {
@@ -92,13 +94,16 @@ public class SessionBean implements Serializable {
                 else {
                     uLogin = true;
                     uAdmin = (Boolean)userInfo.get("is_admin");
-
+                    String uLang = (String)userInfo.get("lang_id");
+                    setCookie("userLang",uLang,CONST_expireCookie);
+                    localizationBean.setElectLocale(uLang);
                 }
 
                 externalContext.getSessionMap().put("userSession",userSession);
                 externalContext.getSessionMap().put("userKey",userKey);
-                setCookie("userSession",userSession,60*60*24*30);
-                setCookie("userKey",userKey,60*60*24*30);
+                setCookie("userSession",userSession,CONST_expireCookie);
+                setCookie("userKey",userKey,CONST_expireCookie);
+
                 return "#";
             } else {
 
@@ -120,7 +125,7 @@ public class SessionBean implements Serializable {
         externalContext.invalidateSession();
         new Users().logout(userSession, userKey);
         uLogin = false;
-        return "index";
+        return "main";
     }
 
     public String getUserSession() {
@@ -140,7 +145,7 @@ public class SessionBean implements Serializable {
         this.userSession = userSession;
     }
 
-    public void setCookie(String name, String value, int expiry) {
+    public static void setCookie(String name, String value, int expiry) {
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
 
@@ -170,7 +175,7 @@ public class SessionBean implements Serializable {
         response.addCookie(cookie);
     }
 
-    public Cookie getCookie(String name) {
+    public static Cookie getCookie(String name) {
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
 

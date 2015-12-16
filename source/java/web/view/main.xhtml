@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="../templates/userTemplate1.xhtml">
+
+    <ui:define name="content">
+        <table>
+            <tr>
+                <td>Name:</td>
+                <td>
+                    <h:inputText label="Name" id="fname" value="#{sessionBean.userName}" required="true"/>
+                    <h:message for="fname" />
+                </td>
+            </tr>
+            <tr>
+                <td>Session:</td>
+                <td>
+                    <h:inputText label="Session"
+                                 id="sess" value="#{sessionBean.userSession}"
+                                 required="true"/>
+                    <h:message for="sess" />
+                </td>
+            </tr>
+            <tr>
+                <td>Key:</td>
+                <td>
+                    <h:inputText label="Key"
+                                 id="key" value="#{sessionBean.userKey}"
+                                 required="true"/>
+                    <h:message for="key" />
+                </td>
+            </tr>
+        </table>
+        Курс швидкого читання стане у нагоді для тих, хто бажає досягти успіху та відчути результати у своїй діяльності. Згадайте, як іноді ви довго працюєте з текстом книги або проектом, який «необхідно було завершити ще вчора»?
+        Усе це пов'язано з індивідуальними особливостями кожного з нас, але ще більшою мірою від неправильного або нераціонального використання своїх особливостей. Наприклад, що вам відомо про методи ефективного запам'ятовування? А про техніку швидкого читання?
+        <h2> Нові статті</h2>
+        <h2> Цікаві факти</h2>
+            <h2> Новини</h2>
+    </ui:define>
+
+</ui:composition>
