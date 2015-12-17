@@ -116,17 +116,39 @@ VALUES (translate_dict_id_seq.nextval,18,'UA','Відмовлено',NULL);
 INSERT INTO user_sess_success(is_success_id, is_success_name, translate_pls_id)
 VALUES(0, 'Відмовлено', 18);
 
---Дія
+--Дії
 INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
 VALUES (translate_dict_id_seq.nextval,19,'UA','Інформація про себе',NULL);
 INSERT INTO action_type(action_type_id, action_name, action_description, translate_pls_id)
 VALUES(6, 'Інформація про себе',NULL,19);
+INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
+VALUES (translate_dict_id_seq.nextval,20,'UA','main.xhtml',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description, translate_pls_id)
+VALUES(7, 'main.xhtml',NULL,19);
+INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
+VALUES (translate_dict_id_seq.nextval,21,'UA','about.xhtml',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description, translate_pls_id)
+VALUES(8, 'about.xhtml',NULL,21);
+INSERT INTO translate_dict(translate_dict_id, translate_pls_id, lang_id, translate_name, translate_desc) 
+VALUES (translate_dict_id_seq.nextval,22,'UA','registr.xhtml',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description, translate_pls_id)
+VALUES(9, 'registr.xhtml',NULL,22);
+
 --ADMIN
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,6);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,7);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,8);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,9);
 --REGISTERED
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,6);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,7);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,8);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,9);
 --GUEST
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,6);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,7);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,8);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,9);
 
 
 COMMIT;

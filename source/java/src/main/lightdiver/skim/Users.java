@@ -116,12 +116,12 @@ public class Users {
         return usersList;
     }
 
-    public static int checkUserSessActive(String userSession, String userKey){
+    public static int checkUserSessActive(String userSession, String userKey, int action){
         int res = -1;
         String ipAddress = getIP();
 
         try {
-            res = new UsersDAO().checkUserSessActive(userSession, userKey, ipAddress);
+            res = new UsersDAO().checkUserSessActive(userSession, userKey, ipAddress, action);
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         } catch (InvalidParameter invalidParameter) {

@@ -218,17 +218,16 @@ public class UsersDAO {
         return usersList;
     }
 
-    public int checkUserSessActive(String userSession, String userKey, String ipAddress){
+    public int checkUserSessActive(String userSession, String userKey, String ipAddress, int action){
         int res = -1;
         CallableStatement cs;
         try {
-            cs = con.prepareCall("{? = call pkg_users.active_session(?,?,?,?,?)}");
+            cs = con.prepareCall("{? = call pkg_users.active_session(?,?,?,?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
-            cs.setInt(5, 1);
-            cs.registerOutParameter(6,Types.INTEGER);
+            cs.setInt(5, action);
             cs.execute();
             res = cs.getInt(1);
             cs.close();

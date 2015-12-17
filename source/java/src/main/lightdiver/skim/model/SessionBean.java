@@ -8,9 +8,11 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +26,15 @@ import java.util.*;
 @SessionScoped
 public class SessionBean implements Serializable {
     private transient HashMap<String, Object> userInfo;
+
     public static final int CONST_expireCookie = 60*60*24*30;
+
+    private static final int CONST_action_main = 7;
+    private static final int CONST_action_about = 8;
+    private static final int CONST_action_registr = 9;
+
+    protected String currPage;
+    protected boolean canVisitPage;
     protected String userName;
     protected transient String userPass;
     protected String hashPass = "abc";
@@ -39,7 +49,7 @@ public class SessionBean implements Serializable {
         if (userName == null ){
             userSession = getCookie("userSession")==null?null:getCookie("userSession").getValue();
             if (userSession!=null) userKey = getCookie("userKey").getValue();
-            if (userSession == null || userKey == null || Users.checkUserSessActive(userSession, userKey) != 0) {
+            if (userSession == null || userKey == null || Users.checkUserSessActive(userSession, userKey, 1) != 0) {
                 userName = "GUEST";
                 login();
                 userName = "";
@@ -228,4 +238,36 @@ public class SessionBean implements Serializable {
         this.langs = langs;
     }
 
+    public String getCurrPage() {
+        return currPage;
+    }
+
+    public void setCurrPage(String currPage) {
+        this.currPage = currPage;
+    }
+
+    public boolean isCanVisitPage() {
+        //canVisitPage = (Users.checkUserSessActive(userSession, userKey, 1) == 0);
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        String uri=((HttpServletRequest)request).getRequestURI();
+        String requestContext=((HttpServletRequest)request).getContextPath();
+        UIViewRoot viewRoot = facesContext.getViewRoot();
+
+        System.out.println("Страница " + uri + " requestContext=" + requestContext + " PhaseId=" + facesContext.getCurrentPhaseId()+ " viewRoot=" + viewRoot);
+
+        switch (uri){
+            case "/view/main.xhtml":
+                canVisitPage = true;
+                break;
+            default:canVisitPage = false;
+                    break;
+        }
+
+        return canVisitPage;
+    }
+
+    public void setCanVisitPage(boolean canVisitPage) {
+        this.canVisitPage = canVisitPage;
+    }
 }

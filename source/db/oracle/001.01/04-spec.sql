@@ -49,6 +49,13 @@ CREATE OR REPLACE PACKAGE pkg_users IS
                           i_act         user_session.l_action_type_id%TYPE,
                           o_user_id     OUT user_session.user_id%TYPE)
     RETURN error_desc.error_desc_id%TYPE;
+
+   FUNCTION active_session(i_session_id  user_session.session_id%TYPE,
+                          i_key_id      user_session.key_id%TYPE,
+                          i_terminal_ip user_session.terminal_ip%TYPE,
+                          i_act         user_session.l_action_type_id%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
   /* Список всіх користувачів
   Помилки:
                1004 - Недостатньо повноважень
