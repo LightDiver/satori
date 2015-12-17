@@ -2,13 +2,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="../templates/userTemplate1.xhtml">
-
+    <f:metadata>
+        <f:viewAction action="#{sessionBean.canVisitPage}"/>
+    </f:metadata>
     <ui:define name="content">
-        <c:if test = "#{sessionBean.canVisitPage}">
-            Daaa!
-        </c:if>
         <table>
             <tr>
                 <td>Name:</td>

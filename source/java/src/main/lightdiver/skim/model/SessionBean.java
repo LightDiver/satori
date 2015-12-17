@@ -5,17 +5,23 @@ import main.lightdiver.skim.Users;
 import main.lightdiver.skim.entity.UserEntity;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ComponentSystemEvent;
+import javax.faces.event.PostConstructApplicationEvent;
+import javax.faces.event.PreDestroyApplicationEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -29,12 +35,6 @@ public class SessionBean implements Serializable {
 
     public static final int CONST_expireCookie = 60*60*24*30;
 
-    private static final int CONST_action_main = 7;
-    private static final int CONST_action_about = 8;
-    private static final int CONST_action_registr = 9;
-
-    protected String currPage;
-    protected boolean canVisitPage;
     protected String userName;
     protected transient String userPass;
     protected String hashPass = "abc";
@@ -238,36 +238,41 @@ public class SessionBean implements Serializable {
         this.langs = langs;
     }
 
-    public String getCurrPage() {
-        return currPage;
-    }
 
-    public void setCurrPage(String currPage) {
-        this.currPage = currPage;
-    }
-
-    public boolean isCanVisitPage() {
+    public void canVisitPage() {
         //canVisitPage = (Users.checkUserSessActive(userSession, userKey, 1) == 0);
+        int actionType = 0;
+
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-        String uri=((HttpServletRequest)request).getRequestURI();
-        String requestContext=((HttpServletRequest)request).getContextPath();
-        UIViewRoot viewRoot = facesContext.getViewRoot();
+        String uri=request.getRequestURI();
 
-        System.out.println("Страница " + uri + " requestContext=" + requestContext + " PhaseId=" + facesContext.getCurrentPhaseId()+ " viewRoot=" + viewRoot);
+        System.out.println("Страница " + uri + " PhaseId=" + facesContext.getCurrentPhaseId());
+        System.out.println(userName + ":" + userSession);
 
         switch (uri){
             case "/view/main.xhtml":
-                canVisitPage = true;
+                actionType = 7;
                 break;
-            default:canVisitPage = false;
-                    break;
+            case "/view/about.xhtml":
+                actionType = 8;
+                break;
+            case "/view/register.xhtml":
+                actionType = 9;
+                break;
+        }
+        if (actionType > 0){
+            if(Users.checkUserSessActive(userSession, userKey, actionType) != 0){
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("access_denied.xhtml");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        return canVisitPage;
+
     }
 
-    public void setCanVisitPage(boolean canVisitPage) {
-        this.canVisitPage = canVisitPage;
-    }
+
 }

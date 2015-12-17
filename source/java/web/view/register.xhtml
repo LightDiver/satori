@@ -6,8 +6,10 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                template="../templates/userTemplate1.xhtml"
-        >
+                template="../templates/userTemplate1.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{sessionBean.canVisitPage}"/>
+    </f:metadata>
     <ui:define name="content">
     <c:if test = "#{sessionBean.uLogin}">
         #{text['hint.alreadyreg']}

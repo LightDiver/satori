@@ -26,7 +26,6 @@ public class LocalizationBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("locale="+locale);
         if (selectedLanguage == null) {
             System.out.println("LangInit");
             selectedLanguage = new ArrayList<>();
@@ -35,7 +34,7 @@ public class LocalizationBean implements Serializable {
             selectedLanguage.add(new Language("ru", "ru.png", "ru"));
         }
         //Якщо є кука берем мову звідти
-        locale = SessionBean.getCookie("userLang")==null?"uk":SessionBean.getCookie("userLang").getValue();
+        locale = SessionBean.getCookie("userLang")==null?locale:SessionBean.getCookie("userLang").getValue();
         System.out.println("try cookie. locale="+locale);
         switch (locale) {
             case "uk":
