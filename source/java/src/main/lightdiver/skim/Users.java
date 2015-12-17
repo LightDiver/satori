@@ -89,7 +89,7 @@ public class Users {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         String ipAddress = getIP();
         try {
-            usersActionList = new UsersDAO().getUsersAction((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, "UA", new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime()), userId, isSuccess);
+            usersActionList = new UsersDAO().getUsersAction((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime()), userId, isSuccess);
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         } catch (FileNotRead fileNotRead) {
@@ -105,7 +105,7 @@ public class Users {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         String ipAddress = getIP();
         try {
-            usersList = new UsersDAO().getUsersList((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, "UA");
+            usersList = new UsersDAO().getUsersList((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress);
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         } catch (FileNotRead fileNotRead) {

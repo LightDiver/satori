@@ -138,27 +138,26 @@ public class UsersDAO {
             return 1;//Тіпа завжди є
         }
     }
-    public static List<UsersAction> getUsersAction(String userSession, String userKey, String ipAddress, String userLang, Date startDate, Date endDate, Integer userId, Integer isSuccess){
+    public static List<UsersAction> getUsersAction(String userSession, String userKey, String ipAddress, Date startDate, Date endDate, Integer userId, Integer isSuccess){
         List<UsersAction> usersActionList = new ArrayList<>();
         CallableStatement cs;
         try {
-            cs = con.prepareCall("{? = call pkg_users.list_users_action(?,?,?,?,?,?,?,?,?)}");
+            cs = con.prepareCall("{? = call pkg_users.list_users_action(?,?,?,?,?,?,?,?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
-            cs.setString(5, userLang);
-            cs.setDate(6,startDate);
-            cs.setDate(7,endDate);
-            if(userId==null) cs.setNull(8,Types.INTEGER); else cs.setInt(8,userId);
+            cs.setDate(5,startDate);
+            cs.setDate(6,endDate);
+            if(userId==null) cs.setNull(7,Types.INTEGER); else cs.setInt(7,userId);
             //System.out.println("isSuccess="+isSuccess);
-            if(isSuccess==null) cs.setNull(9,Types.INTEGER) ;else cs.setInt(9, isSuccess);
-            cs.registerOutParameter(10, cp.TypeCursor());
+            if(isSuccess==null) cs.setNull(8,Types.INTEGER) ;else cs.setInt(8, isSuccess);
+            cs.registerOutParameter(9, cp.TypeCursor());
             cs.execute();
             if (cs.getInt(1) != 0){
                 logger.severe("Refused execute getUsersAction (session= "+userSession+";key="+userKey+")");
             }
-            ResultSet rset = (ResultSet)cs.getObject(10);
+            ResultSet rset = (ResultSet)cs.getObject(9);
             while (rset.next ()){
                 UsersAction usersAction = new UsersAction();
                 usersAction.setUserId(rset.getInt(1));
@@ -182,23 +181,22 @@ public class UsersDAO {
         return usersActionList;
     }
 
-    public List<UserEntity> getUsersList(String userSession, String userKey, String ipAddress, String userLang){
+    public List<UserEntity> getUsersList(String userSession, String userKey, String ipAddress){
         List<UserEntity> usersList = new ArrayList<>();
 
         CallableStatement cs;
         try {
-            cs = con.prepareCall("{? = call pkg_users.list_users(?,?,?,?,?)}");
+            cs = con.prepareCall("{? = call pkg_users.list_users(?,?,?,?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
-            cs.setString(5, userLang);
-            cs.registerOutParameter(6, cp.TypeCursor());
+            cs.registerOutParameter(5, cp.TypeCursor());
             cs.execute();
             if (cs.getInt(1) != 0){
                 logger.severe("Refused execute getUsersList (session= "+userSession+";key="+userKey+")");
             }
-            ResultSet rset = (ResultSet)cs.getObject(6);
+            ResultSet rset = (ResultSet)cs.getObject(5);
             while (rset.next ()){
                 UserEntity user = new UserEntity();
                 user.setUserId(rset.getInt(1));

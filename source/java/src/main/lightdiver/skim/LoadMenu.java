@@ -26,7 +26,7 @@ public class LoadMenu {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         ResourceBundle msg = LocalizationBean.getTextDependLangList().get(externalContext.getSessionMap().get("electLocale"));
 
-        System.out.println("Load getFooterMenu1");
+        //System.out.println("Load getFooterMenu1");
         TreeNodeMenu treeNode1 = new TreeNodeMenu("simple", msg.getString("menu.footer1.skimread"), "#", false);
 
         TreeNodeMenu treeNode11 = new TreeNodeMenu("lesson", msg.getString("menu.footer1.lessons"), "#", false);
@@ -52,7 +52,7 @@ public class LoadMenu {
         footerMenu1.add(treeNode1);
 
 
-        System.out.println("Load getFooterMenu2");
+        //System.out.println("Load getFooterMenu2");
         TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", msg.getString("menu.footer2.main"), "main.xhtml", true);
         TreeNodeMenu treeNode3 = new TreeNodeMenu("simple", msg.getString("menu.footer2.article"), "#", true);
         TreeNodeMenu treeNode4 = new TreeNodeMenu("simple", msg.getString("menu.footer2.about"), "about.xhtml", true);

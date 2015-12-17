@@ -11,7 +11,7 @@ import javax.faces.context.FacesContext;
 import java.io.*;
 import java.util.*;
 
-@ManagedBean(eager = true)
+@ManagedBean
 @SessionScoped
 public class LocalizationBean implements Serializable {
 
@@ -35,7 +35,7 @@ public class LocalizationBean implements Serializable {
         }
         //Якщо є кука берем мову звідти
         locale = SessionBean.getCookie("userLang")==null?locale:SessionBean.getCookie("userLang").getValue();
-        System.out.println("try cookie. locale="+locale);
+        //System.out.println("try cookie. locale="+locale);
         switch (locale) {
             case "uk":
                 language = selectedLanguage.get(0);
@@ -50,7 +50,7 @@ public class LocalizationBean implements Serializable {
                 language = selectedLanguage.get(0);
                 break;
         }
-        System.out.println("locale="+ locale +" langname="+language.getLangName());
+        //System.out.println("locale="+ locale +" langname="+language.getLangName());
         if (textDependLangList == null) {
             System.out.println("Load locale.text");
             textDependLangList = new HashMap<>();

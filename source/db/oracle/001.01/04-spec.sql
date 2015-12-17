@@ -63,7 +63,6 @@ CREATE OR REPLACE PACKAGE pkg_users IS
   FUNCTION list_users(i_session_id  user_session.session_id%TYPE,
                       i_key_id      user_session.key_id%TYPE,
                       i_terminal_ip user_session.terminal_ip%TYPE,
-                      i_lang_id     supp_lang.lang_id%TYPE,
                       o_items       OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE;
   /* Список дій користувачів в системі
@@ -74,7 +73,6 @@ CREATE OR REPLACE PACKAGE pkg_users IS
   FUNCTION list_users_action(i_session_id   user_session.session_id%TYPE,
                              i_key_id       user_session.key_id%TYPE,
                              i_terminal_ip  user_session.terminal_ip%TYPE,
-                             i_lang_id      supp_lang.lang_id%TYPE,
                              i_start_date   user_session_hist.a_date%TYPE,
                              i_end_date     user_session_hist.a_date%TYPE,
                              i_user_id      user_session.user_id%TYPE,
@@ -127,8 +125,7 @@ CREATE OR REPLACE PACKAGE pkg_systeminfo IS
   -- Created : 01.12.2015 14:28:40
   -- Purpose : 
 
-  FUNCTION get_description_error(i_error_id error_desc.error_desc_id%TYPE,
-                                 i_lang_id  users.lang_id%TYPE DEFAULT 'UA')
+  FUNCTION get_description_error(i_error_id error_desc.error_desc_id%TYPE)
     RETURN VARCHAR2;
 
   FUNCTION get_langs RETURN SYS_REFCURSOR;    

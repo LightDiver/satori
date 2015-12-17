@@ -8,8 +8,6 @@
 @@07-proc.sql
 @@08-func.sql
 @@09-trig.sql
-@@19-cmnt.sql
-@@10-role.sql
 @@20-init.sql
 
 PROMPT RECOMPILE ALL OBJECTS
