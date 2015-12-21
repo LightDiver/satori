@@ -13,7 +13,7 @@ public class SystemInfoDAO {
     private final static Logger logger = Logger.getLogger(SystemInfoDAO.class.getName());
 
     public static String getDescError(Integer error_id, String lang) throws BaseNotConnect {
-        Connection con = ConnectionPool.OpenConnect();
+        Connection con = ConnectionPool.takeConn();
         CallableStatement cs = null;
         try {
             cs = con.prepareCall("{? = call pkg_systeminfo.get_description_error(?, ?)}");
@@ -33,7 +33,7 @@ public class SystemInfoDAO {
 
     public static HashMap<String, String> getLangs() throws BaseNotConnect {
         HashMap<String, String> langs = new HashMap<>();
-        Connection con = ConnectionPool.OpenConnect();
+        Connection con = ConnectionPool.takeConn();
         CallableStatement cs = null;
         try {
             cs = con.prepareCall("{? = call pkg_systeminfo.get_langs()}");

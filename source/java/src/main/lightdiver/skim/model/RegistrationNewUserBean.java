@@ -2,6 +2,7 @@ package main.lightdiver.skim.model;
 
 import main.lightdiver.skim.DAO.UsersDAO;
 import main.lightdiver.skim.Users;
+import main.lightdiver.skim.exceptions.BaseNotConnect;
 import main.lightdiver.skim.exceptions.ErrorInBase;
 
 import javax.faces.application.FacesMessage;
@@ -27,7 +28,7 @@ public class RegistrationNewUserBean implements Serializable{
     protected String sex;
     protected String userLang = "UA";
 
-    public String registr() {
+    public String registr() throws BaseNotConnect {
         String res = null;
         String check;
        /* if(0==0) try {
@@ -90,7 +91,7 @@ public class RegistrationNewUserBean implements Serializable{
     }
 
 
-    public String validUserNameAjax(){
+    public String validUserNameAjax() throws BaseNotConnect {
         //final String PATTERN_LOGIN = "^[\\w_]{3,25}$";
         final String PATTERN_LOGIN = "^[а-яА-ЯёЁa-zA-Z0-9_іІїЇєЄҐґ']{3,30}$";
         Pattern pattern;

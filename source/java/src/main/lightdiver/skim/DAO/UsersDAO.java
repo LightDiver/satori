@@ -19,24 +19,23 @@ import java.util.logging.Logger;
 /**
  * Created by Serj on 05.11.2015.
  */
-public class UsersDAO {
+public class UsersDAO {//а навіщо такий конструктор?
     private final static Logger logger = Logger.getLogger(UsersDAO.class.getName());
     private static Properties props = null;
     private static Connection con;
-    private static ConnectionPool cp;
 
     public UsersDAO() throws BaseNotConnect, FileNotRead, InvalidParameter {
         if (props == null) {
             props = new Conf().getProps();
-            this.cp = new ConnectionPool(props);
-            this.con = cp.OpenConnect();
+            ConnectionPool.initPool(props);
         }
     }
 
-    public static HashMap<String, Object> login(String user_login, String pass, String terminal_ip, String terminal_client) throws ErrorInBase {
+    public static HashMap<String, Object> login(String user_login, String pass, String terminal_ip, String terminal_client) throws ErrorInBase, BaseNotConnect {
         HashMap<String, Object> res = new HashMap<String, Object>();
         CallableStatement cs = null;
         try {
+            con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.login(?, ?, ?, ?, ?, ?, ?, ?)}");
 
         cs.registerOutParameter(1, Types.INTEGER);
@@ -47,7 +46,7 @@ public class UsersDAO {
         cs.registerOutParameter(6, Types.VARCHAR);
         cs.registerOutParameter(7, Types.VARCHAR);
         cs.registerOutParameter(8, Types.VARCHAR);
-        cs.registerOutParameter(9, cp.TypeCursor());
+        cs.registerOutParameter(9, ConnectionPool.TypeCursor());
         cs.execute();
         res.put("err_id", cs.getObject(1));
         if (cs.getInt(1) != 0){
@@ -72,11 +71,15 @@ public class UsersDAO {
             e.printStackTrace();
             throw new ErrorInBase();
         }
+        finally {
+            ConnectionPool.putConn(con);
+        }
 
     }
-    public void logout(String user_session, String user_key) throws ErrorInBase {
+    public void logout(String user_session, String user_key) throws ErrorInBase, BaseNotConnect {
         CallableStatement cs = null;
         try {
+            con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.logout(?, ?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, user_session);
@@ -88,11 +91,15 @@ public class UsersDAO {
             e.printStackTrace();
             throw new ErrorInBase();
         }
+        finally {
+            ConnectionPool.putConn(con);
+        }
     }
     public String registr(String userSession, String userKey, String ipAddress, String userLogin, String userPass, String userName, String userEmail, String userSex, String userLang) {
         CallableStatement cs;
         String res = null;
      try {
+         con = ConnectionPool.takeConn();
          cs = con.prepareCall("{? = call pkg_users.registr(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
          cs.registerOutParameter(1, Types.INTEGER);
          cs.setString(2, userSession);
@@ -118,13 +125,17 @@ public class UsersDAO {
          baseNotConnect.printStackTrace();
          res = "baseNotConnect";
      }
+        finally {
+         ConnectionPool.putConn(con);
+     }
         return res;
     }
 
-    public static int isUserExist(String userLogin) {
+    public static int isUserExist(String userLogin) throws BaseNotConnect {
         CallableStatement cs;
         try {
             int res;
+            con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.is_user_exist(?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userLogin);
@@ -137,11 +148,15 @@ public class UsersDAO {
             e.printStackTrace();
             return 1;//Тіпа завжди є
         }
+        finally {
+            ConnectionPool.putConn(con);
+        }
     }
-    public static List<UsersAction> getUsersAction(String userSession, String userKey, String ipAddress, Date startDate, Date endDate, Integer userId, Integer isSuccess){
+    public static List<UsersAction> getUsersAction(String userSession, String userKey, String ipAddress, Date startDate, Date endDate, Integer userId, Integer isSuccess) throws BaseNotConnect {
         List<UsersAction> usersActionList = new ArrayList<>();
         CallableStatement cs;
         try {
+            con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.list_users_action(?,?,?,?,?,?,?,?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
@@ -152,7 +167,7 @@ public class UsersDAO {
             if(userId==null) cs.setNull(7,Types.INTEGER); else cs.setInt(7,userId);
             //System.out.println("isSuccess="+isSuccess);
             if(isSuccess==null) cs.setNull(8,Types.INTEGER) ;else cs.setInt(8, isSuccess);
-            cs.registerOutParameter(9, cp.TypeCursor());
+            cs.registerOutParameter(9, ConnectionPool.TypeCursor());
             cs.execute();
             if (cs.getInt(1) != 0){
                 logger.severe("Refused execute getUsersAction (session= "+userSession+";key="+userKey+")");
@@ -178,20 +193,24 @@ public class UsersDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finally {
+            ConnectionPool.putConn(con);
+        }
         return usersActionList;
     }
 
-    public List<UserEntity> getUsersList(String userSession, String userKey, String ipAddress){
+    public List<UserEntity> getUsersList(String userSession, String userKey, String ipAddress) throws BaseNotConnect {
         List<UserEntity> usersList = new ArrayList<>();
 
         CallableStatement cs;
         try {
+            con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.list_users(?,?,?,?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
-            cs.registerOutParameter(5, cp.TypeCursor());
+            cs.registerOutParameter(5, ConnectionPool.TypeCursor());
             cs.execute();
             if (cs.getInt(1) != 0){
                 logger.severe("Refused execute getUsersList (session= "+userSession+";key="+userKey+")");
@@ -213,13 +232,17 @@ public class UsersDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finally {
+            ConnectionPool.putConn(con);
+        }
         return usersList;
     }
 
-    public int checkUserSessActive(String userSession, String userKey, String ipAddress, int action){
+    public int checkUserSessActive(String userSession, String userKey, String ipAddress, int action) throws BaseNotConnect {
         int res = -1;
         CallableStatement cs;
         try {
+            con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.active_session(?,?,?,?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
@@ -232,13 +255,17 @@ public class UsersDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finally {
+            ConnectionPool.putConn(con);
+        }
         return res;
     }
 
-    public UserEntity getUserInfoBySess(String userSession, String userKey, String ipAddress){
+    public UserEntity getUserInfoBySess(String userSession, String userKey, String ipAddress) throws BaseNotConnect {
         UserEntity user = null;
         CallableStatement cs;
         try {
+            con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.user_info(?,?,?,?,?,?,?,?,?,?,?,?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
@@ -252,7 +279,7 @@ public class UsersDAO {
             cs.registerOutParameter(10,Types.TIMESTAMP);
             cs.registerOutParameter(11,Types.VARCHAR);
             cs.registerOutParameter(12,Types.VARCHAR);
-            cs.registerOutParameter(13,cp.TypeCursor());
+            cs.registerOutParameter(13, ConnectionPool.TypeCursor());
 
             cs.execute();
 
@@ -284,6 +311,9 @@ public class UsersDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        finally {
+            ConnectionPool.putConn(con);
         }
         return user;
     }
