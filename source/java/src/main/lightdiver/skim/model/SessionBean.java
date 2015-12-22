@@ -3,22 +3,19 @@ package main.lightdiver.skim.model;
 import main.lightdiver.skim.LoadMenu;
 import main.lightdiver.skim.Users;
 import main.lightdiver.skim.entity.UserEntity;
+import main.lightdiver.skim.exceptions.BaseNotConnect;
+import main.lightdiver.skim.exceptions.ErrorInBase;
+import main.lightdiver.skim.exceptions.FileNotRead;
+import main.lightdiver.skim.exceptions.InvalidParameter;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ComponentSystemEvent;
-import javax.faces.event.PostConstructApplicationEvent;
-import javax.faces.event.PreDestroyApplicationEvent;
 import javax.faces.model.SelectItem;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +33,7 @@ public class SessionBean implements Serializable {
     @ManagedProperty("#{localizationBean}")
     private LocalizationBean localizationBean;
 
-    public static final int CONST_expireCookie = 60*60*24*30;
+    public static final int CONST_EXPIRE_COOKIE = 60*60*24*30;
 
     protected String userName;
     protected transient String userPass;
@@ -48,31 +45,56 @@ public class SessionBean implements Serializable {
     protected boolean uAdmin = false;
 
     @PostConstruct
-    public void init(){
-        if (userName == null ){
+    public void init() {
+        String msgErr = null;
+
+        if (userName == null || userName.length() == 0){
             userSession = getCookie("userSession")==null?null:getCookie("userSession").getValue();
             if (userSession!=null) userKey = getCookie("userKey").getValue();
-            if (userSession == null || userKey == null || Users.checkUserSessActive(userSession, userKey, 1) != 0) {
-                userName = "GUEST";
-                login();
-                userName = "";
-            }
-            else{
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userSession",userSession);
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userKey",userKey);
-                UserEntity user = Users.getUserInfoBySess(userSession, userKey);
-                if (user.getUserLogin().equals("GUEST")){
-                    uLogin = false;
-                }else {
-                    userName = user.getUserLogin();
-                    uLogin = true;
-                    uAdmin = user.getUserRoles().containsKey("ADMIN");
+            try {
+                if (userSession == null || userKey == null || Users.checkUserSessActive(userSession, userKey, 1) != 0) {
+                    userName = "GUEST";
+                    /*
+                    if (login().equals("error.xhtml")){
+                        try {
+                            FacesContext.getCurrentInstance().getExternalContext().dispatch("/view/error.xhtml?error=");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    */
+                    login();
+                    userName = "";
+                }
+                else{
+                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userSession",userSession);
+                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userKey",userKey);
+                    UserEntity user = Users.getUserInfoBySess(userSession, userKey);
+                    if (user.getUserLogin().equals("GUEST")){
+                        uLogin = false;
+                    }else {
+                        userName = user.getUserLogin();
+                        uLogin = true;
+                        uAdmin = user.getUserRoles().containsKey("ADMIN");
+
+                    }
 
                 }
-
-                System.out.println("Restore user info " + userName);
+            } catch (FileNotRead fileNotRead) {
+                msgErr = "?error=fileNotRead";
+            } catch (InvalidParameter invalidParameter) {
+                msgErr = "?error=invalidParameter";
+            } catch (BaseNotConnect baseNotConnect) {
+                msgErr = "?error=baseNotConnect";
             }
-
+            if (msgErr != null) {
+                /*try {
+                    FacesContext.getCurrentInstance().getExternalContext().dispatch("/view/error.xhtml" + msgErr);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                */
+            }
         }
 
     }
@@ -95,10 +117,32 @@ public class SessionBean implements Serializable {
 
     public String login() /*throws Throwable*/ {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        String msgErr = null;
         //LocalizationBean localizationBean = (LocalizationBean) externalContext.getSessionMap().get("localizationBean");
        // try {
+        try {
             userInfo = Users.login(userName, hashPass);
-            if (userInfo.get("err_id") == 0) {
+        } catch (FileNotRead fileNotRead) {
+            fileNotRead.printStackTrace();
+            msgErr = "Не зміг прочитати налаштування";
+        } catch (InvalidParameter invalidParameter) {
+            invalidParameter.printStackTrace();
+            msgErr = "Не зміг розпізнати параметри";
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+            msgErr = "Не зміг підключитись до БД";
+        } catch (ErrorInBase errorInBase) {
+            errorInBase.printStackTrace();
+            msgErr = "Трапилась помилка при запиті у БД";
+        }
+        if (msgErr != null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, msgErr, "!"));
+
+                return "error.xhtml";
+
+        }
+        if (userInfo.get("err_id") == 0) {
                 userSession = userInfo.get("session_id").toString();
                 userKey = userInfo.get("key_id").toString();
                 if (userName.equals("GUEST")){
@@ -108,14 +152,14 @@ public class SessionBean implements Serializable {
                     uLogin = true;
                     uAdmin = (Boolean)userInfo.get("is_admin");
                     String uLang = (String)userInfo.get("lang_id");
-                    setCookie("userLang",uLang,CONST_expireCookie);
+                    setCookie("userLang",uLang, CONST_EXPIRE_COOKIE);
                     localizationBean.setElectLocale(uLang);
                 }
 
                 externalContext.getSessionMap().put("userSession",userSession);
                 externalContext.getSessionMap().put("userKey",userKey);
-                setCookie("userSession",userSession,CONST_expireCookie);
-                setCookie("userKey",userKey,CONST_expireCookie);
+                setCookie("userSession",userSession, CONST_EXPIRE_COOKIE);
+                setCookie("userKey",userKey, CONST_EXPIRE_COOKIE);
 
                 return "#";
             } else {
@@ -245,6 +289,7 @@ public class SessionBean implements Serializable {
     public void canVisitPage() {
         //canVisitPage = (Users.checkUserSessActive(userSession, userKey, 1) == 0);
         int actionType = 0;
+        int check;
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
@@ -264,13 +309,35 @@ public class SessionBean implements Serializable {
                 actionType = 9;
                 break;
         }
+
         if (actionType > 0){
-            if(Users.checkUserSessActive(userSession, userKey, actionType) != 0){
+            try {
                 try {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("access_denied.xhtml");
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    if (userSession == null || userKey == null){//Можливо, якщо була зупинена БД перед тим як користувач прийде вперше
+                        init();
+                    }
+
+                    if( (check=Users.checkUserSessActive(userSession, userKey, actionType)) != 0){
+                        //Якщо була грохнута в базі сесія
+                        if (check == 1002) {
+                                    userName = null;
+                                    userSession = null;
+                                    FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=noLogin");
+                        }
+                        else {
+                            FacesContext.getCurrentInstance().getExternalContext().redirect("access_denied.xhtml");
+                        }
+                    }
+                } catch (FileNotRead fileNotRead) {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=fileNotRead");
+                } catch (InvalidParameter invalidParameter) {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=invalidParameter");
+                } catch (BaseNotConnect baseNotConnect) {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=baseNotConnect");
                 }
+            }
+            catch (IOException e) {//try on redirect()
+                e.printStackTrace();
             }
         }
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="../templates/userTemplateError1.xhtml">
+    <ui:define name="header">
+        <h:panelGrid columns="2" style="margin: auto">
+        <h:graphicImage value="/resources/images/header/err.jpg" />
+        Error of the site. If it is repeated please contact administrator lightdiver@bigmir.net
+        </h:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:outputStylesheet>
+            .content {
+                background-image: url("/resources/images/content/err_background.jpg");
+                color: #B5E3FF;
+            }
+        </h:outputStylesheet>
+        <h:messages />
+        <h:outputText value="Помилка файлу налаштувань" rendered="#{param.error == 'fileNotRead'}" />
+        <h:outputText value="Помилка параметрів" rendered="#{param.error == 'invalidParameter'}" />
+        <h:outputText value="Помилка доступу до БД" rendered="#{param.error == 'baseNotConnect'}" />
+        <h:outputText value="Не можу увійти до системи або сесія видалена. Спробуйте ще." rendered="#{param.error == 'noLogin'}" />
+        <h:outputLink value="main.xhtml" title="Перейти на головну" rendered="#{param.error == 'noLogin'}" >TRY GO</h:outputLink>
+    </ui:define>
+
+</ui:composition>

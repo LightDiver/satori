@@ -25,24 +25,15 @@ import java.util.logging.Logger;
 public class Users {
     private final static Logger logger = Logger.getLogger(Users.class.getName());
 
-    public static HashMap<String, Object> login(String user_login, String pass){
+    public static HashMap<String, Object> login(String user_login, String pass) throws FileNotRead, InvalidParameter, BaseNotConnect, ErrorInBase {
         HashMap<String, Object> res = null;
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        try {
-            String ipAddress = getIP();
+        String ipAddress = getIP();
 
             //RequestInfoToLog();//�������� ���� � ���
 
             res = new UsersDAO().login(user_login, pass, ipAddress, request.getHeader("user-agent"));
-        } catch (BaseNotConnect baseNotConnect) {
-            baseNotConnect.printStackTrace();
-        } catch (InvalidParameter invalidParameter) {
-            invalidParameter.printStackTrace();
-        } catch (FileNotRead fileNotRead) {
-            fileNotRead.printStackTrace();
-        } catch (ErrorInBase errorInBase) {
-            errorInBase.printStackTrace();
-        }
+
         return res;
     }
     public static void logout(String user_session, String user_key){
@@ -116,21 +107,9 @@ public class Users {
         return usersList;
     }
 
-    public static int checkUserSessActive(String userSession, String userKey, int action){
-        int res = -1;
+    public static int checkUserSessActive(String userSession, String userKey, int action) throws FileNotRead, InvalidParameter, BaseNotConnect {
         String ipAddress = getIP();
-
-        try {
-            res = new UsersDAO().checkUserSessActive(userSession, userKey, ipAddress, action);
-        } catch (BaseNotConnect baseNotConnect) {
-            baseNotConnect.printStackTrace();
-        } catch (InvalidParameter invalidParameter) {
-            invalidParameter.printStackTrace();
-        } catch (FileNotRead fileNotRead) {
-            fileNotRead.printStackTrace();
-        }
-
-        return res;
+        return new UsersDAO().checkUserSessActive(userSession, userKey, ipAddress, action);
     }
 
     public static UserEntity getUserInfoBySess(String userSession, String userKey){

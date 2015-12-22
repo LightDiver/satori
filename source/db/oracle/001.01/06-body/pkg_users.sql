@@ -53,6 +53,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       INTO v_user_id, o_lang_id
       FROM users
      WHERE user_login = i_user_login
+     AND state_id = 1
 	AND (user_pass = i_pass OR user_login = 'GUEST');
   
     o_session_id := session_id_seq.nextval;
@@ -155,8 +156,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     v_error_id := 0;
     SELECT us.terminal_ip, us.user_id
       INTO v_terminal_ip, o_user_id
-      FROM user_session us
-     WHERE us.session_id = i_session_id
+      FROM user_session us, users u
+     WHERE us.user_id = u.user_id AND u.state_id = 1
+     AND us.session_id = i_session_id
        AND key_id = i_key_id;
   
     IF v_terminal_ip <> i_terminal_ip THEN

@@ -79,7 +79,7 @@ public class LocalizationBean implements Serializable {
         this.electLocale = electLocale;
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         externalContext.getSessionMap().put("electLocale",electLocale);
-        SessionBean.setCookie("userLang", electLocale, SessionBean.CONST_expireCookie);
+        SessionBean.setCookie("userLang", electLocale, SessionBean.CONST_EXPIRE_COOKIE);
 
         loadMenu.LoadMenuFooter();
     }
