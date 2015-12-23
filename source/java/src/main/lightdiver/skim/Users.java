@@ -74,20 +74,13 @@ public class Users {
         return res;
     }
 
-    public static List<UsersAction> getUsersAction(Date startDate, Date endDate, Integer userId, Integer isSuccess){
+    public static List<UsersAction> getUsersAction(Date startDate, Date endDate, Integer userId, Integer isSuccess) throws FileNotRead, InvalidParameter, BaseNotConnect {
         //System.out.println("isSuccess="+isSuccess);
         List<UsersAction> usersActionList = null;
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         String ipAddress = getIP();
-        try {
-            usersActionList = new UsersDAO().getUsersAction((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime()), userId, isSuccess);
-        } catch (BaseNotConnect baseNotConnect) {
-            baseNotConnect.printStackTrace();
-        } catch (FileNotRead fileNotRead) {
-            fileNotRead.printStackTrace();
-        } catch (InvalidParameter invalidParameter) {
-            invalidParameter.printStackTrace();
-        }
+        usersActionList = new UsersDAO().getUsersAction((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), ipAddress, new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime()), userId, isSuccess);
+
         return usersActionList;
     }
 

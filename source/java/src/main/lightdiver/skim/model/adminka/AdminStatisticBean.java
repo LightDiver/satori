@@ -3,10 +3,15 @@ package main.lightdiver.skim.model.adminka;
 import main.lightdiver.skim.Users;
 import main.lightdiver.skim.entity.UserEntity;
 import main.lightdiver.skim.entity.UsersAction;
+import main.lightdiver.skim.exceptions.BaseNotConnect;
+import main.lightdiver.skim.exceptions.FileNotRead;
+import main.lightdiver.skim.exceptions.InvalidParameter;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,12 +46,26 @@ public class AdminStatisticBean implements Serializable{
             usersList.add(new SelectItem(uArrListU.get(i).getUserId(), uArrListU.get(i).getUserLogin()));
         }
 
-
     }
 
     public void loadListUsersAction(){
-        allUsersAction = Users.getUsersAction(startDate, endDate, userId<=0?null:userId, successActionYes==-1?null:successActionYes);
-        //System.out.println("successActionYes="+successActionYes);
+        String msgErr = null;
+        try {
+            allUsersAction = Users.getUsersAction(startDate, endDate, userId<=0?null:userId, successActionYes==-1?null:successActionYes);
+        } catch (FileNotRead fileNotRead) {
+            msgErr = "fileNotRead";
+        } catch (InvalidParameter invalidParameter) {
+            msgErr = "invalidParameter";
+        } catch (BaseNotConnect baseNotConnect) {
+            msgErr = "baseNotConnect";
+        } catch (Throwable throwable){
+            msgErr = "throwable:" + throwable.toString();
+        }
+
+        if (msgErr != null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Сталася помилка", msgErr));
+        }
     }
 
     public List<UsersAction> getAllUsersAction() {
@@ -54,7 +73,6 @@ public class AdminStatisticBean implements Serializable{
             if (allUsersAction == null) {
                 loadListUsersAction();
             }
-            //System.out.println("Size allUsersAction:" + allUsersAction.size());
         }
         return allUsersAction;
     }

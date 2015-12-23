@@ -170,7 +170,7 @@ public class UsersDAO {//а навіщо такий конструктор?
             cs.registerOutParameter(9, ConnectionPool.TypeCursor());
             cs.execute();
             if (cs.getInt(1) != 0){
-                logger.severe("Refused execute getUsersAction (session= "+userSession+";key="+userKey+")");
+                logger.severe("Refused execute getUsersAction (session= "+userSession+";key="+userKey+")" + "error code:"+cs.getInt(1));
             }
             ResultSet rset = (ResultSet)cs.getObject(9);
             while (rset.next ()){
@@ -243,7 +243,7 @@ public class UsersDAO {//а навіщо такий конструктор?
         CallableStatement cs;
         try {
             con = ConnectionPool.takeConn();
-            cs = con.prepareCall("{? = call pkg_users.active_session(?,?,?,?)}");
+            cs = con.prepareCall("{? = call pkg_users.check_user_sess_active(?,?,?,?)}");
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
@@ -254,6 +254,7 @@ public class UsersDAO {//а навіщо такий конструктор?
             cs.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            logger.severe("" + e);
         }
         finally {
             ConnectionPool.putConn(con);

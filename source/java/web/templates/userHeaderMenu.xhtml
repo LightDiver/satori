@@ -3,7 +3,8 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:rich="http://richfaces.org/rich">
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:outputStylesheet>
     .pic {
     margin-bottom: -4px;
@@ -27,9 +28,9 @@
                     <h:outputText value="#{text['menu.header.direction']}" />
                 </h:panelGroup>
             </f:facet>
-            <rich:menuGroup label="#{text['menu.header.skimread']}">
-                <rich:menuItem label="#{text['menu.header.lessons']}" icon="/resources/images/menu/lesson_e.png" />
-                <rich:menuItem label="#{text['menu.header.testing']}">
+            <rich:menuGroup label="#{text['menu.skimread']}">
+                <rich:menuItem label="#{text['menu.lessons']}" icon="/resources/images/menu/lesson_e.png" />
+                <rich:menuItem label="#{text['menu.testing']}">
                     <f:facet name="icon">
                         <h:graphicImage value="/resources/images/menu/test.png"/>
                     </f:facet>
@@ -39,14 +40,37 @@
         <rich:dropDownMenu mode="ajax">
             <f:facet name="label">
                 <h:panelGrid cellpadding="0" cellspacing="0" columns="2" style="vertical-align:middle">
-                    <h:outputText value="Тести" />
+                    <h:outputText value="#{text['menu.header.navigate']}" />
                 </h:panelGrid>
             </f:facet>
-            <rich:menuItem submitMode="client" onclick="document.location.href='http://richfaces.org/'">
-                <h:outputText value="RichFaces Home Page" />
-            </rich:menuItem>
-            <rich:menuItem submitMode="client" onclick="document.location.href='https://developer.jboss.org/en/richfaces/content'">
-                <h:outputText value="RichFaces Forum" />
+            <c:if test="#{sessionBean.uLogin}">
+                <rich:menuItem submitMode="client" onclick="document.location.href='profile.xhtml'">
+                    <h:outputText value="#{text['menu.profile']}" />
+                </rich:menuItem>
+            </c:if>
+            <c:if test="#{!sessionBean.uLogin}">
+                <rich:menuItem submitMode="client" onclick="document.location.href='profile.xhtml'" disabled="true">
+                    <h:outputText value="#{text['menu.profile']}" />
+                </rich:menuItem>
+                <rich:menuItem submitMode="client" onclick="document.location.href='register.xhtml'">
+                    <h:outputText value="#{text['menu.registration']}" />
+                </rich:menuItem>
+            </c:if>
+            <rich:menuSeparator />
+            <rich:menuGroup label="#{text['menu.main']}" ondblclick="document.location.href='main.xhtml'">
+                <rich:menuItem submitMode="none" onclick="document.location.href='main.xhtml#news'">
+                    <h:outputText value="#{text['menu.news']}" />
+                </rich:menuItem>
+                <rich:menuItem submitMode="none" onclick="document.location.href='main.xhtml#interisting'">
+                    <h:outputText value="#{text['menu.interisting']}" />
+                </rich:menuItem>
+                <rich:menuItem submitMode="none" onclick="document.location.href='main.xhtml#article'">
+                    <h:outputText value="#{text['menu.article']}" />
+                </rich:menuItem>
+            </rich:menuGroup>
+            <rich:menuSeparator />
+            <rich:menuItem submitMode="client" onclick="document.location.href='about.xhtml'">
+                <h:outputText value="#{text['menu.about']}" />
             </rich:menuItem>
         </rich:dropDownMenu>
 

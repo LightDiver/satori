@@ -308,6 +308,16 @@ public class SessionBean implements Serializable {
             case "/view/register.xhtml":
                 actionType = 9;
                 break;
+            case "/view/news.xhtml":
+                actionType = 11;
+                break;
+            case "/view/article.xhtml":
+                actionType = 12;
+                break;
+            case "/view/interest.xhtml":
+                actionType = 13;
+                break;
+            default:actionType = 10;break;
         }
 
         if (actionType > 0){

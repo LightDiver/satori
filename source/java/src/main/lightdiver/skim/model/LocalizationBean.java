@@ -27,7 +27,7 @@ public class LocalizationBean implements Serializable {
     @PostConstruct
     public void init() {
         if (selectedLanguage == null) {
-            System.out.println("LangInit");
+            //System.out.println("LangInit");
             selectedLanguage = new ArrayList<>();
             selectedLanguage.add(new Language("ua", "ua.png", "uk"));
             selectedLanguage.add(new Language("en", "en.png", "en"));
@@ -52,7 +52,7 @@ public class LocalizationBean implements Serializable {
         }
         //System.out.println("locale="+ locale +" langname="+language.getLangName());
         if (textDependLangList == null) {
-            System.out.println("Load locale.text");
+            //System.out.println("Load locale.text");
             textDependLangList = new HashMap<>();
             textDependLangList.put("uk", ResourceBundle.getBundle("locale.text", new Locale("uk")) );
             textDependLangList.put("en", ResourceBundle.getBundle("locale.text", new Locale("en")) );

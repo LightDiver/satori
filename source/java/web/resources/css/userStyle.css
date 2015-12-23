@@ -25,9 +25,7 @@
 	border-bottom-color: #FFF;
 }
 .content {
-  	width: 720px;
-  	float: right;
-	padding: 0 0 100px;
+	padding: 5px 5px 100px;
 }
 .footer {
 	background-color: #999;

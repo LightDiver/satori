@@ -53,8 +53,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       INTO v_user_id, o_lang_id
       FROM users
      WHERE user_login = i_user_login
-     AND state_id = 1
-	AND (user_pass = i_pass OR user_login = 'GUEST');
+       AND state_id = 1
+       AND (user_pass = i_pass OR user_login = 'GUEST');
   
     o_session_id := session_id_seq.nextval;
     o_key_id     := rawtohex(dbms_crypto.hash(src => utl_raw.cast_to_raw(o_session_id ||
@@ -131,6 +131,21 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     END IF;
   END is_permission;
 
+  PROCEDURE update_user_session(i_session_id   user_session.session_id%TYPE,
+                                i_key_id       user_session.key_id%TYPE,
+                                i_act          user_session.l_action_type_id%TYPE,
+                                i_l_is_success user_session.l_is_success%TYPE) AS
+    PRAGMA AUTONOMOUS_TRANSACTION;
+  BEGIN
+    UPDATE user_session
+       SET l_date           = localtimestamp,
+           l_action_type_id = i_act,
+           l_is_success     = i_l_is_success
+     WHERE session_id = i_session_id
+       AND key_id = i_key_id;
+    COMMIT;
+  END;
+
   FUNCTION active_session(i_session_id  user_session.session_id%TYPE,
                           i_key_id      user_session.key_id%TYPE,
                           i_terminal_ip user_session.terminal_ip%TYPE,
@@ -140,13 +155,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     /* Перевірка на аткивність сесії.
         Оновлює сесію часом і типом останньої дії користувача
         Перевіряє дозвіл на виконання дії i_act
-            
+    
              Помилки:
                      1002 - Сесія не існує або минула
                      1003 - IP сесії невірне
-             Помилка-виключення 
-                     insufficient_privileges - Недостатньо повноважень (Перехоплювати і встановлювати 1004)        
-       
+             Помилка-виключення
+                     insufficient_privileges - Недостатньо повноважень (Перехоплювати і встановлювати 1004)
+    
      */
     v_terminal_ip  user_session.terminal_ip%TYPE;
     v_error_id     error_desc.error_desc_id%TYPE;
@@ -157,8 +172,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     SELECT us.terminal_ip, us.user_id
       INTO v_terminal_ip, o_user_id
       FROM user_session us, users u
-     WHERE us.user_id = u.user_id AND u.state_id = 1
-     AND us.session_id = i_session_id
+     WHERE us.user_id = u.user_id
+       AND u.state_id = 1
+       AND us.session_id = i_session_id
        AND key_id = i_key_id;
   
     IF v_terminal_ip <> i_terminal_ip THEN
@@ -172,12 +188,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       v_l_is_success := 0;
     END IF;
   
-    UPDATE user_session
-       SET l_date           = localtimestamp,
-           l_action_type_id = i_act,
-           l_is_success     = v_l_is_success
-     WHERE session_id = i_session_id
-       AND key_id = i_key_id;
+    update_user_session(i_session_id, i_key_id, i_act, v_l_is_success);
   
     IF v_l_is_success = 0 THEN
       RAISE insufficient_privileges;
@@ -207,6 +218,36 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
                                  v_user_id);
     RETURN v_error_id;
   END active_session;
+
+  FUNCTION check_user_sess_active(i_session_id  user_session.session_id%TYPE,
+                                  i_key_id      user_session.key_id%TYPE,
+                                  i_terminal_ip user_session.terminal_ip%TYPE,
+                                  i_act         user_session.l_action_type_id%TYPE)
+    RETURN error_desc.error_desc_id%TYPE AS
+    /*Обгортка active_session ДЛЯ ВИКОРИСТАННЯ ВИКЛИКІВ ІЗ ЗОВНІ
+      !Нотебене, Ахтунг: Не використовувати в коді PL/SQL
+                        0 - Функція спрацювала без помилок
+                        
+                     1004 - Недостатньо повноважень для дії i_act
+         
+                     1002 - Сесія не існує або минула
+                     1003 - IP сесії невірне
+    */
+    v_error_id error_desc.error_desc_id%TYPE;
+  BEGIN
+    v_error_id := active_session(i_session_id,
+                                 i_key_id,
+                                 i_terminal_ip,
+                                 i_act);
+  
+    RETURN v_error_id;
+  EXCEPTION
+    WHEN insufficient_privileges THEN
+      v_error_id := 1004;
+      RETURN v_error_id;
+  END check_user_sess_active;
+
+
 
   FUNCTION list_users(i_session_id  user_session.session_id%TYPE,
                       i_key_id      user_session.key_id%TYPE,
@@ -292,9 +333,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
            AND u.state_id = us.state_id
            AND ush.a_date BETWEEN i_start_date AND i_end_date
            AND (i_user_id IS NULL OR ush.user_id = i_user_id)
-           AND (i_l_is_success IS NULL OR
-               ush.l_is_success = i_l_is_success)
-		ORDER BY ush.l_date DESC;
+           AND (i_l_is_success IS NULL OR ush.l_is_success = i_l_is_success)
+         ORDER BY ush.l_date DESC;
     
     END IF;
     RETURN v_error_id;
@@ -343,16 +383,16 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
          lang_id)
       VALUES
         (users_id_seq.nextval,
-         trim(i_newuser_login),
+         TRIM(i_newuser_login),
          i_newuser_pass,
-         trim(i_user_name),
+         TRIM(i_user_name),
          i_user_email,
          1,
          localtimestamp,
          i_user_sex,
          i_lang_id);
     END IF;
-
+  
     INSERT INTO users_role
       (user_id, role_id)
     VALUES
@@ -387,8 +427,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
                      o_state_name  OUT user_state.state_name%TYPE,
                      o_r_date      OUT users.r_date%TYPE,
                      o_user_sex    OUT users.user_sex%TYPE,
-                     o_lang_id     OUT supp_lang.lang_id%TYPE, 
-			o_roles       OUT SYS_REFCURSOR)
+                     o_lang_id     OUT supp_lang.lang_id%TYPE,
+                     o_roles       OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE AS
     /* Інфо користувача по сессії та ключу
     Помилки:
@@ -420,9 +460,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
         FROM users u, user_state us
        WHERE u.state_id = us.state_id
          AND u.user_id = o_user_id;
-
-	v_error_id := get_roles_list(o_user_id, NULL, NULL, o_roles);
-
+    
+      v_error_id := get_roles_list(o_user_id, NULL, NULL, o_roles);
+    
     END IF;
     RETURN v_error_id;
   
@@ -432,9 +472,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       RETURN v_error_id;
   END user_info;
 
-
-
-  --BEGIN
+--BEGIN
 -- Initialization
 --< STATEMENT >;
 END pkg_users;

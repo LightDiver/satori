@@ -35,11 +35,31 @@
                 </td>
             </tr>
         </table>
-        Курс швидкого читання стане у нагоді для тих, хто бажає досягти успіху та відчути результати у своїй діяльності. Згадайте, як іноді ви довго працюєте з текстом книги або проектом, який «необхідно було завершити ще вчора»?
-        Усе це пов'язано з індивідуальними особливостями кожного з нас, але ще більшою мірою від неправильного або нераціонального використання своїх особливостей. Наприклад, що вам відомо про методи ефективного запам'ятовування? А про техніку швидкого читання?
-        <h2> Нові статті</h2>
-        <h2> Цікаві факти</h2>
-            <h2> Новини</h2>
+
+        <ui:include src="part_text_localisation/main_#{localizationBean.electLocale}.xhtml" />
+
+        <h2><a id="newarticle"/> #{text['menu.article']}</h2>
+            <h:outputLink value="article.xhtml" styleClass="ui-commandlink" >#{text['content.main.all']}
+                <h:graphicImage id="articledetail" value="/resources/images/content/next1.png"
+                                onmouseover="document.getElementById('articledetail').src='/resources/images/content/next2.png'"
+                                onmouseout ="document.getElementById('articledetail').src='/resources/images/content/next1.png'"
+                                onmousedown="document.getElementById('articledetail').src='/resources/images/content/next3.png'"/>
+            </h:outputLink>
+        <h2><a id="interisting"/> #{text['menu.interisting']}</h2>
+            <ui:include src="part_text_localisation/main_interest_#{localizationBean.electLocale}.xhtml" />
+        <h:outputLink value="interest.xhtml" styleClass="ui-commandlink" >#{text['content.main.all']}
+            <h:graphicImage id="interestdetail" value="/resources/images/content/next1.png"
+                            onmouseover="document.getElementById('interestdetail').src='/resources/images/content/next2.png'"
+                            onmouseout ="document.getElementById('interestdetail').src='/resources/images/content/next1.png'"
+                            onmousedown="document.getElementById('interestdetail').src='/resources/images/content/next3.png'"/>
+        </h:outputLink>
+        <h2><a id="news"/> #{text['menu.news']}</h2>
+        <h:outputLink value="news.xhtml" styleClass="ui-commandlink" >#{text['content.main.all']}
+            <h:graphicImage id="newsdetail" value="/resources/images/content/next1.png"
+                            onmouseover="document.getElementById('newsdetail').src='/resources/images/content/next2.png'"
+                            onmouseout ="document.getElementById('newsdetail').src='/resources/images/content/next1.png'"
+                            onmousedown="document.getElementById('newsdetail').src='/resources/images/content/next3.png'"/>
+        </h:outputLink>
     </ui:define>
 
 </ui:composition>

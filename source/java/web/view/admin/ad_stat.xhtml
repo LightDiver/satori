@@ -4,6 +4,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:p="http://primefaces.org/ui"
                 template="../../templates/admin/adminTemplate1.xhtml">
     <ui:define name="content">
         <h:outputStylesheet>
@@ -30,7 +31,8 @@
             <rich:tab header="Всі дії">
             <rich:panel header="Параметри пошуку">
                 <h:form>
-                <h:panelGrid id="panel1" columns="2" columnClasses="ecol, ecol" >
+                    <p:growl showSummary="true" showDetail="true" globalOnly="true" sticky="true" />
+                <h:panelGrid id="panel1" columns="3" columnClasses="ecol, ecol" >
                     <h:panelGrid id="panel_1" columns="2" columnClasses="ecol, ecol" style="border-right: #ceab89 1px solid;">
                         <h:outputLabel value="З "/>
                         <rich:calendar value="#{adminStatisticBean.startDate}" id="calendarStart" locale="uk"
@@ -46,19 +48,24 @@
                     </h:panelGrid>
                     <h:panelGrid id="panel_2" columns="2" columnClasses="ecol, ecol" style=" border-right: #ceab89 1px solid;">
                         <h:outputLabel value="Статус дії "/>
-                        <h:selectOneMenu value="#{adminStatisticBean.successActionYes}">
+                        <h:selectOneMenu id="selActionType" value="#{adminStatisticBean.successActionYes}">
                             <f:selectItem itemLabel=" " itemValue="-1"/>
                             <f:selectItem itemLabel="Успіх" itemValue="1"/>
                             <f:selectItem itemLabel="Відмова" itemValue="0"/>
                         </h:selectOneMenu>
                         <h:outputLabel value="Користувач "/>
-                        <rich:select enableManualInput="true" value="#{adminStatisticBean.userId}" defaultLabel="почніть вводити...">
-                            <f:selectItem itemLabel=" " itemValue="-2"/>
+                        <rich:select id="selUser" enableManualInput="true" value="#{adminStatisticBean.userId}" defaultLabel="почніть вводити...">
+                            <f:selectItem itemLabel="" itemValue="-1"/>
                             <f:selectItems value="#{adminStatisticBean.usersList}" />
                         </rich:select>
                         <a4j:commandButton value="Запит" action="#{adminStatisticBean.loadListUsersAction}" render="formUserAction, @form"/>
                     </h:panelGrid>
-
+                    <h:panelGrid id="panel_3" columns="4">
+                        <h:message for="calendarStart"/>
+                        <h:message for="calendarEnd"/>
+                        <h:message for="selActionType"/>
+                        <h:message for="selUser"/>
+                    </h:panelGrid>
                 </h:panelGrid>
                 </h:form>
             </rich:panel>

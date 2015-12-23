@@ -27,21 +27,21 @@ public class LoadMenu {
         ResourceBundle msg = LocalizationBean.getTextDependLangList().get(externalContext.getSessionMap().get("electLocale"));
 
         //System.out.println("Load getFooterMenu1");
-        TreeNodeMenu treeNode1 = new TreeNodeMenu("simple", msg.getString("menu.footer1.skimread"), "#", false);
+        TreeNodeMenu treeNode1 = new TreeNodeMenu("simple", msg.getString("menu.skimread"), "#", false);
 
-        TreeNodeMenu treeNode11 = new TreeNodeMenu("lesson", msg.getString("menu.footer1.lessons"), "#", false);
-        TreeNodeMenu treeNode111 = new TreeNodeMenu("lesson", msg.getString("menu.footer1.lesson1"), "#", true);
-        TreeNodeMenu treeNode112 = new TreeNodeMenu("lesson", msg.getString("menu.footer1.lesson2"), "#", false);
+        TreeNodeMenu treeNode11 = new TreeNodeMenu("lesson", msg.getString("menu.lessons"), "#", false);
+        TreeNodeMenu treeNode111 = new TreeNodeMenu("lesson", msg.getString("menu.lesson1"), "#", true);
+        TreeNodeMenu treeNode112 = new TreeNodeMenu("lesson", msg.getString("menu.lesson2"), "#", false);
         treeNode11.addChild(treeNode111);
         treeNode11.addChild(treeNode112);
 
-        TreeNodeMenu treeNode112p = new TreeNodeMenu("practice", msg.getString("menu.footer1.practices"), "#", false);
-        TreeNodeMenu treeNode112p1 = new TreeNodeMenu("practice", msg.getString("menu.footer1.practice1"), "#", true);
+        TreeNodeMenu treeNode112p = new TreeNodeMenu("practice", msg.getString("menu.practices"), "#", false);
+        TreeNodeMenu treeNode112p1 = new TreeNodeMenu("practice", msg.getString("menu.practice1"), "#", true);
         treeNode112p.addChild(treeNode112p1);
 
         treeNode112.addChild(treeNode112p);
 
-        TreeNodeMenu treeNode12 = new TreeNodeMenu("test", msg.getString("menu.footer1.testing"), "#", true);
+        TreeNodeMenu treeNode12 = new TreeNodeMenu("test", msg.getString("menu.testing"), "#", true);
 
 
         treeNode1.addChild(treeNode11);
@@ -53,12 +53,14 @@ public class LoadMenu {
 
 
         //System.out.println("Load getFooterMenu2");
-        TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", msg.getString("menu.footer2.main"), "main.xhtml", true);
-        TreeNodeMenu treeNode3 = new TreeNodeMenu("simple", msg.getString("menu.footer2.article"), "#", true);
-        TreeNodeMenu treeNode4 = new TreeNodeMenu("simple", msg.getString("menu.footer2.about"), "about.xhtml", true);
-        TreeNodeMenu treeNode5 = new TreeNodeMenu("simple", msg.getString("menu.footer2.contacts"), "#", true);
-        TreeNodeMenu treeNode6 = new TreeNodeMenu("simple", msg.getString("menu.footer2.registration"), "register.xhtml", true);
-        TreeNodeMenu treeNode7 = new TreeNodeMenu("simple", msg.getString("menu.footer2.literature"), "#", true);
+        TreeNodeMenu treeNode2 = new TreeNodeMenu("simple", msg.getString("menu.main"), "main.xhtml", true);
+        TreeNodeMenu treeNode3 = new TreeNodeMenu("simple", msg.getString("menu.article"), "article.xhtml", true);
+        TreeNodeMenu treeNode4 = new TreeNodeMenu("simple", msg.getString("menu.news"), "news.xhtml", true);
+        TreeNodeMenu treeNode5 = new TreeNodeMenu("simple", msg.getString("menu.interisting"), "interest.xhtml", true);
+        TreeNodeMenu treeNode6 = new TreeNodeMenu("simple", msg.getString("menu.about"), "about.xhtml", true);
+        TreeNodeMenu treeNode7 = new TreeNodeMenu("simple", msg.getString("menu.contacts"), "#", true);
+        TreeNodeMenu treeNode8 = new TreeNodeMenu("simple", msg.getString("menu.registration"), "register.xhtml", true);
+        TreeNodeMenu treeNode9 = new TreeNodeMenu("simple", msg.getString("menu.literature"), "#", true);
 
 
         footerMenu2 = new ArrayList<>();
@@ -68,6 +70,8 @@ public class LoadMenu {
         footerMenu2.add(treeNode5);
         footerMenu2.add(treeNode6);
         footerMenu2.add(treeNode7);
+        footerMenu2.add(treeNode8);
+        footerMenu2.add(treeNode9);
     }
 
     public  List<TreeNode> getFooterMenu1(){

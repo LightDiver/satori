@@ -32,6 +32,14 @@ INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(8, 'about.xhtml',NULL);
 INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(9, 'register.xhtml',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(10, 'Others Pages','Сторінки які відслідковуються як інші(можуть ще бути які не відсклідковуються взагалі)');
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(11, 'news.xhtml',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(12, 'article.xhtml',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(13, 'interest.xhtml',NULL);
 
 
 INSERT INTO roles (role_id, role_name, role_short_name)

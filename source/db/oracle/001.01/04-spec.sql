@@ -56,6 +56,21 @@ CREATE OR REPLACE PACKAGE pkg_users IS
                           i_act         user_session.l_action_type_id%TYPE)
     RETURN error_desc.error_desc_id%TYPE;
 
+  /*Обгортка active_session ДЛЯ ВИКОРИСТАННЯ ВИКЛИКІВ ІЗ ЗОВНІ
+    !Нотебене, Ахтунг: Не використовувати в коді PL/SQL
+                      0 - Функція спрацювала без помилок
+                      
+                   1004 - Недостатньо повноважень для дії i_act
+       
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+  */
+  FUNCTION check_user_sess_active(i_session_id  user_session.session_id%TYPE,
+                                  i_key_id      user_session.key_id%TYPE,
+                                  i_terminal_ip user_session.terminal_ip%TYPE,
+                                  i_act         user_session.l_action_type_id%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
   /* Список всіх користувачів
   Помилки:
                1004 - Недостатньо повноважень
