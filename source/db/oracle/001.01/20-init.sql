@@ -57,6 +57,10 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,6);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,7);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,8);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,9);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,10);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,11);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,12);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,13);
 
 --REGISTERED
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,1);
@@ -65,6 +69,11 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,6);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,7);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,8);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,9);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,10);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,11);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,12);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,13);
+
 --GUEST
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,1);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,5);
@@ -72,6 +81,11 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,6);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,7);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,8);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,9);
+--INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,10);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,11);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,12);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,13);
+
 
 --Special users
 INSERT INTO users(user_id,user_login, user_pass, user_name, user_email, state_id, r_date, lang_id, user_sex)
