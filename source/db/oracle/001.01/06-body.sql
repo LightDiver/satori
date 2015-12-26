@@ -9,4 +9,6 @@ PROMPT compile body of  PKG_USERS;
 PROMPT compile body of  PKG_SYSTEMINFO;
 @@001.01\06-body\pkg_systeminfo.sql
 
+PROMPT compile body of  PKG_ARTICLE;
+@@001.01\06-body\pkg_article.sql
 

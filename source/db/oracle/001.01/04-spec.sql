@@ -147,3 +147,72 @@ CREATE OR REPLACE PACKAGE pkg_systeminfo IS
 
 END pkg_systeminfo;
 /
+
+CREATE OR REPLACE PACKAGE pkg_article IS
+  /* Додавання статті
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+  */
+  FUNCTION create_new_article(i_session_id      user_session.session_id%TYPE,
+                              i_key_id          user_session.key_id%TYPE,
+                              i_terminal_ip     user_session.terminal_ip%TYPE,
+                              o_article_id      OUT article.article_id%TYPE,
+                              i_article_title   article.article_title%TYPE,
+                              i_article_content article.article_content%TYPE,
+                              i_article_lang    article.article_lang%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Редагування статті
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+       1006 - Поточний статус(редагується автором) статті не дозволяє її редагувати
+       1007 - Поточний статус(редагується редактором) статті не дозволяє її редагувати
+       1008 - Поточний статус статті не дозволяє її редагувати
+  */
+  FUNCTION edit_article(i_session_id      user_session.session_id%TYPE,
+                        i_key_id          user_session.key_id%TYPE,
+                        i_terminal_ip     user_session.terminal_ip%TYPE,
+                        i_article_id      article.article_id%TYPE,
+                        i_article_title   article.article_title%TYPE,
+                        i_article_content article.article_content%TYPE,
+                        i_article_lang    article.article_lang%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Зміна статусу статті
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+          1009 - Параметр _новий статус статті_ задано невірно
+          1010 - Зміна статусу статті неможлива
+       
+       */
+  FUNCTION change_status_article(i_session_id         user_session.session_id%TYPE,
+                                 i_key_id             user_session.key_id%TYPE,
+                                 i_terminal_ip        user_session.terminal_ip%TYPE,
+                                 i_article_id         article.article_id%TYPE,
+                                 i_atricle_status_new article.article_status_id%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Повернути статтю яка в статусі Редагування автором
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+	1011 - Пусто
+  */
+  FUNCTION get_last_edit_active_article(i_session_id      user_session.session_id%TYPE,
+                                        i_key_id          user_session.key_id%TYPE,
+                                        i_terminal_ip     user_session.terminal_ip%TYPE,
+                                        o_article_id      OUT article.article_id%TYPE,
+                                        o_article_title   OUT article.article_title%TYPE,
+                                        o_article_content OUT article.article_content%TYPE,
+                                        o_article_lang    OUT article.article_lang%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
+END pkg_article;
+/

@@ -43,6 +43,13 @@ CREATE SEQUENCE users_id_seq
   START WITH 1000
   NOCACHE;
 
+create sequence ARTICLE_ID_SEQ
+minvalue 1
+maxvalue 100000
+start with 1
+increment by 1
+nocache;
+
 
 
 /* -------------------------------- */
@@ -149,6 +156,26 @@ create table ERROR_DESC
 );
 comment on table ERROR_DESC is 'Опис помилок в системі';
 
+create table ARTICLE_STATUS
+(
+  status_id   NUMBER(1) not null,
+  status_name VARCHAR2(50) not null,
+  constraint STATUS_ID_PK primary key (STATUS_ID)
+);
+
+create table ARTICLE
+(
+  article_id          NUMBER(5) not null,
+  article_title       VARCHAR2(300),
+  article_content     CLOB,
+  article_status_id   NUMBER(1) not null,
+  article_create_date TIMESTAMP(6) not null,
+  article_creator_id  NUMBER(18) not null,
+  article_public_date TIMESTAMP(6),
+  article_editor_id   NUMBER(18),
+  article_lang        VARCHAR2(2),
+  constraint ARTICLE_ID_PK primary key (ARTICLE_ID)
+)
 /* -------------------------------- */
 /*             INDEXES              */
 /* -------------------------------- */
@@ -195,7 +222,18 @@ alter table USER_SESSION
   add constraint USER_SESS_SUCCESS_FK foreign key (L_IS_SUCCESS)
   references USER_SESS_SUCCESS (IS_SUCCESS_ID);
 
-
+alter table ARTICLE
+  add constraint ARTICLE_CREATOR_ID_FK foreign key (ARTICLE_CREATOR_ID)
+  references USERS (USER_ID);
+alter table ARTICLE
+  add constraint ARTICLE_EDITOR_ID_FK foreign key (ARTICLE_EDITOR_ID)
+  references USERS (USER_ID);
+alter table ARTICLE
+  add constraint ARTICLE_STATUS_ID_FK foreign key (ARTICLE_STATUS_ID)
+  references ARTICLE_STATUS (STATUS_ID);
+alter table ARTICLE
+  add constraint ARTICLE_LANG_FK foreign key (ARTICLE_LANG)
+  references SUPP_LANG (LANG_ID);
 /* -------------------------------- */
 /*            CHECK                 */
 /* -------------------------------- */

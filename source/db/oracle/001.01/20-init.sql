@@ -40,14 +40,28 @@ INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(12, 'article.xhtml',NULL);
 INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(13, 'interest.xhtml',NULL);
-
-
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(14, 'Додавання статті',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(15, 'Зміна статусу статті на редагується автором',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(16, 'Зміна статусу статті на редагується редактором',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(17, 'Зміна статусу статті на готова до публікації',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(18, 'Зміна статусу статті на опубліковано',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(19, 'Знайти мою статтю в Редагування автором',NULL);
+                                                  
 INSERT INTO roles (role_id, role_name, role_short_name)
 VALUES(1, 'Адміністратори', 'ADMIN');
 INSERT INTO roles (role_id, role_name, role_short_name)
 VALUES(2, 'Зареєстровані', 'REGISTERED');
 INSERT INTO roles (role_id, role_name, role_short_name)
 VALUES(3, 'Гості', 'GUEST');
+INSERT INTO roles (role_id, role_name, role_short_name)
+VALUES(4, 'Редактори статтей', 'EDITOR');
+
 --ADMIN
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,1);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,2);
@@ -61,6 +75,12 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,10);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,11);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,12);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,13);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,14);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,15);
+--INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,16);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,17);
+--INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,18);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,19);
 
 --REGISTERED
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,1);
@@ -73,6 +93,11 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,10);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,11);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,12);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,13);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,14);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,15);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,17);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,19);
+
 
 --GUEST
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,1);
@@ -85,6 +110,11 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,9);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,11);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,12);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,13);
+
+--EDITOR
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,16);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,18);
+
 
 
 --Special users
@@ -100,7 +130,15 @@ VALUES(2,'GUEST',
        );
 --assign role
 INSERT INTO users_role(user_id, role_id) VALUES(1, 1);
+INSERT INTO users_role(user_id, role_id) VALUES(1, 4);
 INSERT INTO users_role(user_id, role_id) VALUES(2, 3);
+
+
+INSERT INTO article_status(status_id, status_name)VALUES(1,'Редагується автором');
+INSERT INTO article_status(status_id, status_name)VALUES(2,'Редагується редактором');
+INSERT INTO article_status(status_id, status_name)VALUES(3,'Готова до публікації');
+INSERT INTO article_status(status_id, status_name)VALUES(4,'Опубліковано');
+
        
 INSERT INTO error_desc (error_desc_id, error_desc)
 VALUES (1001, 'Помилковий логін або пароль');
@@ -112,6 +150,20 @@ INSERT INTO error_desc (error_desc_id, error_desc)
 VALUES (1004, 'Недостатньо повноважень');
 INSERT INTO error_desc (error_desc_id, error_desc)
 VALUES (1005, 'Невірно вказані дата початку або дата кінця');
+INSERT INTO error_desc (error_desc_id, error_desc)
+VALUES (1006, 'Поточний статус(редагується автором) статті не дозволяє її редагувати');
+INSERT INTO error_desc (error_desc_id, error_desc)
+VALUES (1007, 'Поточний статус(редагується редактором) статті не дозволяє її редагувати');
+INSERT INTO error_desc (error_desc_id, error_desc)
+VALUES (1008, 'Поточний статус статті не дозволяє її редагувати');
+INSERT INTO error_desc (error_desc_id, error_desc)
+VALUES (1009, 'Параметр _новий статус статті_ задано невірно');
+INSERT INTO error_desc (error_desc_id, error_desc)
+VALUES (1010, 'Зміна статусу статті неможлива');
+INSERT INTO error_desc (error_desc_id, error_desc)
+VALUES (1011, 'Даних немає');--!(select empty)
+
+
 
 --довідничок 
 INSERT INTO user_sess_success(is_success_id, is_success_name)

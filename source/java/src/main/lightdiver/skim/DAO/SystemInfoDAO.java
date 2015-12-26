@@ -28,6 +28,9 @@ public class SystemInfoDAO {
             logger.severe("Don't read description error from base: " + e);
             return "Don't read description error from base";
         }
+        finally {
+            ConnectionPool.putConn(con);
+        }
 
     }
 
@@ -46,11 +49,15 @@ public class SystemInfoDAO {
                 langs.put(rset.getString(1), rset.getString(2));
                 //System.out.println(rset.getString(1) + "|" + rset.getString(2));
             }
+            cs.close();
             //System.out.println(langs.size());
         } catch (SQLException e) {
             e.printStackTrace();
             logger.severe("Don't read description error from base: " + e);
             return null;
+        }
+        finally {
+            ConnectionPool.putConn(con);
         }
         return langs;
     }
