@@ -13,12 +13,12 @@ public class ArticleDAO {
     private final static Logger logger = Logger.getLogger(ArticleDAO.class.getName());
 
 
-    public static int createArticle(String userSession, String userKey, String ipAddress, Article outArticle, String title, String content, String lang ) throws BaseNotConnect {
+    public static int createArticle(String userSession, String userKey, String ipAddress, Article outArticle, String title, String shortContent, String content, String lang ) throws BaseNotConnect {
         Connection con = ConnectionPool.takeConn();
         CallableStatement cs = null;
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.create_new_article(?, ?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{? = call pkg_article.create_new_article(?, ?, ?, ?, ?, ?, ?, ?)}");
 
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
@@ -26,8 +26,9 @@ public class ArticleDAO {
             cs.setString(4, ipAddress);
             cs.registerOutParameter(5, Types.INTEGER);
             cs.setString(6, title);
-            cs.setString(7, content);
-            cs.setString(8, lang);
+            cs.setString(7, shortContent);
+            cs.setString(8, content);
+            cs.setString(9, lang);
             cs.execute();
             res = cs.getInt(1);
             if (res == 0){
@@ -45,12 +46,12 @@ public class ArticleDAO {
         return res;
     }
 
-    public static int editArticle(String userSession, String userKey, String ipAddress, Integer articleID, String title, String content, String lang, String categoryIDList ) throws BaseNotConnect {
+    public static int editArticle(String userSession, String userKey, String ipAddress, Integer articleID, String title,String shortContent, String content, String lang, String categoryIDList ) throws BaseNotConnect {
         Connection con = ConnectionPool.takeConn();
         CallableStatement cs = null;
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.edit_article(?, ?, ?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{? = call pkg_article.edit_article(?, ?, ?, ?, ?, ?, ?, ?,?)}");
 
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
@@ -58,9 +59,10 @@ public class ArticleDAO {
             cs.setString(4, ipAddress);
             cs.setInt(5, articleID);
             cs.setString(6, title);
-            cs.setString(7, content);
-            cs.setString(8, lang);
-            cs.setString(9,categoryIDList);
+            cs.setString(7, shortContent);
+            cs.setString(8, content);
+            cs.setString(9, lang);
+            cs.setString(10,categoryIDList);
             cs.execute();
             res = cs.getInt(1);
             cs.close();
@@ -80,7 +82,7 @@ public class ArticleDAO {
         CallableStatement cs = null;
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_last_edit_active_article(?, ?, ?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{? = call pkg_article.get_last_edit_active_article(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
@@ -91,16 +93,18 @@ public class ArticleDAO {
             cs.registerOutParameter(7, Types.VARCHAR);
             cs.registerOutParameter(8, Types.VARCHAR);
             cs.registerOutParameter(9, Types.VARCHAR);
+            cs.registerOutParameter(10, Types.VARCHAR);
             cs.execute();
 
             res = cs.getInt(1);
             if (res != 1011){
                 outArticle.setArticleId(cs.getInt(5)) ;
                 outArticle.setTitle(cs.getString(6));
-                outArticle.setContent(cs.getString(7));
-                outArticle.setLang(cs.getString(8));
-                if (cs.getString(9) != null) {
-                    String[] s = cs.getString(9).split(",");
+                outArticle.setShortContent(cs.getString(7));
+                outArticle.setContent(cs.getString(8));
+                outArticle.setLang(cs.getString(9));
+                if (cs.getString(10) != null) {
+                    String[] s = cs.getString(10).split(",");
                     Integer[] n_val = new Integer[s.length];
                     for (int i = 0; i < s.length; i++) {
                         n_val[i] = Integer.parseInt(s[i]);

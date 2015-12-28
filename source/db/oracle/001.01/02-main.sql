@@ -167,6 +167,7 @@ create table ARTICLE
 (
   article_id          NUMBER(5) not null,
   article_title       VARCHAR2(300),
+  article_short       VARCHAR2(2000),
   article_content     CLOB,
   article_status_id   NUMBER(1) not null,
   article_create_date TIMESTAMP(6) not null,

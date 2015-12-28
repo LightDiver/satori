@@ -3,6 +3,7 @@ package main.lightdiver.skim.entity;
 public class Article {
     private Integer articleId;
     private String title;
+    private String shortContent;
     private String content;
     private String lang;
     private Integer status;
@@ -55,5 +56,13 @@ public class Article {
 
     public void setCategoryIDList(Integer[] categoryIDList) {
         this.categoryIDList = categoryIDList;
+    }
+
+    public String getShortContent() {
+        return shortContent;
+    }
+
+    public void setShortContent(String shortContent) {
+        this.shortContent = shortContent;
     }
 }

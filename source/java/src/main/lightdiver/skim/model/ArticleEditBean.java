@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 public class ArticleEditBean {
     private int err;
 
+    private String shortValue = null;
     private String value = null;
     private Language language;
     private String nameArticle;
@@ -42,7 +43,7 @@ public class ArticleEditBean {
 
 
     private void edit(){
-        err = ManagerContent.editArticle(idArticle, nameArticle, value, language.getLangName().toUpperCase(), getCategoryIDList());
+        err = ManagerContent.editArticle(idArticle, nameArticle, shortValue, value, language.getLangName().toUpperCase(), getCategoryIDList());
 
         if (err != 0) {
             String text;
@@ -62,6 +63,7 @@ public class ArticleEditBean {
                     break;
                 default:
                     text = "err=" +err;
+                    break;
             }
 
             FacesContext.getCurrentInstance().addMessage(null,
@@ -153,15 +155,9 @@ public class ArticleEditBean {
     }
 
     public void setValue(String value) {
-        //System.out.println("setValue");
+        System.out.println("setValue");
         if (value != null) {
             edit();
-        }
-        if (!language.getLangISO().equals(localizationBean.getElectLocale())){
-            ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
-            FacesContext.getCurrentInstance().addMessage("add_article:sellang",
-                    new FacesMessage(FacesMessage.SEVERITY_WARN, null, msg.getString("warn.articlelang")));
-
         }
         this.value = value;
     }
@@ -197,13 +193,14 @@ public class ArticleEditBean {
             if ( err == 0) {
                 idArticle = article.getArticleId();
                 nameArticle = article.getTitle();
+                shortValue = article.getShortContent();
                 value = article.getContent();
                 language = LocalizationBean.getLanguageByISO(article.getLang().toLowerCase());
                 selectedCategory = getCategoryObjList(article.getCategoryIDList());
 
             }else
             {
-                if (ManagerContent.createArticle(article, nameArticle, value, language.getLangName().toUpperCase()) == 0)
+                if (ManagerContent.createArticle(article, nameArticle, shortValue, value, language.getLangName().toUpperCase()) == 0)
                     idArticle = article.getArticleId();
                 else {
                     FacesContext.getCurrentInstance().addMessage(null,
@@ -268,5 +265,23 @@ public class ArticleEditBean {
 
     public void setArticleBean(ArticleBean articleBean) {
         this.articleBean = articleBean;
+    }
+
+    public String getShortValue() {
+        return shortValue;
+    }
+
+    public void setShortValue(String shortValue) {
+        System.out.println("shortValue");
+        if (value != null) {
+            edit();
+        }
+        if (!language.getLangISO().equals(localizationBean.getElectLocale())){
+            ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+            FacesContext.getCurrentInstance().addMessage("add_article:sellang",
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, null, msg.getString("warn.articlelang")));
+
+        }
+        this.shortValue = shortValue;
     }
 }

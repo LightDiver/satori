@@ -5,6 +5,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                               i_terminal_ip     user_session.terminal_ip%TYPE,
                               o_article_id      OUT article.article_id%TYPE,
                               i_article_title   article.article_title%TYPE,
+                              i_article_short   article.article_short%TYPE,
                               i_article_content article.article_content%TYPE,
                               i_article_lang    article.article_lang%TYPE)
     RETURN error_desc.error_desc_id%TYPE AS
@@ -34,6 +35,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       (article_id,
        article_title,
        article_content,
+       article_short,
        article_status_id,
        article_create_date,
        article_creator_id,
@@ -43,6 +45,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
     VALUES
       (o_article_id,
        i_article_title,
+       i_article_short,
        i_article_content,
        1,
        localtimestamp,
@@ -64,6 +67,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                         i_terminal_ip      user_session.terminal_ip%TYPE,
                         i_article_id       article.article_id%TYPE,
                         i_article_title    article.article_title%TYPE,
+                        i_article_short    article.article_short%TYPE,
                         i_article_content  article.article_content%TYPE,
                         i_article_lang     article.article_lang%TYPE,
                         i_article_category VARCHAR2)
@@ -111,18 +115,21 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
     END IF;
   
-    IF v_article_status = 1 AND v_article_creator_id != v_user_id THEN
+    IF v_article_status = 1 AND NOT (v_article_creator_id = v_user_id AND
+        v_article_creator_id IS NOT NULL) THEN
       v_error_id := 1006;
       RETURN v_error_id;
     END IF;
   
-    IF v_article_status = 2 AND v_article_editor_id != v_user_id THEN
+    IF v_article_status = 2 AND NOT (v_article_editor_id = v_user_id AND
+        v_article_editor_id IS NOT NULL) THEN
       v_error_id := 1007;
       RETURN v_error_id;
     END IF;
   
     UPDATE article a
        SET a.article_title   = i_article_title,
+           a.article_short   = i_article_short,
            a.article_content = i_article_content,
            a.article_lang    = i_article_lang
      WHERE a.article_id = i_article_id;
@@ -131,7 +138,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
   
     IF i_article_category IS NOT NULL AND i_article_category <> ',' THEN
       FOR cur IN (SELECT regexp_substr(str, '[^,]+', 1, LEVEL) str
-                    FROM (SELECT rtrim(i_article_category,',') str FROM dual) t
+                    FROM (SELECT rtrim(i_article_category, ',') str FROM dual) t
                   CONNECT BY instr(str, ',', 1, LEVEL - 1) > 0) LOOP
         INSERT INTO category_article_link
         VALUES
@@ -283,6 +290,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                                         i_terminal_ip      user_session.terminal_ip%TYPE,
                                         o_article_id       OUT article.article_id%TYPE,
                                         o_article_title    OUT article.article_title%TYPE,
+                                        o_article_short    OUT article.article_short%TYPE,
                                         o_article_content  OUT article.article_content%TYPE,
                                         o_article_lang     OUT article.article_lang%TYPE,
                                         o_article_category OUT VARCHAR2)
@@ -308,8 +316,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
     END IF;
   
-    SELECT a.article_id, a.article_title, a.article_content, a.article_lang
-      INTO o_article_id, o_article_title, o_article_content, o_article_lang
+    SELECT a.article_id, a.article_title, a.article_short, a.article_content, a.article_lang
+      INTO o_article_id, o_article_title, o_article_short, o_article_content, o_article_lang
       FROM article a
      WHERE a.article_creator_id = v_user_id
        AND a.article_status_id = 1

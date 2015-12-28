@@ -42,7 +42,9 @@
                 <rich:message id="mes_namearticle" for="namearticle" />
             </h:panelGrid>
             <h:inputHidden id="articleid" value="#{articleEditBean.idArticle}"/>
-            <rich:editor id="editor" lang="#{articleEditBean.language.langISO}" value="#{articleEditBean.value}" style="margin-bottom: 1em">
+
+            <h:outputLabel value="#{text['hint.article.short']}"/>
+            <rich:editor id="editorshort" lang="#{articleEditBean.language.langISO}" value="#{articleEditBean.shortValue}" style="margin-bottom: 1em">
                 <a4j:ajax event="change" render="panel" status="panelUpdateStatus" />
                 <a4j:ajax event="dirty" render="panel" status="panelUpdateStatus">
                     <a4j:attachQueue requestDelay="300000" />
@@ -53,7 +55,6 @@
                     startupFocus: true,
                     toolbar_custom:
                     [
-                    { name: 'document', items : [ 'Save','Preview' ] },
                     { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
                     { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
                     { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'
@@ -67,6 +68,52 @@
                     ]
                 </f:facet>
             </rich:editor>
+
+            <h:outputLabel value="#{text['hint.preview']}" />
+            <rich:panel id="panel" style="background-color: inherit">
+                <f:facet name="header">
+                    #{articleEditBean.nameArticle}
+                    <a4j:status name="panelUpdateStatus">
+                        <f:facet name="start">
+                            (Updating)
+                        </f:facet>
+                    </a4j:status>
+                </f:facet>
+                <h:outputText escape="false" value="#{articleEditBean.shortValue}" />
+                <h:panelGrid style="width: 100%; text-align: right">
+                    <h:outputLink value="article_read.xhtml?id=#{articleEditBean.idArticle}" target="_blank" styleClass="ui-commandlink">#{text['butt.readmore']}</h:outputLink>
+                </h:panelGrid>
+                <hr style="margin: 0; width: 100%; height: 1px; background: floralwhite; border: none;" />
+                Опубліковано: #{sessionBean.userName}
+            </rich:panel>
+
+            <h:outputLabel value="#{text['hint.article.content']}"/>
+            <rich:editor id="editor" lang="#{articleEditBean.language.langISO}" value="#{articleEditBean.value}" style="margin-bottom: 1em">
+                <a4j:ajax event="change" />
+                <a4j:ajax event="dirty" >
+                    <a4j:attachQueue requestDelay="300000" />
+                </a4j:ajax>
+                <f:facet name="config">
+                    toolbar: 'custom',
+                    language: '#{articleEditBean.language.langISO}',
+                    startupFocus: true,
+                    toolbar_custom:
+                    [
+                    { name: 'document', items : [ 'Save' ] },
+                    { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+                    { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
+                    { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'
+                    ,'Iframe' ] },
+                    '/',
+                    { name: 'styles', items : [ 'Styles','Format' ] },
+                    { name: 'basicstyles', items : [ 'Bold','Italic','Strike','-','RemoveFormat' ] },
+                    { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote' ] },
+                    { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+                    { name: 'tools', items : [ 'Maximize' ] }
+                    ]
+                </f:facet>
+            </rich:editor>
+
             <rich:messages />
 
             <rich:panel >
@@ -82,19 +129,6 @@
             </rich:panel>
 
             <h:commandButton action="#{articleEditBean.saveToPublic}" value="#{text['butt.public']}" />
-            <rich:panel id="panel" style="background-color: inherit">
-                <f:facet name="header">
-                    #{articleEditBean.nameArticle}
-                    <a4j:status name="panelUpdateStatus">
-                        <f:facet name="start">
-                            (Updating)
-                        </f:facet>
-                    </a4j:status>
-                </f:facet>
-                <h:outputText escape="false" value="#{articleEditBean.value}" />
-                <hr style="margin: 0; width: 100%; height: 1px; background: floralwhite; border: none;" />
-                Опубліковано: #{sessionBean.userName}
-            </rich:panel>
         </h:form>
 
 

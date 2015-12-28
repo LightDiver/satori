@@ -22,22 +22,22 @@ public class ManagerContent {
 
     }
 
-    public static int editArticle(Integer articleID, String title, String content, String lang, String categoryIDList ){
+    public static int editArticle(Integer articleID, String title, String shortContent, String content, String lang, String categoryIDList ){
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         int err = -1;
         try {
-            err = ArticleDAO.editArticle((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), getIP(), articleID, title, content, lang, categoryIDList );
+            err = ArticleDAO.editArticle((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), getIP(), articleID, title, shortContent, content, lang, categoryIDList );
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         }
         return err;
     }
 
-    public static int createArticle(Article outArticle, String title, String content, String lang ) {
+    public static int createArticle(Article outArticle, String title,String shortContent, String content, String lang ) {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         int err = -1;
         try {
-            err = ArticleDAO.createArticle((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), getIP(),  outArticle,  title,  content,  lang );
+            err = ArticleDAO.createArticle((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), getIP(),  outArticle,  title, shortContent,  content,  lang );
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         }

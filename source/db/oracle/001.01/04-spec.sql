@@ -159,6 +159,7 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                               i_terminal_ip     user_session.terminal_ip%TYPE,
                               o_article_id      OUT article.article_id%TYPE,
                               i_article_title   article.article_title%TYPE,
+                              i_article_short   article.article_short%TYPE,
                               i_article_content article.article_content%TYPE,
                               i_article_lang    article.article_lang%TYPE)
     RETURN error_desc.error_desc_id%TYPE;
@@ -178,6 +179,7 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                         i_terminal_ip      user_session.terminal_ip%TYPE,
                         i_article_id       article.article_id%TYPE,
                         i_article_title    article.article_title%TYPE,
+                        i_article_short    article.article_short%TYPE,
                         i_article_content  article.article_content%TYPE,
                         i_article_lang     article.article_lang%TYPE,
                         i_article_category VARCHAR2)
@@ -206,13 +208,14 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                    1003 - IP сесії невірне
               1011 - Пусто
   */
-  FUNCTION get_last_edit_active_article(i_session_id      user_session.session_id%TYPE,
-                                        i_key_id          user_session.key_id%TYPE,
-                                        i_terminal_ip     user_session.terminal_ip%TYPE,
-                                        o_article_id      OUT article.article_id%TYPE,
-                                        o_article_title   OUT article.article_title%TYPE,
-                                        o_article_content OUT article.article_content%TYPE,
-                                        o_article_lang    OUT article.article_lang%TYPE,
+  FUNCTION get_last_edit_active_article(i_session_id       user_session.session_id%TYPE,
+                                        i_key_id           user_session.key_id%TYPE,
+                                        i_terminal_ip      user_session.terminal_ip%TYPE,
+                                        o_article_id       OUT article.article_id%TYPE,
+                                        o_article_title    OUT article.article_title%TYPE,
+                                        o_article_short    OUT article.article_short%TYPE,
+                                        o_article_content  OUT article.article_content%TYPE,
+                                        o_article_lang     OUT article.article_lang%TYPE,
                                         o_article_category OUT VARCHAR2)
     RETURN error_desc.error_desc_id%TYPE;
 
