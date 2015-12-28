@@ -59,13 +59,14 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
   END create_new_article;
 
-  FUNCTION edit_article(i_session_id      user_session.session_id%TYPE,
-                        i_key_id          user_session.key_id%TYPE,
-                        i_terminal_ip     user_session.terminal_ip%TYPE,
-                        i_article_id      article.article_id%TYPE,
-                        i_article_title   article.article_title%TYPE,
-                        i_article_content article.article_content%TYPE,
-                        i_article_lang    article.article_lang%TYPE)
+  FUNCTION edit_article(i_session_id       user_session.session_id%TYPE,
+                        i_key_id           user_session.key_id%TYPE,
+                        i_terminal_ip      user_session.terminal_ip%TYPE,
+                        i_article_id       article.article_id%TYPE,
+                        i_article_title    article.article_title%TYPE,
+                        i_article_content  article.article_content%TYPE,
+                        i_article_lang     article.article_lang%TYPE,
+                        i_article_category VARCHAR2)
     RETURN error_desc.error_desc_id%TYPE AS
     /* Редагування статті
     Помилки:
@@ -75,6 +76,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
          1006 - Поточний статус(редагується автором) статті не дозволяє її редагувати
          1007 - Поточний статус(редагується редактором) статті не дозволяє її редагувати
          1008 - Поточний статус статті не дозволяє її редагувати
+         1011 - Пусто
     */
     v_error_id           error_desc.error_desc_id%TYPE := 0;
     v_user_id            user_session.user_id%TYPE;
@@ -93,12 +95,18 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
     END IF;
   
-    SELECT a.article_status_id, a.article_creator_id, a.article_editor_id
-      INTO v_article_status, v_article_creator_id, v_article_editor_id
-      FROM article a
-     WHERE a.article_id = i_article_id;
+    BEGIN
+    
+      SELECT a.article_status_id, a.article_creator_id, a.article_editor_id
+        INTO v_article_status, v_article_creator_id, v_article_editor_id
+        FROM article a
+       WHERE a.article_id = i_article_id;
+    EXCEPTION
+      WHEN no_data_found THEN
+        RETURN 1011;
+    END;
   
-    IF v_article_status <> 1 OR v_article_status <> 2 THEN
+    IF v_article_status NOT IN (1, 2) THEN
       v_error_id := 1008;
       RETURN v_error_id;
     END IF;
@@ -118,6 +126,19 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
            a.article_content = i_article_content,
            a.article_lang    = i_article_lang
      WHERE a.article_id = i_article_id;
+  
+    DELETE FROM category_article_link c WHERE c.article_id = i_article_id;
+  
+    IF i_article_category IS NOT NULL AND i_article_category <> ',' THEN
+      FOR cur IN (SELECT regexp_substr(str, '[^,]+', 1, LEVEL) str
+                    FROM (SELECT rtrim(i_article_category,',') str FROM dual) t
+                  CONNECT BY instr(str, ',', 1, LEVEL - 1) > 0) LOOP
+        INSERT INTO category_article_link
+        VALUES
+          (to_number(cur.str), i_article_id);
+      END LOOP;
+    END IF;
+  
     RETURN v_error_id;
   
   EXCEPTION
@@ -154,7 +175,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                      1003 - IP сесії невірне
             1009 - Параметр _новий статус статті_ задано невірно
             1010 - Зміна статусу статті неможлива
-         
+            1011 - Пусто
          */
     v_error_id           error_desc.error_desc_id%TYPE := 0;
     v_user_id            user_session.user_id%TYPE;
@@ -192,10 +213,17 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
     END IF;
     v_is_editor := user_is_editor(v_user_id);
   
-    SELECT a.article_status_id, a.article_creator_id, a.article_editor_id
-      INTO v_article_status, v_article_creator_id, v_article_editor_id
-      FROM article a
-     WHERE a.article_id = i_article_id;
+    BEGIN
+    
+      SELECT a.article_status_id, a.article_creator_id, a.article_editor_id
+        INTO v_article_status, v_article_creator_id, v_article_editor_id
+        FROM article a
+       WHERE a.article_id = i_article_id;
+    
+    EXCEPTION
+      WHEN no_data_found THEN
+        RETURN 1011;
+    END;
   
     CASE i_atricle_status_new
       WHEN 1 THEN
@@ -241,6 +269,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       
     END CASE;
   
+    RETURN v_error_id;
+  
   EXCEPTION
   
     WHEN pkg_users.insufficient_privileges THEN
@@ -248,20 +278,21 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
   END change_status_article;
 
-  FUNCTION get_last_edit_active_article(i_session_id      user_session.session_id%TYPE,
-                                        i_key_id          user_session.key_id%TYPE,
-                                        i_terminal_ip     user_session.terminal_ip%TYPE,
-                                        o_article_id      OUT article.article_id%TYPE,
-                                        o_article_title   OUT article.article_title%TYPE,
-                                        o_article_content OUT article.article_content%TYPE,
-                                        o_article_lang    OUT article.article_lang%TYPE)
+  FUNCTION get_last_edit_active_article(i_session_id       user_session.session_id%TYPE,
+                                        i_key_id           user_session.key_id%TYPE,
+                                        i_terminal_ip      user_session.terminal_ip%TYPE,
+                                        o_article_id       OUT article.article_id%TYPE,
+                                        o_article_title    OUT article.article_title%TYPE,
+                                        o_article_content  OUT article.article_content%TYPE,
+                                        o_article_lang     OUT article.article_lang%TYPE,
+                                        o_article_category OUT VARCHAR2)
     RETURN error_desc.error_desc_id%TYPE AS
     /* Повернути статтю яка в статусі Редагування автором
     Помилки:
                      1004 - Недостатньо повноважень
                      1002 - Сесія не існує або минула
                      1003 - IP сесії невірне
-	1011 - Пусто
+                 1011 - Пусто
     */
     v_error_id error_desc.error_desc_id%TYPE := 0;
     v_user_id  user_session.user_id%TYPE;
@@ -283,6 +314,11 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
      WHERE a.article_creator_id = v_user_id
        AND a.article_status_id = 1
        AND rownum() < 2;
+  
+    SELECT listagg(c.category_id, ',') within GROUP(ORDER BY c.category_id)
+      INTO o_article_category
+      FROM category_article_link c
+     WHERE c.article_id = o_article_id;
   
     RETURN v_error_id;
   EXCEPTION

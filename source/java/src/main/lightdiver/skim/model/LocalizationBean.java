@@ -36,7 +36,22 @@ public class LocalizationBean implements Serializable {
         //Якщо є кука берем мову звідти
         locale = SessionBean.getCookie("userLang")==null?locale:SessionBean.getCookie("userLang").getValue();
         //System.out.println("try cookie. locale="+locale);
-        switch (locale) {
+        language = getLanguageByISO(locale);
+
+        //System.out.println("locale="+ locale +" langname="+language.getLangName());
+        if (textDependLangList == null) {
+            //System.out.println("Load locale.text");
+            textDependLangList = new HashMap<>();
+            textDependLangList.put("uk", ResourceBundle.getBundle("locale.text", new Locale("uk")) );
+            textDependLangList.put("en", ResourceBundle.getBundle("locale.text", new Locale("en")) );
+            textDependLangList.put("ru", ResourceBundle.getBundle("locale.text", new Locale("ru")) );
+        }
+        setElectLocale(language.getLangISO());
+    }
+
+    public static Language getLanguageByISO(String langISO){
+        Language language;
+        switch (langISO) {
             case "uk":
                 language = selectedLanguage.get(0);
                 break;
@@ -50,17 +65,8 @@ public class LocalizationBean implements Serializable {
                 language = selectedLanguage.get(0);
                 break;
         }
-        //System.out.println("locale="+ locale +" langname="+language.getLangName());
-        if (textDependLangList == null) {
-            //System.out.println("Load locale.text");
-            textDependLangList = new HashMap<>();
-            textDependLangList.put("uk", ResourceBundle.getBundle("locale.text", new Locale("uk")) );
-            textDependLangList.put("en", ResourceBundle.getBundle("locale.text", new Locale("en")) );
-            textDependLangList.put("ru", ResourceBundle.getBundle("locale.text", new Locale("ru")) );
-        }
-        setElectLocale(language.getLangISO());
+        return language;
     }
-
 
     public String getLocale() {
         return FacesContext.getCurrentInstance().getViewRoot().getLocale().toString();
@@ -89,6 +95,10 @@ public class LocalizationBean implements Serializable {
     }
 
     public void setLanguage(Language language) {
+        FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(language.getLangISO()));
+        setElectLocale(language.getLangISO());
+        System.out.println("Set locale to "+ language.getLangISO());
+
         this.language = language;
     }
 

@@ -22,11 +22,11 @@ public class ManagerContent {
 
     }
 
-    public static int editArticle(Integer articleID, String title, String content, String lang ){
+    public static int editArticle(Integer articleID, String title, String content, String lang, String categoryIDList ){
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         int err = -1;
         try {
-            err = ArticleDAO.editArticle((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), getIP(), articleID, title, content, lang );
+            err = ArticleDAO.editArticle((String)externalContext.getSessionMap().get("userSession"), (String)externalContext.getSessionMap().get("userKey"), getIP(), articleID, title, content, lang, categoryIDList );
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         }
@@ -44,6 +44,18 @@ public class ManagerContent {
         return err;
     }
 
+    public static int changeStatusArticleToReadyPublic(Integer articleID) {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        int err = -1;
+        try {
+            err = ArticleDAO.changeStatusArticle((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), articleID, 3);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+        }
+        return err;
+    }
+
+
     private static String getIP(){
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
@@ -52,4 +64,6 @@ public class ManagerContent {
         }
         return ipAddress;
     }
+
+
 }

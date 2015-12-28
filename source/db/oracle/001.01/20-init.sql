@@ -171,4 +171,9 @@ VALUES(1, 'Успіх');
 INSERT INTO user_sess_success(is_success_id, is_success_name)
 VALUES(0, 'Відмовлено');
 
+INSERT INTO category_article(category_id, category_name) VALUES(1, 'Інше');
+INSERT INTO category_article(category_id, category_name) VALUES(2, 'Швидке читання');
+INSERT INTO category_article(category_id, category_name) VALUES(3, 'Увага та пам''ять');
+INSERT INTO category_article(category_id, category_name) VALUES(4, 'Цікава математика');
+
 COMMIT;

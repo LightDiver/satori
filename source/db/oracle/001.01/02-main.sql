@@ -175,7 +175,21 @@ create table ARTICLE
   article_editor_id   NUMBER(18),
   article_lang        VARCHAR2(2),
   constraint ARTICLE_ID_PK primary key (ARTICLE_ID)
-)
+);
+
+create table CATEGORY_ARTICLE
+(
+  category_id   NUMBER(2) not null,
+  category_name VARCHAR2(50) not null,
+  constraint CATEGORY_ID_PK primary key (CATEGORY_ID)
+);
+
+create table CATEGORY_ARTICLE_LINK
+(
+  category_id NUMBER(2) not null,
+  article_id  NUMBER(5) not null
+);
+
 /* -------------------------------- */
 /*             INDEXES              */
 /* -------------------------------- */
@@ -234,6 +248,13 @@ alter table ARTICLE
 alter table ARTICLE
   add constraint ARTICLE_LANG_FK foreign key (ARTICLE_LANG)
   references SUPP_LANG (LANG_ID);
+
+alter table CATEGORY_ARTICLE_LINK
+  add constraint ARTICLE_ID_FK foreign key (ARTICLE_ID)
+  references ARTICLE (ARTICLE_ID);
+alter table CATEGORY_ARTICLE_LINK
+  add constraint CATEGORY_ID_FK foreign key (CATEGORY_ID)
+  references CATEGORY_ARTICLE (CATEGORY_ID);
 /* -------------------------------- */
 /*            CHECK                 */
 /* -------------------------------- */
@@ -246,6 +267,7 @@ CREATE UNIQUE INDEX users_login_idx ON users(user_login);
 CREATE UNIQUE INDEX roles_idx ON roles(ROLE_SHORT_NAME);
 CREATE UNIQUE INDEX users_role_idx ON users_role (user_id, role_id);
 create unique index ERROR_DESC_ID_IDX1 on ERROR_DESC (ERROR_DESC_ID);
+create unique index ARTICLE_CATEGORY_UNIQ on CATEGORY_ARTICLE_LINK (ARTICLE_ID, CATEGORY_ID);
 /* -------------------------------- */
 /*            TYPES                 */
 /* -------------------------------- */
