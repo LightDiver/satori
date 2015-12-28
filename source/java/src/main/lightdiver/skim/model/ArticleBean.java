@@ -5,8 +5,11 @@ import main.lightdiver.skim.entity.Category;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 @ManagedBean
 @ViewScoped
@@ -15,11 +18,14 @@ public class ArticleBean {
 
     @PostConstruct
     public void init(){
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        LocalizationBean localizationBean = (LocalizationBean) externalContext.getSessionMap().get("localizationBean");
+        ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
         category = new ArrayList<>();
-        category.add(new Category(1,"Інше"));
-        category.add(new Category(2,"Швидке читання"));
-        category.add(new Category(3,"Увага та пам'ять"));
-        category.add(new Category(4,"Цікава математика"));
+        category.add(new Category(1,msg.getString("cata.others")));
+        category.add(new Category(2,msg.getString("cata.skimread")));
+        category.add(new Category(3,msg.getString("cata.attentionmemory")));
+        category.add(new Category(4,msg.getString("cata.interestingmathematics")));
     }
 
     public List<Category> getCategory() {

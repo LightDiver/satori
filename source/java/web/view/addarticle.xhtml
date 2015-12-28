@@ -21,7 +21,7 @@
                 <rich:message id="mes_rulesok" for="rulesok" />
 
                 <h:panelGroup>
-                    <h:outputLabel value="Мова сттатті " />
+                    <h:outputLabel value="#{text['input.articlelang']}" />
                     <p:selectOneMenu id="sellang" value="#{articleEditBean.language}" onchange="submit()" converter="localeConverter" panelStyle="width:100px" effect="fade" var="l" style="width:45px;font-size:13px;">
                         <f:selectItems value="#{localizationBean.selectedLanguage}" var="language" itemLabel="#{language.langName}" itemValue="#{language}" />
                         <p:column>
@@ -71,16 +71,17 @@
 
             <rich:panel >
                 <f:facet name="header">
-                    <h:outputText value="Оберіть категорії, яких охоплюює стаття" />
+                    <h:outputText value="#{text['input.articlecat']}" />
                 </f:facet>
-                <rich:pickList id="category" value="#{articleEditBean.selectedCategory}" onblur="validcat( #{rich:component('category')}.getValue() )" sourceCaption="Категорії" targetCaption="Обрані категорії" listWidth="270px" listHeight="100px" orderable="false">
+                <rich:pickList id="category" value="#{articleEditBean.selectedCategory}" sourceCaption="#{text['hint.article.categories']}" targetCaption="#{text['hint.article.selcategories']}" listWidth="270px" listHeight="100px" orderable="false">
                     <f:selectItems value="#{articleBean.category}" var="category" itemValue="#{category}" itemLabel="#{category.categoryName}" />
+                    <f:ajax event="change" execute="@this" render="mes_category"/>
                     <f:converter converterId="categoryConverter" />
                 </rich:pickList>
                 <rich:message id="mes_category" for="category"/>
             </rich:panel>
 
-            <h:commandButton action="#{articleEditBean.saveToPublic}" value="Публікувати" />
+            <h:commandButton action="#{articleEditBean.saveToPublic}" value="#{text['butt.public']}" />
             <rich:panel id="panel" style="background-color: inherit">
                 <f:facet name="header">
                     #{articleEditBean.nameArticle}
@@ -100,11 +101,6 @@
         <h:form id="t1">
             <a4j:jsFunction name="validnamearticle"  action = "#{articleEditBean.validNameArticleAjax}"  limitRender="true" render="add_article:mes_namearticle">
                 <a4j:param name="p1" assignTo="#{articleEditBean.nameArticle}" />
-            </a4j:jsFunction>
-        </h:form>
-        <h:form id="t2">
-            <a4j:jsFunction name="validcat"  action = "#{articleEditBean.validCategoryAjax}"  limitRender="true" render="add_article:mes_category">
-                <a4j:param name="p1" assignTo="#{articleEditBean.selectedCategory}" />
             </a4j:jsFunction>
         </h:form>
 
