@@ -11,6 +11,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -30,6 +31,9 @@ public class ArticleEditBean {
     private boolean rulesok = false;
     private List<Category> selectedCategory;
 
+    @ManagedProperty("#{sessionBean}")
+    private SessionBean sessionBean;
+
     @ManagedProperty("#{localizationBean}")
     private LocalizationBean localizationBean;
 
@@ -42,13 +46,17 @@ public class ArticleEditBean {
     }
 
 
-    private void edit(){
-        err = ManagerContent.editArticle(idArticle, nameArticle, shortValue, value, language.getLangName().toUpperCase(), getCategoryIDList());
+    private void edit(boolean shortEdit){
+
+        err = ManagerContent.editArticle(idArticle, nameArticle, shortValue, shortEdit?null:value, language.getLangName().toUpperCase(), shortEdit?null:getCategoryIDList());
 
         if (err != 0) {
             String text;
             ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
             switch (err){
+                case 1004:
+                    text = msg.getString("err.db.1004");
+                    break;
                 case 1006:
                     text = msg.getString("err.db.1006");
                     break;
@@ -101,7 +109,7 @@ public class ArticleEditBean {
         }
 
         if (nameArticle != null){
-            edit();
+            edit(true);
         }
 
         FacesContext.getCurrentInstance().addMessage("add_article:namearticle", new FacesMessage(FacesMessage.SEVERITY_INFO, null, "Ok "));
@@ -156,10 +164,10 @@ public class ArticleEditBean {
 
     public void setValue(String value) {
         System.out.println("setValue");
-        if (value != null) {
-            edit();
-        }
         this.value = value;
+        if (value != null) {
+            edit(false);
+        }
     }
 
     public Language getLanguage() {
@@ -188,8 +196,30 @@ public class ArticleEditBean {
 
     public Integer getIdArticle() {
         if (idArticle == null || idArticle == 0) {
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            String idA = facesContext.getExternalContext().getRequestParameterMap().get("id");
+
             Article article = new Article();
-            err = ManagerContent.getMyActiveArticle(article);
+
+            if (getWorkEditor()) {//Якщо працює редактор, то взяти с GET запиту id
+                if (idA != null && idA.length()>0){
+                    err = ManagerContent.getEditorArticle(idA, article);
+                }
+                else {
+                    return -1;//стрьомна ситуація
+                }
+            }else{//користувач підгружає або створюэ "пустишку"
+                err = ManagerContent.getMyActiveArticle(article);
+                if ( err != 0) {
+                                if (ManagerContent.createArticle(article, nameArticle, shortValue, value, language.getLangName().toUpperCase()) == 0)
+                        idArticle = article.getArticleId();
+                    else {
+                        FacesContext.getCurrentInstance().addMessage(null,
+                                new FacesMessage(FacesMessage.SEVERITY_ERROR, "err=" + err, "err=" + err));
+                    }
+                }
+            }
+
             if ( err == 0) {
                 idArticle = article.getArticleId();
                 nameArticle = article.getTitle();
@@ -197,17 +227,10 @@ public class ArticleEditBean {
                 value = article.getContent();
                 language = LocalizationBean.getLanguageByISO(article.getLang().toLowerCase());
                 selectedCategory = getCategoryObjList(article.getCategoryIDList());
-
-            }else
-            {
-                if (ManagerContent.createArticle(article, nameArticle, shortValue, value, language.getLangName().toUpperCase()) == 0)
-                    idArticle = article.getArticleId();
-                else {
-                    FacesContext.getCurrentInstance().addMessage(null,
-                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "err=" + err, "err=" + err));
-                }
             }
         }
+
+
         return idArticle;
     }
 
@@ -267,15 +290,20 @@ public class ArticleEditBean {
         this.articleBean = articleBean;
     }
 
+    public SessionBean getSessionBean() {
+        return sessionBean;
+    }
+
+    public void setSessionBean(SessionBean sessionBean) {
+        this.sessionBean = sessionBean;
+    }
+
     public String getShortValue() {
         return shortValue;
     }
 
     public void setShortValue(String shortValue) {
         System.out.println("shortValue");
-        if (value != null) {
-            edit();
-        }
         if (!language.getLangISO().equals(localizationBean.getElectLocale())){
             ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
             FacesContext.getCurrentInstance().addMessage("add_article:sellang",
@@ -283,5 +311,38 @@ public class ArticleEditBean {
 
         }
         this.shortValue = shortValue;
+        if (shortValue != null) {
+            edit(true);
+        }
     }
+
+    public String getStringSelectedCategory() {
+        if (selectedCategory!= null && selectedCategory.size() > 0){
+            String stringSelectedCategory = "";
+            for(Category cat : selectedCategory){
+                stringSelectedCategory = stringSelectedCategory + cat.getCategoryName() + ",";
+            }
+            return stringSelectedCategory.substring(0, stringSelectedCategory.length() - 1);
+        }
+        return "";
+    }
+
+    public boolean getWorkEditor(){
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        String uri=request.getRequestURI();
+        //String idA = facesContext.getExternalContext().getRequestParameterMap().get("id");
+        //System.out.println(uri);
+        //System.out.println(idA);
+
+        FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+
+        if (uri.equals("/view/editor/editarticle.xhtml") && sessionBean.uEditor){
+            rulesok = true;
+            return true;
+        }
+        else return false;
+
+    }
+
 }

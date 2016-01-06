@@ -81,10 +81,11 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
          1007 - Поточний статус(редагується редактором) статті не дозволяє її редагувати
          1008 - Поточний статус статті не дозволяє її редагувати
          1011 - Пусто
+         1012 - Не задано ні заголовку ні тексту статті
     */
     v_error_id           error_desc.error_desc_id%TYPE := 0;
     v_user_id            user_session.user_id%TYPE;
-    c_perm_act           action_type.action_type_id%TYPE := 15;
+    c_perm_act           action_type.action_type_id%TYPE := 20;
     v_article_status     article.article_status_id%TYPE;
     v_article_creator_id article.article_creator_id%TYPE;
     v_article_editor_id  article.article_editor_id%TYPE;
@@ -127,23 +128,41 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
     END IF;
   
-    UPDATE article a
-       SET a.article_title   = i_article_title,
-           a.article_short   = i_article_short,
-           a.article_content = i_article_content,
-           a.article_lang    = i_article_lang
-     WHERE a.article_id = i_article_id;
+    IF i_article_content IS NULL AND i_article_short IS NULL THEN
+      v_error_id := 1012;
+      RETURN v_error_id;
+    END IF;
   
-    DELETE FROM category_article_link c WHERE c.article_id = i_article_id;
-  
-    IF i_article_category IS NOT NULL AND i_article_category <> ',' THEN
-      FOR cur IN (SELECT regexp_substr(str, '[^,]+', 1, LEVEL) str
-                    FROM (SELECT rtrim(i_article_category, ',') str FROM dual) t
-                  CONNECT BY instr(str, ',', 1, LEVEL - 1) > 0) LOOP
-        INSERT INTO category_article_link
-        VALUES
-          (to_number(cur.str), i_article_id);
-      END LOOP;
+    IF i_article_content IS NULL THEN
+      UPDATE article a
+         SET a.article_title = i_article_title,
+             a.article_short = i_article_short,
+             
+             a.article_lang = i_article_lang
+       WHERE a.article_id = i_article_id;
+    
+    ELSE
+      UPDATE article a
+         SET a.article_title   = i_article_title,
+             a.article_short   = i_article_short,
+             a.article_content = i_article_content,
+             a.article_lang    = i_article_lang
+       WHERE a.article_id = i_article_id;
+    
+      DELETE FROM category_article_link c
+       WHERE c.article_id = i_article_id;
+    
+      IF i_article_category IS NOT NULL AND i_article_category <> ',' THEN
+        FOR cur IN (SELECT regexp_substr(str, '[^,]+', 1, LEVEL) str
+                      FROM (SELECT rtrim(i_article_category, ',') str
+                              FROM dual) t
+                    CONNECT BY instr(str, ',', 1, LEVEL - 1) > 0) LOOP
+          INSERT INTO category_article_link
+          VALUES
+            (to_number(cur.str), i_article_id);
+        END LOOP;
+      END IF;
+    
     END IF;
   
     RETURN v_error_id;
@@ -316,8 +335,16 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
     END IF;
   
-    SELECT a.article_id, a.article_title, a.article_short, a.article_content, a.article_lang
-      INTO o_article_id, o_article_title, o_article_short, o_article_content, o_article_lang
+    SELECT a.article_id,
+           a.article_title,
+           a.article_short,
+           a.article_content,
+           a.article_lang
+      INTO o_article_id,
+           o_article_title,
+           o_article_short,
+           o_article_content,
+           o_article_lang
       FROM article a
      WHERE a.article_creator_id = v_user_id
        AND a.article_status_id = 1
@@ -337,5 +364,66 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
   END get_last_edit_active_article;
 
+  FUNCTION get_edit_editor_article(i_session_id       user_session.session_id%TYPE,
+                                   i_key_id           user_session.key_id%TYPE,
+                                   i_terminal_ip      user_session.terminal_ip%TYPE,
+                                   i_article_id       article.article_id%TYPE,
+                                   o_article_title    OUT article.article_title%TYPE,
+                                   o_article_short    OUT article.article_short%TYPE,
+                                   o_article_content  OUT article.article_content%TYPE,
+                                   o_article_lang     OUT article.article_lang%TYPE,
+                                   o_article_category OUT VARCHAR2)
+    RETURN error_desc.error_desc_id%TYPE AS
+    /* Повернути статтю яка в статусі Редагування редактором за умови що редактором він і є
+    Помилки:
+                     1004 - Недостатньо повноважень
+                     1002 - Сесія не існує або минула
+                     1003 - IP сесії невірне
+                 1011 - Пусто
+    */
+    v_error_id error_desc.error_desc_id%TYPE := 0;
+    v_user_id  user_session.user_id%TYPE;
+    c_perm_act action_type.action_type_id%TYPE := 21;
+  
+  BEGIN
+    v_error_id := pkg_users.active_session(i_session_id,
+                                           i_key_id,
+                                           i_terminal_ip,
+                                           c_perm_act,
+                                           v_user_id);
+  
+    IF v_error_id <> 0 THEN
+      RETURN v_error_id;
+    END IF;
+    IF NOT user_is_editor(v_user_id) THEN
+      RETURN 1004;
+    END IF;
+  
+    SELECT a.article_title,
+           a.article_short,
+           a.article_content,
+           a.article_lang
+      INTO o_article_title,
+           o_article_short,
+           o_article_content,
+           o_article_lang
+      FROM article a
+     WHERE a.article_editor_id = v_user_id
+       AND a.article_status_id = 2
+       AND a.article_id = i_article_id;
+  
+    SELECT listagg(c.category_id, ',') within GROUP(ORDER BY c.category_id)
+      INTO o_article_category
+      FROM category_article_link c
+     WHERE c.article_id = i_article_id;
+  
+    RETURN v_error_id;
+  EXCEPTION
+    WHEN no_data_found THEN
+      RETURN 1011;
+    WHEN pkg_users.insufficient_privileges THEN
+      v_error_id := 1004;
+      RETURN v_error_id;
+  END get_edit_editor_article;
+
 END pkg_article;
-/

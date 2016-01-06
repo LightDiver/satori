@@ -97,8 +97,55 @@ public class ArticleDAO {
             cs.execute();
 
             res = cs.getInt(1);
-            if (res != 1011){
+            if (res == 0){
                 outArticle.setArticleId(cs.getInt(5)) ;
+                outArticle.setTitle(cs.getString(6));
+                outArticle.setShortContent(cs.getString(7));
+                outArticle.setContent(cs.getString(8));
+                outArticle.setLang(cs.getString(9));
+                if (cs.getString(10) != null) {
+                    String[] s = cs.getString(10).split(",");
+                    Integer[] n_val = new Integer[s.length];
+                    for (int i = 0; i < s.length; i++) {
+                        n_val[i] = Integer.parseInt(s[i]);
+                    }
+                    outArticle.setCategoryIDList(n_val);
+                }
+            }
+            cs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            logger.severe("" + e);
+        }
+        finally {
+            ConnectionPool.putConn(con);
+        }
+        return res;
+    }
+
+    public static int getEditorArticle(Integer ArticleID, String userSession, String userKey, String ipAddress, Article outArticle) throws BaseNotConnect {
+        Connection con = ConnectionPool.takeConn();
+        CallableStatement cs = null;
+        int res = -1;
+        try {
+            cs = con.prepareCall("{? = call pkg_article.get_edit_editor_article(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2, userSession);
+            cs.setString(3, userKey);
+            cs.setString(4, ipAddress);
+            cs.setInt(5, ArticleID);
+            cs.registerOutParameter(6, Types.VARCHAR);
+            cs.registerOutParameter(7, Types.VARCHAR);
+            cs.registerOutParameter(8, Types.VARCHAR);
+            cs.registerOutParameter(9, Types.VARCHAR);
+            cs.registerOutParameter(10, Types.VARCHAR);
+            cs.execute();
+
+            res = cs.getInt(1);
+            if (res == 0){
+                outArticle.setArticleId(ArticleID);
                 outArticle.setTitle(cs.getString(6));
                 outArticle.setShortContent(cs.getString(7));
                 outArticle.setContent(cs.getString(8));

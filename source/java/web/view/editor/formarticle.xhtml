@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <c:if test = "#{!sessionBean.uLogin}">
+        #{text['err.accessdenied']}
+    </c:if>
+    <c:if test="#{sessionBean.uLogin}">
+         <h:form id="add_article">
+            <h:panelGrid columns="2">
+                <h:selectBooleanCheckbox id="rulesok" value="#{articleEditBean.rulesok}" required="true" disabled="#{articleEditBean.getWorkEditor()}">
+                    <h:outputLabel value="#{text['input.checkbox.rulesok']}"/>
+                </h:selectBooleanCheckbox>
+                <rich:message id="mes_rulesok" for="rulesok" />
+
+                <h:panelGroup>
+                    <h:outputLabel value="#{text['input.articlelang']}:" />
+                    <p:selectOneMenu id="sellang" value="#{articleEditBean.language}" onchange="submit()" converter="localeConverter" panelStyle="width:100px" effect="fade" var="l" style="width:45px;font-size:13px;">
+                        <f:selectItems value="#{localizationBean.selectedLanguage}" var="language" itemLabel="#{language.langName}" itemValue="#{language}" />
+                        <p:column>
+                            <p:graphicImage value="/resources/images/menu/#{l.langPict}" />
+                        </p:column>
+                        <p:column>
+                            #{l.langName}
+                        </p:column>
+                    </p:selectOneMenu>
+                    <p:graphicImage value="/resources/images/menu/#{articleEditBean.language.langPict}" />
+                </h:panelGroup>
+                <rich:message id="mes_lang" for="sellang" />
+
+                <h:panelGroup>
+                    <h:outputLabel value="#{text['input.namearticle']}: " />
+                    <h:inputTextarea id="namearticle" cols="50" a:maxlength="300" onblur="validnamearticle(this.value)" value="#{articleEditBean.nameArticle}" required="true" requiredMessage="#{text['err.empty']}"/>
+                </h:panelGroup>
+                <rich:message id="mes_namearticle" for="namearticle" />
+            </h:panelGrid>
+            <h:inputHidden id="articleid" value="#{articleEditBean.idArticle}"/>
+
+            <h:outputLabel value="#{text['hint.article.short']}: "/>
+            <rich:editor id="editorshort" lang="#{articleEditBean.language.langISO}" value="#{articleEditBean.shortValue}" style="margin-bottom: 1em">
+                <a4j:ajax event="change" render="panel" status="panelUpdateStatus" />
+                <a4j:ajax event="dirty" render="panel" status="panelUpdateStatus">
+                    <a4j:attachQueue requestDelay="300000" />
+                </a4j:ajax>
+                <f:facet name="config">
+                    toolbar: 'custom',
+                    language: '#{articleEditBean.language.langISO}',
+                    startupFocus: true,
+                    toolbar_custom:
+                    [
+                    { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+                    { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
+                    { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'
+                    ,'Iframe' ] },
+                    '/',
+                    { name: 'styles', items : [ 'Styles','Format' ] },
+                    { name: 'basicstyles', items : [ 'Bold','Italic','Strike','-','RemoveFormat' ] },
+                    { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote' ] },
+                    { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+                    { name: 'tools', items : [ 'Maximize' ] }
+                    ]
+                </f:facet>
+            </rich:editor>
+
+            <h:outputLabel value="#{text['hint.preview']}: " />
+            <rich:panel id="panel" style="background-color: inherit">
+                <f:facet name="header">
+                    #{articleEditBean.nameArticle}
+                    <a4j:status name="panelUpdateStatus">
+                        <f:facet name="start">
+                            (Updating)
+                        </f:facet>
+                    </a4j:status>
+                </f:facet>
+                <h:outputText escape="false" value="#{articleEditBean.shortValue}" />
+                <h:panelGrid style="width: 100%; text-align: right">
+                    <h:outputLink value="article_read.xhtml?id=#{articleEditBean.idArticle}" target="_blank" styleClass="ui-commandlink">#{text['butt.readmore']}</h:outputLink>
+                </h:panelGrid>
+                <hr style="margin: 0; width: 100%; height: 1px; background: floralwhite; border: none;" />
+                #{text['hint.article.published']}: #{sessionBean.userName} | #{text['hint.article.categories']}: #{articleEditBean.getStringSelectedCategory()}
+            </rich:panel>
+
+            <h:outputLabel value="#{text['hint.article.content']}: "/>
+            <rich:editor id="editor" lang="#{articleEditBean.language.langISO}" value="#{articleEditBean.value}" style="margin-bottom: 1em">
+                <a4j:ajax event="change" />
+                <a4j:ajax event="dirty" >
+                    <a4j:attachQueue requestDelay="300000" />
+                </a4j:ajax>
+                <f:facet name="config">
+                    toolbar: 'custom',
+                    language: '#{articleEditBean.language.langISO}',
+                    startupFocus: true,
+                    toolbar_custom:
+                    [
+                    { name: 'document', items : [ 'Save' ] },
+                    { name: 'clipboard', items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+                    { name: 'editing', items : [ 'Find','Replace','-','SelectAll','-','Scayt' ] },
+                    { name: 'insert', items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'
+                    ,'Iframe' ] },
+                    '/',
+                    { name: 'styles', items : [ 'Styles','Format' ] },
+                    { name: 'basicstyles', items : [ 'Bold','Italic','Strike','-','RemoveFormat' ] },
+                    { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote' ] },
+                    { name: 'links', items : [ 'Link','Unlink','Anchor' ] },
+                    { name: 'tools', items : [ 'Maximize' ] }
+                    ]
+                </f:facet>
+            </rich:editor>
+
+            <rich:messages />
+
+            <rich:panel >
+                <f:facet name="header">
+                    <h:outputText value="#{text['input.articlecat']}: " />
+                </f:facet>
+                <rich:pickList id="category" value="#{articleEditBean.selectedCategory}" sourceCaption="#{text['hint.article.categories']}" targetCaption="#{text['hint.article.selcategories']}" listWidth="270px" listHeight="100px" orderable="false">
+                    <f:selectItems value="#{articleBean.category}" var="category" itemValue="#{category}" itemLabel="#{category.categoryName}" />
+                    <f:ajax event="change" execute="@this" render="mes_category, panel"/>
+                    <f:converter converterId="categoryConverter" />
+                </rich:pickList>
+                <rich:message id="mes_category" for="category"/>
+            </rich:panel>
+
+            <h:commandButton action="#{articleEditBean.saveToPublic}" value="#{text['butt.public']}" />
+        </h:form>
+
+
+        <h:form id="t1">
+            <a4j:jsFunction name="validnamearticle"  action = "#{articleEditBean.validNameArticleAjax}"  limitRender="true" render="add_article:mes_namearticle">
+                <a4j:param name="p1" assignTo="#{articleEditBean.nameArticle}" />
+            </a4j:jsFunction>
+        </h:form>
+    </c:if>
+</ui:composition>

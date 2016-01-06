@@ -21,6 +21,17 @@ public class ManagerContent {
         }
 
     }
+    public static int getEditorArticle(String sArticleID, Article outArticle) {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        int ArticleID = Integer.parseInt(sArticleID);
+        try {
+            return ArticleDAO.getEditorArticle(ArticleID, (String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), outArticle);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+            return -1;
+        }
+
+    }
 
     public static int editArticle(Integer articleID, String title, String shortContent, String content, String lang, String categoryIDList ){
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();

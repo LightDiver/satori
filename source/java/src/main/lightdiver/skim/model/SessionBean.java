@@ -43,6 +43,7 @@ public class SessionBean implements Serializable {
     protected List<SelectItem> langs;
     protected boolean uLogin = false;
     protected boolean uAdmin = false;
+    protected boolean uEditor = false;
 
     @PostConstruct
     public void init() {
@@ -76,7 +77,7 @@ public class SessionBean implements Serializable {
                         userName = user.getUserLogin();
                         uLogin = true;
                         uAdmin = user.getUserRoles().containsKey("ADMIN");
-
+                        uEditor = user.getUserRoles().containsKey("EDITOR");
                     }
 
                 }
@@ -105,6 +106,10 @@ public class SessionBean implements Serializable {
 
     public void setuLogin(boolean uLogin) {
         this.uLogin = uLogin;
+    }
+
+    public boolean isuEditor() {
+        return uEditor;
     }
 
     public boolean isuAdmin() {

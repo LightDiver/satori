@@ -52,6 +52,12 @@ INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(18, 'Зміна статусу статті на опубліковано',NULL);
 INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(19, 'Знайти мою статтю в Редагування автором',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(20, 'Редагування статті',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(21, 'Редагування статті редактором',NULL);
+
+
                                                   
 INSERT INTO roles (role_id, role_name, role_short_name)
 VALUES(1, 'Адміністратори', 'ADMIN');
@@ -81,6 +87,7 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,15);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,17);
 --INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,18);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,19);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,20);
 
 --REGISTERED
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,1);
@@ -97,7 +104,7 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,14);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,15);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,17);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,19);
-
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,20);
 
 --GUEST
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,1);
@@ -114,8 +121,7 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,13);
 --EDITOR
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,16);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,18);
-
-
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,21);
 
 --Special users
 INSERT INTO users(user_id,user_login, user_pass, user_name, user_email, state_id, r_date, lang_id, user_sex)
@@ -162,6 +168,8 @@ INSERT INTO error_desc (error_desc_id, error_desc)
 VALUES (1010, 'Зміна статусу статті неможлива');
 INSERT INTO error_desc (error_desc_id, error_desc)
 VALUES (1011, 'Даних немає');--!(select empty)
+INSERT INTO error_desc (error_desc_id, error_desc)
+VALUES (1012, 'Не задано ні заголовку ні тексту статті');
 
 
 
