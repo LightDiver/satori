@@ -13,7 +13,10 @@
     </c:if>
     <c:if test="#{sessionBean.uLogin}">
          <h:form id="add_article">
-             <rich:messages />
+             <c:if test="#{articleEditBean.err!=0}" >
+                <rich:messages />
+             </c:if>
+             <c:if test="#{articleEditBean.err==0}" >
              <h:panelGrid columns="2">
                 <h:selectBooleanCheckbox id="rulesok" value="#{articleEditBean.rulesok}" required="true" disabled="#{articleEditBean.typePage == 0}">
                     <h:outputLabel value="#{text['input.checkbox.rulesok']}"/>
@@ -129,6 +132,7 @@
 
             <h:commandButton action="#{articleEditBean.saveToPublic}" value="#{text['butt.public']}" />
              <rich:messages />
+             </c:if>
         </h:form>
 
 

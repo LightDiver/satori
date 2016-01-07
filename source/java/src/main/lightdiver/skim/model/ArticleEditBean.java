@@ -63,30 +63,25 @@ public class ArticleEditBean {
 
         Article article = new Article();
         err = -1;
+        String text = "Невідома помилка";
+
         if (typePage == 0) {//Якщо працює редактор, то взяти с GET запиту id
             //FacesContext facesContext = FacesContext.getCurrentInstance();
             String idA = facesContext.getExternalContext().getRequestParameterMap().get("id");
             if (idA != null && idA.length() > 0) {
                 err = ManagerContent.getEditorArticle(idA, article);
             } else {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Незаданий параметр id", "Незаданий параметр id"));
+                err = 1;
             }
-        }else {//користувач підгружає або створюэ "пустишку"
+        }else {//користувач підгружає створену або створюэ "пустишку"
             System.out.println("idArticle="+idArticle);
-            if (idArticle == null || idArticle == 0) {
-                err = ManagerContent.getMyActiveArticle(article);
-                System.out.println("ManagerContent.getMyActiveArticle(article)=" + err);
-                if (err != 0) {
-                    if (ManagerContent.createArticle(article, nameArticle, shortValue, value, language.getLangName().toUpperCase()) == 0) {
-                        System.out.println("ManagerContent.createArticle=0");
-                        idArticle = article.getArticleId();
-                    }
-                    else {
-                        System.out.println("ManagerContent.createArticle <> 0");
-                        FacesContext.getCurrentInstance().addMessage(null,
-                                new FacesMessage(FacesMessage.SEVERITY_ERROR, "err=" + err, "err=" + err));
-                    }
+
+            err = ManagerContent.getMyActiveArticle(article);
+            System.out.println("ManagerContent.getMyActiveArticle(article)=" + err);
+            if (err != 0) {
+                if ((err=ManagerContent.createArticle(article, nameArticle, shortValue, value, language.getLangName().toUpperCase())) == 0) {
+                    System.out.println("ManagerContent.createArticle=0");
+                    idArticle = article.getArticleId();
                 }
             }
         }
@@ -98,8 +93,23 @@ public class ArticleEditBean {
             value = article.getContent();
             language = LocalizationBean.getLanguageByISO(article.getLang().toLowerCase());
             selectedCategory = getCategoryObjList(article.getCategoryIDList());
-        }else {FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "err=" + err, "err=" + err));
+        }else {
+            ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+            switch (err){
+                case -1:
+                    text = msg.getString("err.unknown");
+                    break;
+                case 1:
+                    text = msg.getString("err.idarticle");
+                    break;
+                case 1011:
+                    text = msg.getString("err.db.1004");
+                    break;
+                default: break;
+            }
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "err=" + err + " " + text, null));
             System.out.println("else if ( err == 0) {");
         }
         System.out.println("END catchArticleID=" + idArticle);
@@ -356,6 +366,14 @@ public class ArticleEditBean {
 
     public void setTypePage(int typePage) {
         this.typePage = typePage;
+    }
+
+    public int getErr() {
+        return err;
+    }
+
+    public void setErr(int err) {
+        this.err = err;
     }
 
     public boolean isWorkEditor(){

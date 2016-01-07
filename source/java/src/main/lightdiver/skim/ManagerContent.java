@@ -7,6 +7,7 @@ import main.lightdiver.skim.exceptions.BaseNotConnect;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public class ManagerContent {
 
@@ -60,6 +61,17 @@ public class ManagerContent {
         int err = -1;
         try {
             err = ArticleDAO.changeStatusArticle((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), articleID, 3);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+        }
+        return err;
+    }
+
+    public static int getEditorArticleList(Integer statusID, List<Article> outListArticle) {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        int err = -1;
+        try {
+            err = ArticleDAO.getEditorArticleList((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), statusID, outListArticle);
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         }

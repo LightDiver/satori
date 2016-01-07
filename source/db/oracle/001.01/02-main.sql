@@ -269,6 +269,7 @@ CREATE UNIQUE INDEX roles_idx ON roles(ROLE_SHORT_NAME);
 CREATE UNIQUE INDEX users_role_idx ON users_role (user_id, role_id);
 create unique index ERROR_DESC_ID_IDX1 on ERROR_DESC (ERROR_DESC_ID);
 create unique index ARTICLE_CATEGORY_UNIQ on CATEGORY_ARTICLE_LINK (ARTICLE_ID, CATEGORY_ID);
+create unique index role_action_idx on ROLES_PERM_ACTION (role_id, action_type_id);
 /* -------------------------------- */
 /*            TYPES                 */
 /* -------------------------------- */

@@ -426,4 +426,58 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
   END get_edit_editor_article;
 
+  FUNCTION get_editor_article_list(i_session_id        user_session.session_id%TYPE,
+                                   i_key_id            user_session.key_id%TYPE,
+                                   i_terminal_ip       user_session.terminal_ip%TYPE,
+                                   i_article_status_id article.article_status_id%TYPE,
+                                   o_items             OUT SYS_REFCURSOR)
+    RETURN error_desc.error_desc_id%TYPE AS
+    /* Повернути статті яка в певному статусі або всі якщо null 
+    Помилки:
+                     1004 - Недостатньо повноважень
+                     1002 - Сесія не існує або минула
+                     1003 - IP сесії невірне
+    */
+    v_error_id error_desc.error_desc_id%TYPE := 0;
+    v_user_id  user_session.user_id%TYPE;
+    c_perm_act action_type.action_type_id%TYPE := 23;
+  
+  BEGIN
+    v_error_id := pkg_users.active_session(i_session_id,
+                                           i_key_id,
+                                           i_terminal_ip,
+                                           c_perm_act,
+                                           v_user_id);
+  
+    IF v_error_id <> 0 THEN
+      RETURN v_error_id;
+    END IF;
+    IF NOT user_is_editor(v_user_id) THEN
+      RETURN 1004;
+    END IF;
+  
+    OPEN o_items FOR
+      SELECT a.article_title,
+             a.article_lang,
+             uc.user_login,
+             ue.user_login,
+             (SELECT listagg(c.category_id, ',') within GROUP(ORDER BY c.category_id)
+                FROM category_article_link c
+               WHERE c.article_id = a.article_id) article_category
+        FROM article a
+       INNER JOIN users uc
+          ON uc.user_id = a.article_creator_id
+        LEFT JOIN users ue
+          ON ue.user_id = a.article_editor_id
+       WHERE (i_article_status_id IS NULL OR
+             a.article_status_id = i_article_status_id);
+  
+    RETURN v_error_id;
+  EXCEPTION
+    WHEN pkg_users.insufficient_privileges THEN
+      v_error_id := 1004;
+      RETURN v_error_id;
+  END get_editor_article_list;
+
 END pkg_article;
+/

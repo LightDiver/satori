@@ -1,12 +1,11 @@
 package main.lightdiver.skim.DAO;
 
 import main.lightdiver.skim.entity.Article;
+import main.lightdiver.skim.entity.UsersAction;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class ArticleDAO {
@@ -199,4 +198,50 @@ public class ArticleDAO {
         }
         return res;
     }
+
+
+    public static int getEditorArticleList(String userSession, String userKey, String ipAddress, Integer statusID, List<Article> outListArticle) throws BaseNotConnect {
+        Connection con = ConnectionPool.takeConn();
+        CallableStatement cs = null;
+        outListArticle.clear();
+        int res = -1;
+        try {
+            cs = con.prepareCall("{? = call pkg_article.get_editor_article_list(?, ?, ?, ?, ?)}");
+
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2, userSession);
+            cs.setString(3, userKey);
+            cs.setString(4, ipAddress);
+            if(statusID==null) cs.setNull(5,Types.INTEGER) ;else cs.setInt(5, statusID);
+            cs.registerOutParameter(6, ConnectionPool.TypeCursor());
+
+            cs.execute();
+
+            res = cs.getInt(1);
+            if (res == 0) {
+                ResultSet rset = (ResultSet)cs.getObject(6);
+                while (rset.next ()){
+                    Article article = new Article();
+                    article.setTitle(rset.getString(1));
+                    article.setLang(rset.getString(2));
+                    article.setCreator(rset.getString(3));
+                    article.setEditor(rset.getString(4));
+                    //get Cat
+
+                    outListArticle.add(article);
+
+                }
+            }
+            cs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            logger.severe("" + e);
+        }
+        finally {
+            ConnectionPool.putConn(con);
+        }
+        return res;
+    }
+
 }

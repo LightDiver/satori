@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:a4j="http://richfaces.org/a4j"
+                template="../templates/userTemplate1.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{sessionBean.canVisitPage}"/>
+    </f:metadata>
+    <ui:define name="content">
+        <h:form id="formEditorReadyArticle">
+            <rich:dataTable value="#{articleBean.editorReadyEdit}" var="readyarticle" id="table" rows="10" styleClass="stable">
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['input.namearticle']}" />
+                    </f:facet>
+                    <h:outputText value="#{readyarticle.title}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['input.articlelang']}" />
+                    </f:facet>
+                    <h:outputText value="#{readyarticle.lang}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.creator']}" />
+                    </f:facet>
+                    <h:outputText value="#{readyarticle.creator}" />
+                </rich:column>
+                <f:facet name="footer">
+                    <rich:dataScroller />
+                </f:facet>
+            </rich:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

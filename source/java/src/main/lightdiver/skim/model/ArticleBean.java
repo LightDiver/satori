@@ -1,5 +1,7 @@
 package main.lightdiver.skim.model;
 
+import main.lightdiver.skim.ManagerContent;
+import main.lightdiver.skim.entity.Article;
 import main.lightdiver.skim.entity.Category;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +17,9 @@ import java.util.ResourceBundle;
 @ViewScoped
 public class ArticleBean {
     private List<Category> category;
+    private List<Article> editorMyListEdit;
+    private List<Article> editorReadyEdit;
+    private List<Article> editorForeignEdit;
 
     @PostConstruct
     public void init(){
@@ -28,11 +33,41 @@ public class ArticleBean {
         category.add(new Category(4,msg.getString("cata.interestingmathematics")));
     }
 
+    public void loadEditorMyListEdit(){
+        if (editorReadyEdit == null) editorReadyEdit = new ArrayList<>();
+        ManagerContent.getEditorArticleList(3, editorReadyEdit);
+    }
+
     public List<Category> getCategory() {
         return category;
     }
 
     public void setCategory(List<Category> category) {
         this.category = category;
+    }
+
+    public List<Article> getEditorMyListEdit() {
+        return editorMyListEdit;
+    }
+
+    public void setEditorMyListEdit(List<Article> editorMyListEdit) {
+        this.editorMyListEdit = editorMyListEdit;
+    }
+
+    public List<Article> getEditorReadyEdit() {
+        if (editorReadyEdit == null) loadEditorMyListEdit();
+        return editorReadyEdit;
+    }
+
+    public void setEditorReadyEdit(List<Article> editorReadyEdit) {
+        this.editorReadyEdit = editorReadyEdit;
+    }
+
+    public List<Article> getEditorForeignEdit() {
+        return editorForeignEdit;
+    }
+
+    public void setEditorForeignEdit(List<Article> editorForeignEdit) {
+        this.editorForeignEdit = editorForeignEdit;
     }
 }

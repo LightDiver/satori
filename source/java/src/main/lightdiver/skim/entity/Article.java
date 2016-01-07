@@ -5,6 +5,8 @@ public class Article {
     private String title;
     private String shortContent;
     private String content;
+    private String creator;
+    private String editor;
     private String lang;
     private Integer status;
     private Integer[] categoryIDList;
@@ -64,5 +66,21 @@ public class Article {
 
     public void setShortContent(String shortContent) {
         this.shortContent = shortContent;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public String getEditor() {
+        return editor;
+    }
+
+    public void setEditor(String editor) {
+        this.editor = editor;
     }
 }

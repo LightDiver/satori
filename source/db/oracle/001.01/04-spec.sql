@@ -218,8 +218,7 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                                         o_article_lang     OUT article.article_lang%TYPE,
                                         o_article_category OUT VARCHAR2)
     RETURN error_desc.error_desc_id%TYPE;
-    
-    
+
   /* Повернути статтю яка в статусі Редагування редактором за умови що редактором він і є
   Помилки:
                    1004 - Недостатньо повноважень
@@ -236,6 +235,19 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                                    o_article_content  OUT article.article_content%TYPE,
                                    o_article_lang     OUT article.article_lang%TYPE,
                                    o_article_category OUT VARCHAR2)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Повернути статті яка в певному статусі або всі якщо null 
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+  */
+  FUNCTION get_editor_article_list(i_session_id        user_session.session_id%TYPE,
+                                   i_key_id            user_session.key_id%TYPE,
+                                   i_terminal_ip       user_session.terminal_ip%TYPE,
+                                   i_article_status_id article.article_status_id%TYPE,
+                                   o_items             OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE;
 
 END pkg_article;
