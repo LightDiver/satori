@@ -31,6 +31,8 @@ public class ArticleEditBean {
     private boolean rulesok = false;
     private List<Category> selectedCategory;
 
+    private int typePage;
+
     @ManagedProperty("#{sessionBean}")
     private SessionBean sessionBean;
 
@@ -42,9 +44,66 @@ public class ArticleEditBean {
 
     @PostConstruct
     public void init(){
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        System.out.println("init ArticleEditBean " + " PhaseId=" + facesContext.getCurrentPhaseId());
+
         language = localizationBean.getLanguage();
+        catchArticleID();
+
     }
 
+    private void catchArticleID(){
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        System.out.println("catchArticleID " + " PhaseId=" + facesContext.getCurrentPhaseId());
+
+        if (isWorkEditor()) typePage = 0; else typePage = 1;
+
+        System.out.println("sessionBean="+sessionBean);
+        System.out.println("typePage="+typePage + "uEditor="+sessionBean.uEditor+" uAdmin="+sessionBean.uAdmin);
+
+        Article article = new Article();
+        err = -1;
+        if (typePage == 0) {//Якщо працює редактор, то взяти с GET запиту id
+            //FacesContext facesContext = FacesContext.getCurrentInstance();
+            String idA = facesContext.getExternalContext().getRequestParameterMap().get("id");
+            if (idA != null && idA.length() > 0) {
+                err = ManagerContent.getEditorArticle(idA, article);
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Незаданий параметр id", "Незаданий параметр id"));
+            }
+        }else {//користувач підгружає або створюэ "пустишку"
+            System.out.println("idArticle="+idArticle);
+            if (idArticle == null || idArticle == 0) {
+                err = ManagerContent.getMyActiveArticle(article);
+                System.out.println("ManagerContent.getMyActiveArticle(article)=" + err);
+                if (err != 0) {
+                    if (ManagerContent.createArticle(article, nameArticle, shortValue, value, language.getLangName().toUpperCase()) == 0) {
+                        System.out.println("ManagerContent.createArticle=0");
+                        idArticle = article.getArticleId();
+                    }
+                    else {
+                        System.out.println("ManagerContent.createArticle <> 0");
+                        FacesContext.getCurrentInstance().addMessage(null,
+                                new FacesMessage(FacesMessage.SEVERITY_ERROR, "err=" + err, "err=" + err));
+                    }
+                }
+            }
+        }
+        if ( err == 0) {
+            System.out.println("if ( err == 0) {");
+            idArticle = article.getArticleId();
+            nameArticle = article.getTitle();
+            shortValue = article.getShortContent();
+            value = article.getContent();
+            language = LocalizationBean.getLanguageByISO(article.getLang().toLowerCase());
+            selectedCategory = getCategoryObjList(article.getCategoryIDList());
+        }else {FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "err=" + err, "err=" + err));
+            System.out.println("else if ( err == 0) {");
+        }
+        System.out.println("END catchArticleID=" + idArticle);
+    }
 
     private void edit(boolean shortEdit){
 
@@ -195,42 +254,6 @@ public class ArticleEditBean {
     }
 
     public Integer getIdArticle() {
-        if (idArticle == null || idArticle == 0) {
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            String idA = facesContext.getExternalContext().getRequestParameterMap().get("id");
-
-            Article article = new Article();
-
-            if (getWorkEditor()) {//Якщо працює редактор, то взяти с GET запиту id
-                if (idA != null && idA.length()>0){
-                    err = ManagerContent.getEditorArticle(idA, article);
-                }
-                else {
-                    return -1;//стрьомна ситуація
-                }
-            }else{//користувач підгружає або створюэ "пустишку"
-                err = ManagerContent.getMyActiveArticle(article);
-                if ( err != 0) {
-                                if (ManagerContent.createArticle(article, nameArticle, shortValue, value, language.getLangName().toUpperCase()) == 0)
-                        idArticle = article.getArticleId();
-                    else {
-                        FacesContext.getCurrentInstance().addMessage(null,
-                                new FacesMessage(FacesMessage.SEVERITY_ERROR, "err=" + err, "err=" + err));
-                    }
-                }
-            }
-
-            if ( err == 0) {
-                idArticle = article.getArticleId();
-                nameArticle = article.getTitle();
-                shortValue = article.getShortContent();
-                value = article.getContent();
-                language = LocalizationBean.getLanguageByISO(article.getLang().toLowerCase());
-                selectedCategory = getCategoryObjList(article.getCategoryIDList());
-            }
-        }
-
-
         return idArticle;
     }
 
@@ -327,22 +350,31 @@ public class ArticleEditBean {
         return "";
     }
 
-    public boolean getWorkEditor(){
+    public int getTypePage() {
+        return typePage;
+    }
+
+    public void setTypePage(int typePage) {
+        this.typePage = typePage;
+    }
+
+    public boolean isWorkEditor(){
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         String uri=request.getRequestURI();
-        //String idA = facesContext.getExternalContext().getRequestParameterMap().get("id");
-        //System.out.println(uri);
-        //System.out.println(idA);
+
+        System.out.println(uri);
+
 
         FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 
-        if (uri.equals("/view/editor/editarticle.xhtml") && sessionBean.uEditor){
+        if (uri.equals("/view/editoreditarticle.xhtml") && sessionBean.uEditor){
             rulesok = true;
             return true;
         }
         else return false;
 
     }
+
 
 }

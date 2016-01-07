@@ -13,11 +13,13 @@
     </c:if>
     <c:if test="#{sessionBean.uLogin}">
          <h:form id="add_article">
-            <h:panelGrid columns="2">
-                <h:selectBooleanCheckbox id="rulesok" value="#{articleEditBean.rulesok}" required="true" disabled="#{articleEditBean.getWorkEditor()}">
+             <rich:messages />
+             <h:panelGrid columns="2">
+                <h:selectBooleanCheckbox id="rulesok" value="#{articleEditBean.rulesok}" required="true" disabled="#{articleEditBean.typePage == 0}">
                     <h:outputLabel value="#{text['input.checkbox.rulesok']}"/>
                 </h:selectBooleanCheckbox>
                 <rich:message id="mes_rulesok" for="rulesok" />
+
 
                 <h:panelGroup>
                     <h:outputLabel value="#{text['input.articlelang']}:" />
@@ -113,8 +115,6 @@
                 </f:facet>
             </rich:editor>
 
-            <rich:messages />
-
             <rich:panel >
                 <f:facet name="header">
                     <h:outputText value="#{text['input.articlecat']}: " />
@@ -128,6 +128,7 @@
             </rich:panel>
 
             <h:commandButton action="#{articleEditBean.saveToPublic}" value="#{text['butt.public']}" />
+             <rich:messages />
         </h:form>
 
 

@@ -1,11 +1,10 @@
 package main.lightdiver.skim.model;
 
-import org.primefaces.event.SelectEvent;
-import org.primefaces.model.mindmap.DefaultMindmapNode;
-import org.primefaces.model.mindmap.MindmapNode;
 
-import javax.enterprise.context.SessionScoped;
+
+
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 
 /**

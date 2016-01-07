@@ -32,7 +32,7 @@ public class ArticleDAO {
             cs.execute();
             res = cs.getInt(1);
             if (res == 0){
-                outArticle.setArticleId(cs.getInt(1));
+                outArticle.setArticleId(cs.getInt(5));
             }
             cs.close();
             return res;

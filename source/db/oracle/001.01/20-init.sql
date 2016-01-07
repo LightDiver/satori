@@ -56,6 +56,9 @@ INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(20, 'Редагування статті',NULL);
 INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(21, 'Редагування статті редактором',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(22, 'editor/editarticle.xhtml',NULL);
+
 
 
                                                   
@@ -122,6 +125,7 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,13);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,16);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,18);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,21);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,22);
 
 --Special users
 INSERT INTO users(user_id,user_login, user_pass, user_name, user_email, state_id, r_date, lang_id, user_sex)

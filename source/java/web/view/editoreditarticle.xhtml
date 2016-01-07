@@ -2,12 +2,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-                template="../../templates/userTemplate1.xhtml">
+                template="../templates/userTemplate1.xhtml">
     <f:metadata>
         <f:viewAction action="#{sessionBean.canVisitPage}"/>
     </f:metadata>
     <ui:define name="content">
-        <h:outputLabel value="Стаття до опрацювання: " style="color: #5af047;font-style: italic"/>
+        <h:outputLabel value="Стаття до опрацювання: " style="color: #2e6ff0;font-style: italic"/>
         <ui:include src="formarticle.xhtml"/>
     </ui:define>
 </ui:composition>
