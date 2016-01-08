@@ -174,9 +174,17 @@ create table ARTICLE
   article_creator_id  NUMBER(18) not null,
   article_public_date TIMESTAMP(6),
   article_editor_id   NUMBER(18),
+  article_edit_date   TIMESTAMP(6),
   article_lang        VARCHAR2(2),
+  article_comment     VARCHAR2(255),
   constraint ARTICLE_ID_PK primary key (ARTICLE_ID)
 );
+comment on column ARTICLE.article_create_date
+  is 'Дата створення або дата відправки на перегляд редактору(момент Готовий до публікації)';
+comment on column ARTICLE.article_edit_date
+  is 'Дата останнього редагування редактором';
+comment on column ARTICLE.article_comment
+  is 'Коментар при зміні статусу при поверненні на доопрацювання';
 
 create table CATEGORY_ARTICLE
 (

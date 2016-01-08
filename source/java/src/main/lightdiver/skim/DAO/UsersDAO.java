@@ -300,6 +300,7 @@ public class UsersDAO {//а навіщо такий конструктор?
                 HashMap<String, String> userR = new HashMap<>();
                 ResultSet rset = (ResultSet)cs.getObject(13);
                 while (rset.next ()){
+                    //System.out.println(rset.getString(3) + ":" + rset.getString(2));
                     userR.put(rset.getString(3), rset.getString(2));
                 }
                 user.setUserRoles(userR);

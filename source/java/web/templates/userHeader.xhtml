@@ -78,7 +78,7 @@
         </c:if>
         <c:if test = "#{sessionBean.uLogin}">
             <p:panelGrid columns="2" columnClasses="section4,section5" width="100%" style="border-collapse:collapse;border-spacing:0;">
-                <c:if test = "#{sessionBean.uAdmin}">
+                <c:if test = "#{sessionBean.uAdmin || sessionBean.uEditor}">
                     <ui:include src = "userAdminHeaderMenu.xhtml" />
                 </c:if>
                 <h:panelGroup>

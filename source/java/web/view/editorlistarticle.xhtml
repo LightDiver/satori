@@ -10,8 +10,80 @@
         <f:viewAction action="#{sessionBean.canVisitPage}"/>
     </f:metadata>
     <ui:define name="content">
+        #{text['content.article.editor']}
+
+        <h:form id="formEditorMyArticle">
+        <rich:panel header="#{text['hint.article.checking']}" style="background-color: inherit">
+            <rich:message for="formEditorMyArticle"/>
+            <rich:dataTable value="#{articleBean.editorMyListEdit}" var="myarticle" id="tableMy" rows="5" styleClass="stable">
+                <rich:column>
+                    <f:facet name="header">#</f:facet>
+                    <h:outputText value="#{myarticle.articleId}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['input.namearticle']}" />
+                    </f:facet>
+                    <h:outputText value="#{myarticle.title}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['input.articlelang']}" />
+                    </f:facet>
+                    <h:outputText value="#{myarticle.lang}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.creator']}" />
+                    </f:facet>
+                    <h:outputText value="#{myarticle.creator}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.createdate']}" />
+                    </f:facet>
+                    <h:outputText  value="#{myarticle.createDate}" >
+                        <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.editdate']}" />
+                    </f:facet>
+                    <h:outputText  value="#{myarticle.editDate}" >
+                        <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column>
+                    <h:outputLink value="editoreditarticle.xhtml?id=#{myarticle.articleId}" styleClass="ui-commandlink">#{text['hint.edit']}</h:outputLink>
+                    <a4j:commandLink styleClass="no-decor" execute="@this"
+                                     oncomplete="#{rich:component('confirmPaneRedo')}.show()">
+                        <h:graphicImage value="/resources/images/content/redo_ready.png" alt="redo" title="#{text['hint.article.redoready']}"/>
+                        <a4j:param value="#{myarticle.articleId}" assignTo="#{articleEditBean.currSelIDArticle}" />
+                    </a4j:commandLink>
+                </rich:column>
+                <f:facet name="footer">
+                    <rich:dataScroller />
+                </f:facet>
+            </rich:dataTable>
+        </rich:panel>
+
+            <rich:popupPanel id="confirmPaneRedo" autosized="true">
+                #{text['hint.article.redoready.quest']}
+                <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPaneRedo')}.hide(); return false;" />
+                <a4j:commandButton render="tableMy,table" value="Ok" action="#{articleEditBean.redoToReadyPublic()}" onclick="#{rich:component('confirmPaneRedo')}.hide();" />
+            </rich:popupPanel>
+
+        </h:form>
+
         <h:form id="formEditorReadyArticle">
-            <rich:dataTable value="#{articleBean.editorReadyEdit}" var="readyarticle" id="table" rows="10" styleClass="stable">
+            <rich:panel header="#{text['hint.article.readyedit']}" style="background-color: inherit">
+                <rich:message for="formEditorReadyArticle"/>
+            <rich:dataTable value="#{articleBean.editorReadyEdit}" var="readyarticle" id="table" rows="5" styleClass="stable">
+                <rich:column>
+                    <f:facet name="header">#</f:facet>
+                    <h:outputText value="#{readyarticle.articleId}" />
+                </rich:column>
                 <rich:column>
                     <f:facet name="header">
                         <h:outputText value="#{text['input.namearticle']}" />
@@ -30,10 +102,103 @@
                     </f:facet>
                     <h:outputText value="#{readyarticle.creator}" />
                 </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.createdate']}" />
+                    </f:facet>
+                    <h:outputText  value="#{readyarticle.createDate}" >
+                        <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column>
+                    <a4j:commandLink styleClass="no-decor" execute="@this"
+                                     oncomplete="#{rich:component('confirmPane')}.show()">
+                        <h:graphicImage value="/resources/images/content/edit-user.png" alt="edit" title="#{text['hint.article.ieditor']}"/>
+                        <a4j:param value="#{readyarticle.articleId}" assignTo="#{articleEditBean.currSelIDArticle}" />
+                    </a4j:commandLink>
+                </rich:column>
                 <f:facet name="footer">
                     <rich:dataScroller />
                 </f:facet>
             </rich:dataTable>
+            </rich:panel>
+
+            <rich:popupPanel id="confirmPane" autosized="true">
+                #{text['hint.article.ieditor.quest']}
+                <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPane')}.hide(); return false;" />
+                <a4j:commandButton render="tableMy,table" value="Ok" action="#{articleEditBean.iWillEdit()}" onclick="#{rich:component('confirmPane')}.hide();" />
+            </rich:popupPanel>
+
         </h:form>
+
+        <h:form id="formEditorForeign">
+            <rich:panel header="#{text['hint.article.foreigncheck']}" style="background-color: inherit">
+                <rich:message for="formEditorForeign"/>
+                <rich:dataTable value="#{articleBean.editorForeignEdit}" var="foreignarticle" id="tableForeign" rows="5" styleClass="stable">
+                    <rich:column>
+                        <f:facet name="header">#</f:facet>
+                        <h:outputText value="#{foreignarticle.articleId}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['input.namearticle']}" />
+                        </f:facet>
+                        <h:outputText value="#{foreignarticle.title}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['input.articlelang']}" />
+                        </f:facet>
+                        <h:outputText value="#{foreignarticle.lang}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['hint.article.creator']}" />
+                        </f:facet>
+                        <h:outputText value="#{foreignarticle.creator}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['hint.article.editor']}" />
+                        </f:facet>
+                        <h:outputText value="#{foreignarticle.editor}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['hint.article.createdate']}" />
+                        </f:facet>
+                        <h:outputText  value="#{foreignarticle.createDate}" >
+                            <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                        </h:outputText>
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['hint.article.editdate']}" />
+                        </f:facet>
+                        <h:outputText  value="#{foreignarticle.editDate}" >
+                            <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                        </h:outputText>
+                    </rich:column>
+                    <rich:column>
+                        <a4j:commandLink styleClass="no-decor" execute="@this"
+                                         oncomplete="#{rich:component('confirmPaneForeign')}.show()">
+                            <h:graphicImage value="/resources/images/content/edit-user.png" alt="take" title="#{text['hint.article.ieditor']}"/>
+                            <a4j:param value="#{foreignarticle.articleId}" assignTo="#{articleEditBean.currSelIDArticle}" />
+                        </a4j:commandLink>
+                    </rich:column>
+                    <f:facet name="footer">
+                        <rich:dataScroller />
+                    </f:facet>
+                </rich:dataTable>
+            </rich:panel>
+
+            <rich:popupPanel id="confirmPaneForeign" autosized="true">
+                #{text['hint.article.ieditor.quest']}
+                <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPaneForeign')}.hide(); return false;" />
+                <a4j:commandButton render="tableMy,tableForeign" value="Ok" action="#{articleEditBean.iWillEdit()}" onclick="#{rich:component('confirmPaneForeign')}.hide();" />
+            </rich:popupPanel>
+
+        </h:form>
+
     </ui:define>
 </ui:composition>

@@ -20,6 +20,8 @@ public class ArticleBean {
     private List<Article> editorMyListEdit;
     private List<Article> editorReadyEdit;
     private List<Article> editorForeignEdit;
+    private List<Article> previewArticle;
+    private Article readArticle;
 
     @PostConstruct
     public void init(){
@@ -33,9 +35,36 @@ public class ArticleBean {
         category.add(new Category(4,msg.getString("cata.interestingmathematics")));
     }
 
-    public void loadEditorMyListEdit(){
+    public void loadArticle(){
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        String idA = facesContext.getExternalContext().getRequestParameterMap().get("id");
+        int err;
+        if (idA != null && idA.length() > 0) {
+            if (readArticle == null) readArticle = new Article();
+            err = ManagerContent.getArticle(idA, readArticle);
+        } else {
+            err = 1;
+        }
+    }
+
+    public void loadEditorReadyEdit(){
         if (editorReadyEdit == null) editorReadyEdit = new ArrayList<>();
-        ManagerContent.getEditorArticleList(3, editorReadyEdit);
+        ManagerContent.getEditorArticleList(3,null, editorReadyEdit);
+    }
+    public void loadEditorMyListEdit(){
+        if (editorMyListEdit == null) editorMyListEdit = new ArrayList<>();
+        ManagerContent.getEditorArticleList(2,1, editorMyListEdit);
+    }
+    public void loadEditorForeignEdit(){
+        if (editorForeignEdit == null) editorForeignEdit = new ArrayList<>();
+        ManagerContent.getEditorArticleList(2,2, editorForeignEdit);
+    }
+
+    public void loadPreviewArticle(){
+       // System.out.println("start loadPreviewArticle");
+        if (previewArticle == null) previewArticle = new ArrayList<>();
+        ManagerContent.getPublicArticleList(previewArticle);
+       // System.out.println("end loadPreviewArticle="+previewArticle.size());
     }
 
     public List<Category> getCategory() {
@@ -47,6 +76,7 @@ public class ArticleBean {
     }
 
     public List<Article> getEditorMyListEdit() {
+        if (editorMyListEdit == null) loadEditorMyListEdit();
         return editorMyListEdit;
     }
 
@@ -55,7 +85,7 @@ public class ArticleBean {
     }
 
     public List<Article> getEditorReadyEdit() {
-        if (editorReadyEdit == null) loadEditorMyListEdit();
+        if (editorReadyEdit == null) loadEditorReadyEdit();
         return editorReadyEdit;
     }
 
@@ -64,10 +94,28 @@ public class ArticleBean {
     }
 
     public List<Article> getEditorForeignEdit() {
+        if (editorForeignEdit == null) loadEditorForeignEdit();
         return editorForeignEdit;
     }
 
     public void setEditorForeignEdit(List<Article> editorForeignEdit) {
         this.editorForeignEdit = editorForeignEdit;
+    }
+
+    public List<Article> getPreviewArticle() {
+        if (previewArticle == null) loadPreviewArticle();
+        return previewArticle;
+    }
+
+    public void setPreviewArticle(List<Article> previewArticle) {
+        this.previewArticle = previewArticle;
+    }
+
+    public Article getReadArticle() {
+        return readArticle;
+    }
+
+    public void setReadArticle(Article readArticle) {
+        this.readArticle = readArticle;
     }
 }

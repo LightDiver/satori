@@ -3,6 +3,7 @@ package main.lightdiver.skim.DAO;
 import main.lightdiver.skim.entity.Article;
 import main.lightdiver.skim.entity.UsersAction;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
+import main.lightdiver.skim.exceptions.ErrorInBase;
 
 import java.sql.*;
 import java.util.List;
@@ -45,7 +46,7 @@ public class ArticleDAO {
         return res;
     }
 
-    public static int editArticle(String userSession, String userKey, String ipAddress, Integer articleID, String title,String shortContent, String content, String lang, String categoryIDList ) throws BaseNotConnect {
+    public static int editArticle(String userSession, String userKey, String ipAddress, Integer articleID, String title,String shortContent, String content, String lang, String categoryIDList ) throws BaseNotConnect, ErrorInBase {
         Connection con = ConnectionPool.takeConn();
         CallableStatement cs = null;
         int res = -1;
@@ -69,11 +70,12 @@ public class ArticleDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             logger.severe("" + e);
+            throw new ErrorInBase();
         }
         finally {
             ConnectionPool.putConn(con);
         }
-        return res;
+
     }
 
     public static int getMyActiveArticle(String userSession, String userKey, String ipAddress, Article outArticle) throws BaseNotConnect {
@@ -170,12 +172,12 @@ public class ArticleDAO {
         return res;
     }
 
-    public static int changeStatusArticle(String userSession, String userKey, String ipAddress, Integer articleID, Integer newStatusID) throws BaseNotConnect {
+    public static int changeStatusArticle(String userSession, String userKey, String ipAddress, Integer articleID, Integer newStatusID, String comment) throws BaseNotConnect {
         Connection con = ConnectionPool.takeConn();
         CallableStatement cs = null;
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.change_status_article(?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{? = call pkg_article.change_status_article(?, ?, ?, ?, ?, ?)}");
 
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
@@ -183,6 +185,7 @@ public class ArticleDAO {
             cs.setString(4, ipAddress);
             cs.setInt(5,articleID);
             cs.setInt(6,newStatusID);
+            cs.setString(7, comment);
             cs.execute();
 
             res = cs.getInt(1);
@@ -200,36 +203,142 @@ public class ArticleDAO {
     }
 
 
-    public static int getEditorArticleList(String userSession, String userKey, String ipAddress, Integer statusID, List<Article> outListArticle) throws BaseNotConnect {
+    public static int getEditorArticleList(String userSession, String userKey, String ipAddress, Integer statusID, Integer iEditor, List<Article> outListArticle) throws BaseNotConnect {
         Connection con = ConnectionPool.takeConn();
         CallableStatement cs = null;
         outListArticle.clear();
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_editor_article_list(?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{? = call pkg_article.get_editor_article_list(?, ?, ?, ?, ?,?)}");
 
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
             if(statusID==null) cs.setNull(5,Types.INTEGER) ;else cs.setInt(5, statusID);
-            cs.registerOutParameter(6, ConnectionPool.TypeCursor());
+            if(iEditor==null) cs.setNull(6,Types.INTEGER) ;else cs.setInt(6, iEditor);
+            cs.registerOutParameter(7, ConnectionPool.TypeCursor());
 
             cs.execute();
 
             res = cs.getInt(1);
             if (res == 0) {
-                ResultSet rset = (ResultSet)cs.getObject(6);
+                ResultSet rset = (ResultSet)cs.getObject(7);
                 while (rset.next ()){
                     Article article = new Article();
-                    article.setTitle(rset.getString(1));
-                    article.setLang(rset.getString(2));
-                    article.setCreator(rset.getString(3));
-                    article.setEditor(rset.getString(4));
+                    article.setArticleId(rset.getInt(1));
+                    article.setTitle(rset.getString(2));
+                    article.setLang(rset.getString(3));
+                    article.setCreator(rset.getString(4));
+                    article.setEditor(rset.getString(5));
+                    article.setCreateDate(rset.getTimestamp(6));
+                    article.setPublicDate(rset.getTimestamp(7));
+                    article.setEditDate(rset.getTimestamp(8));
                     //get Cat
 
                     outListArticle.add(article);
 
+                }
+            }
+            cs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            logger.severe("" + e);
+        }
+        finally {
+            ConnectionPool.putConn(con);
+        }
+        return res;
+    }
+
+
+    public static int getPublicArticleList(String userSession, String userKey, String ipAddress, List<Article> outListArticle) throws BaseNotConnect {
+        Connection con = ConnectionPool.takeConn();
+        CallableStatement cs = null;
+        outListArticle.clear();
+        int res = -1;
+        try {
+            cs = con.prepareCall("{? = call pkg_article.get_article_list_public(?, ?, ?, ?)}");
+
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2, userSession);
+            cs.setString(3, userKey);
+            cs.setString(4, ipAddress);
+            cs.registerOutParameter(5, ConnectionPool.TypeCursor());
+
+            cs.execute();
+
+            res = cs.getInt(1);
+            if (res == 0) {
+                ResultSet rset = (ResultSet)cs.getObject(5);
+                while (rset.next ()){
+                    Article article = new Article();
+                    article.setArticleId(rset.getInt(1));
+                    article.setTitle(rset.getString(2));
+                    article.setShortContent(rset.getString(3));
+                    article.setLang(rset.getString(4));
+                    article.setCreator(rset.getString(5));
+                    article.setEditor(rset.getString(6));
+                    article.setCreateDate(rset.getTimestamp(7));
+                    article.setPublicDate(rset.getTimestamp(8));
+                    article.setEditDate(rset.getTimestamp(9));
+                    //get Cat
+
+                    outListArticle.add(article);
+
+                }
+            }
+            cs.close();
+            return res;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            logger.severe("" + e);
+        }
+        finally {
+            ConnectionPool.putConn(con);
+        }
+        return res;
+    }
+
+    public static int getArticle(String userSession, String userKey, String ipAddress, Integer articleID, Article outArticle) throws BaseNotConnect {
+        Connection con = ConnectionPool.takeConn();
+        CallableStatement cs = null;
+        int res = -1;
+        try {
+            cs = con.prepareCall("{? = call pkg_article.get_article(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2, userSession);
+            cs.setString(3, userKey);
+            cs.setString(4, ipAddress);
+            cs.setInt(5, articleID);
+            cs.registerOutParameter(6, Types.VARCHAR);
+            cs.registerOutParameter(7, Types.VARCHAR);
+            cs.registerOutParameter(8, Types.VARCHAR);
+            cs.registerOutParameter(9, Types.VARCHAR);
+            cs.registerOutParameter(10, Types.VARCHAR);
+            cs.registerOutParameter(11, Types.TIMESTAMP);
+            cs.registerOutParameter(12, Types.VARCHAR);
+            cs.execute();
+
+            res = cs.getInt(1);
+            if (res == 0){
+                outArticle.setArticleId(articleID) ;
+                outArticle.setTitle(cs.getString(6));
+                outArticle.setShortContent(cs.getString(7));
+                outArticle.setContent(cs.getString(8));
+                outArticle.setLang(cs.getString(9));
+                outArticle.setCreator(cs.getString(10));
+                outArticle.setPublicDate(cs.getTimestamp(11));
+
+                if (cs.getString(12) != null) {
+                    String[] s = cs.getString(12).split(",");
+                    Integer[] n_val = new Integer[s.length];
+                    for (int i = 0; i < s.length; i++) {
+                        n_val[i] = Integer.parseInt(s[i]);
+                    }
+                    outArticle.setCategoryIDList(n_val);
                 }
             }
             cs.close();

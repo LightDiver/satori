@@ -60,6 +60,11 @@ INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(22, 'editoreditarticle.xhtml',NULL);
 INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(23, 'Список статтей для редактора',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(24, 'Список опублікованих статтей',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(25, 'Опублікована стаття',NULL);
+
 
 
 
@@ -93,6 +98,8 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,17);
 --INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,18);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,19);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,20);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,24);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,25);
 
 --REGISTERED
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,1);
@@ -110,6 +117,8 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,15);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,17);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,19);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,20);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,24);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,25);
 
 --GUEST
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,1);
@@ -177,6 +186,8 @@ INSERT INTO error_desc (error_desc_id, error_desc)
 VALUES (1011, 'Даних немає');--!(select empty)
 INSERT INTO error_desc (error_desc_id, error_desc)
 VALUES (1012, 'Не задано ні заголовку ні тексту статті');
+INSERT INTO error_desc (error_desc_id, error_desc)
+VALUES (1013, 'Не задана причина(більше 5ти символів) зміни статусу статті');
 
 
 

@@ -3,12 +3,31 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 template="../templates/userTemplate1.xhtml">
     <f:metadata>
         <f:viewAction action="#{sessionBean.canVisitPage}"/>
     </f:metadata>
     <ui:define name="content">
         <h2> #{text['menu.article']}</h2>
+
+        <c:forEach items="#{articleBean.previewArticle}" var="preview">
+
+            <rich:panel id="panel" style="background-color: inherit">
+                <f:facet name="header">
+                    #{preview.title}
+                </f:facet>
+                <h:outputText escape="false" value="#{preview.shortContent}" />
+                <h:panelGrid style="width: 100%; text-align: right">
+                    <h:outputLink value="article_read.xhtml?id=#{preview.articleId}" target="_blank" styleClass="ui-commandlink">#{text['butt.readmore']}</h:outputLink>
+                </h:panelGrid>
+                <hr style="margin: 0; width: 100%; height: 1px; background: floralwhite; border: none;" />
+                #{text['hint.article.published']}: #{preview.creator} | #{text['hint.article.categories']}: #{preview.categoryIDList}
+            </rich:panel>
+            <br/>
+        </c:forEach>
+
         <h:outputLink value="addarticle.xhtml" styleClass="ui-commandlink">#{text['butt.addarticle']}</h:outputLink>
     </ui:define>
 </ui:composition>

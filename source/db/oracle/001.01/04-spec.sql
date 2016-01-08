@@ -193,13 +193,14 @@ CREATE OR REPLACE PACKAGE pkg_article IS
           1009 - Параметр _новий статус статті_ задано невірно
           1010 - Зміна статусу статті неможлива
           1011 - Пусто
-       
+          1013 - Не задана причина(більше 5ти символів) зміни статусу статті
        */
   FUNCTION change_status_article(i_session_id         user_session.session_id%TYPE,
                                  i_key_id             user_session.key_id%TYPE,
                                  i_terminal_ip        user_session.terminal_ip%TYPE,
                                  i_article_id         article.article_id%TYPE,
-                                 i_atricle_status_new article.article_status_id%TYPE)
+                                 i_atricle_status_new article.article_status_id%TYPE,
+                                 i_comment            article.article_comment%TYPE)
     RETURN error_desc.error_desc_id%TYPE;
   /* Повернути статтю яка в статусі Редагування автором
   Помилки:
@@ -247,7 +248,40 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                                    i_key_id            user_session.key_id%TYPE,
                                    i_terminal_ip       user_session.terminal_ip%TYPE,
                                    i_article_status_id article.article_status_id%TYPE,
+                                   i_my_working        NUMBER, --1 я редактор, 2-інші, null-неважливо
                                    o_items             OUT SYS_REFCURSOR)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Повернути статті що опубліковані
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+  */
+  FUNCTION get_article_list_public(i_session_id  user_session.session_id%TYPE,
+                                   i_key_id      user_session.key_id%TYPE,
+                                   i_terminal_ip user_session.terminal_ip%TYPE,
+                                   o_items       OUT SYS_REFCURSOR)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Повернути статтю яка в статусі Опублікована
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+               1011 - Пусто
+  */
+  FUNCTION get_article(i_session_id       user_session.session_id%TYPE,
+                       i_key_id           user_session.key_id%TYPE,
+                       i_terminal_ip      user_session.terminal_ip%TYPE,
+                       i_article_id       article.article_id%TYPE,
+                       o_article_title    OUT article.article_title%TYPE,
+                       o_article_short    OUT article.article_short%TYPE,
+                       o_article_content  OUT article.article_content%TYPE,
+                       o_article_lang     OUT article.article_lang%TYPE,
+                       o_creator          OUT VARCHAR2,
+                       o_public_date      OUT article.article_public_date%TYPE,
+                       o_article_category OUT VARCHAR2)
     RETURN error_desc.error_desc_id%TYPE;
 
 END pkg_article;

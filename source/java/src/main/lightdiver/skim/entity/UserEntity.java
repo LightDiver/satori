@@ -2,7 +2,6 @@ package main.lightdiver.skim.entity;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Serj on 11.12.2015.

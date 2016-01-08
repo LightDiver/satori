@@ -304,7 +304,7 @@ public class SessionBean implements Serializable {
 
         //System.out.println("Страница " + uri + " PhaseId=" + facesContext.getCurrentPhaseId());
         //System.out.println(userName + ":" + userSession);
-        String prfUri = "";
+
         switch (uri){
             case "/view/main.xhtml":
                 actionType = 7;
@@ -324,9 +324,8 @@ public class SessionBean implements Serializable {
             case "/view/interest.xhtml":
                 actionType = 13;
                 break;
-            case "/view/editor/editoreditarticle.xhtml":
+            case "/view/editoreditarticle.xhtml":
                 actionType = 22;
-                prfUri = "../";
                 break;
             default:actionType = 10;break;
         }
@@ -343,18 +342,18 @@ public class SessionBean implements Serializable {
                         if (check == 1002) {
                                     userName = null;
                                     userSession = null;
-                                    FacesContext.getCurrentInstance().getExternalContext().redirect(prfUri+"error.xhtml?error=noLogin");
+                                    FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=noLogin");
                         }
                         else {
-                            FacesContext.getCurrentInstance().getExternalContext().redirect(prfUri+"access_denied.xhtml");
+                            FacesContext.getCurrentInstance().getExternalContext().redirect("access_denied.xhtml");
                         }
                     }
                 } catch (FileNotRead fileNotRead) {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect(prfUri+"error.xhtml?error=fileNotRead");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=fileNotRead");
                 } catch (InvalidParameter invalidParameter) {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect(prfUri+"error.xhtml?error=invalidParameter");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=invalidParameter");
                 } catch (BaseNotConnect baseNotConnect) {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect(prfUri+"error.xhtml?error=baseNotConnect");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=baseNotConnect");
                 }
             }
             catch (IOException e) {//try on redirect()

@@ -1,5 +1,7 @@
 package main.lightdiver.skim.entity;
 
+import java.sql.Timestamp;
+
 public class Article {
     private Integer articleId;
     private String title;
@@ -9,6 +11,9 @@ public class Article {
     private String editor;
     private String lang;
     private Integer status;
+    private Timestamp createDate;
+    private Timestamp editDate;
+    private Timestamp publicDate;
     private Integer[] categoryIDList;
 
 
@@ -82,5 +87,29 @@ public class Article {
 
     public void setEditor(String editor) {
         this.editor = editor;
+    }
+
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getEditDate() {
+        return editDate;
+    }
+
+    public void setEditDate(Timestamp editDate) {
+        this.editDate = editDate;
+    }
+
+    public Timestamp getPublicDate() {
+        return publicDate;
+    }
+
+    public void setPublicDate(Timestamp publicDate) {
+        this.publicDate = publicDate;
     }
 }

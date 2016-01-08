@@ -3,6 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:rich="http://richfaces.org/rich">
     <h:outputStylesheet>
         .pic {
@@ -26,7 +27,12 @@
                             <h:outputText value="#{text['menu.header.useradmin.action']}" />
                         </h:panelGroup>
                     </f:facet>
+                    <c:if test = "#{sessionBean.uAdmin}">
                         <rich:menuItem label="#{text['menu.header.useradmin.adminka']}" icon="/resources/images/menu/admin.png" submitMode="client" onclick="document.location.href='admin/ad.xhtml'"/>
+                    </c:if>
+                    <c:if test = "#{sessionBean.uEditor}">
+                        <rich:menuItem label="#{text['menu.header.usereditor.article']}" icon="/resources/images/menu/editorarticle.png" submitMode="client" onclick="document.location.href='editorlistarticle.xhtml'"/>
+                    </c:if>
                 </rich:dropDownMenu>
 
             </rich:toolbar>

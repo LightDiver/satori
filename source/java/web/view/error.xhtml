@@ -20,6 +20,7 @@
         <h:outputText value="Помилка файлу налаштувань" rendered="#{param.error == 'fileNotRead'}" />
         <h:outputText value="Помилка параметрів" rendered="#{param.error == 'invalidParameter'}" />
         <h:outputText value="Помилка доступу до БД" rendered="#{param.error == 'baseNotConnect'}" />
+        <h:outputText value="Запит до БД потерпів повний і безумовний крах. Ой не добре це все." rendered="#{param.error == 'errorInBase'}" />
         <h:outputText value="Не можу увійти до системи або сесія видалена. Спробуйте ще." rendered="#{param.error == 'noLogin'}" />
         <h:outputLink value="main.xhtml" title="Перейти на головну" rendered="#{param.error == 'noLogin'}" >TRY GO</h:outputLink>
     </ui:define>

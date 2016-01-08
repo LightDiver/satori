@@ -130,7 +130,29 @@
                 <rich:message id="mes_category" for="category"/>
             </rich:panel>
 
-            <h:commandButton action="#{articleEditBean.saveToPublic}" value="#{text['butt.public']}" />
+
+                 <c:if test="#{articleEditBean.typePage == 0}">
+                     <h:commandButton action="#{articleEditBean.saveToPublic}" value="#{text['butt.public']}" />
+                     <h:commandButton type="button" onclick="#{rich:component('commentPane')}.show()" value="#{text['butt.returnrevision']}" />
+                 </c:if>
+                 <c:if test="#{articleEditBean.typePage == 1}">
+                     <h:commandButton action="#{articleEditBean.saveToReadyPublic}" value="#{text['butt.public']}" />
+                 </c:if>
+
+                 <rich:popupPanel header="Вкажіть причину" id="commentPane" domElementAttachment="parent" width="400" height="100">
+                     <h:panelGrid columns="2" id="Grid">
+                         <h:panelGroup>
+                         <h:inputTextarea id="comment" cols="50" a:maxlength="250" value="#{articleEditBean.comment}"  />
+                         <rich:message id="msg_comment" for="comment" />
+                         </h:panelGroup>
+                         <h:panelGroup>
+                         <a4j:commandButton value="Ok" action="#{articleEditBean.returnRevision}"
+                                        onclick="#{rich:component('commentPane')}.hide();" />
+                         <a4j:commandButton value="Cancel" onclick="#{rich:component('commentPane')}.hide(); return false;" />
+                         </h:panelGroup>
+                     </h:panelGrid>
+                 </rich:popupPanel>
+
              <rich:messages />
              </c:if>
         </h:form>

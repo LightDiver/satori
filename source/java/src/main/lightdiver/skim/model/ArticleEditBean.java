@@ -4,6 +4,8 @@ import main.lightdiver.skim.ManagerContent;
 import main.lightdiver.skim.entity.Article;
 import main.lightdiver.skim.entity.Category;
 import main.lightdiver.skim.entity.Language;
+import main.lightdiver.skim.exceptions.BaseNotConnect;
+import main.lightdiver.skim.exceptions.ErrorInBase;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -12,6 +14,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -32,6 +35,9 @@ public class ArticleEditBean {
     private List<Category> selectedCategory;
 
     private int typePage;
+
+    private int currSelIDArticle;
+    private String comment;
 
     @ManagedProperty("#{sessionBean}")
     private SessionBean sessionBean;
@@ -117,7 +123,24 @@ public class ArticleEditBean {
 
     private void edit(boolean shortEdit){
 
-        err = ManagerContent.editArticle(idArticle, nameArticle, shortValue, shortEdit?null:value, language.getLangName().toUpperCase(), shortEdit?null:getCategoryIDList());
+        try {
+            err = ManagerContent.editArticle(idArticle, nameArticle, shortValue, shortEdit?null:value, language.getLangName().toUpperCase(), shortEdit?null:getCategoryIDList());
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+            try {
+                if (!FacesContext.getCurrentInstance().getExternalContext().isResponseCommitted())
+                FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=baseNotConnect");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (ErrorInBase errorInBase) {
+            try {
+                if (!FacesContext.getCurrentInstance().getExternalContext().isResponseCommitted())
+                FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml?error=errorInBase");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         if (err != 0) {
             String text;
@@ -159,7 +182,7 @@ public class ArticleEditBean {
     }
 
     public String validNameArticleAjax(){
-        final String PATTERN_NAME = "^[а-яА-ЯёЁa-zA-Z0-9 іІїЇєЄҐґ.']{1,300}$";
+        final String PATTERN_NAME = "^[а-яА-ЯёЁa-zA-Z0-9 іІїЇєЄҐґ.!,?']{1,300}$";
         Pattern pattern;
         Matcher matcher;
         pattern = Pattern.compile(PATTERN_NAME);
@@ -187,6 +210,77 @@ public class ArticleEditBean {
     }
 
     public String saveToPublic(){
+        ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+
+        if (err != 0){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "err= " + err, "err= " + err));
+            return "#";
+        }
+        if (validNameArticleAjax() != null || validCategoryAjax() != null ){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.refused"), msg.getString("err.refused")));
+            return "#";
+        }
+
+        if ((err=ManagerContent.changeStatusArticleToPublic(idArticle)) !=0 ){
+            String text;
+            switch (err){
+                case 1010:
+                    text = msg.getString("err.db.1010");
+                    break;
+                case 1011:
+                    text = msg.getString("err.db.1011");
+                    break;
+                default:
+                    text = msg.getString("err.refused") + " err=" + err;
+                    break;
+            }
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, text, null));
+            return "#";
+        }else {
+            idArticle = null;
+            return "article.xhtml";
+        }
+
+    }
+
+    public String returnRevision(){
+        System.out.println("returnRevision");
+        ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+
+
+        if (validNameArticleAjax() != null || validCategoryAjax() != null ){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.refused"), msg.getString("err.refused")));
+            return "editoreditarticle.xhtml?id="+idArticle;
+        }
+
+        if ((err=ManagerContent.changeStatusArticleToEditUser(idArticle, comment)) !=0 ){
+            String text;
+            switch (err){
+                case 1010:
+                    text = msg.getString("err.db.1010");
+                    break;
+                case 1011:
+                    text = msg.getString("err.db.1011");
+                    break;
+                default:
+                    text = msg.getString("err.refused") + " err=" + err;
+                    break;
+            }
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, text, null));
+            return "editoreditarticle.xhtml?id="+idArticle;
+        }else {
+            idArticle = null;
+            return "article.xhtml";
+        }
+
+    }
+
+    public String saveToReadyPublic(){
         ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
         if (!rulesok) {
             FacesContext.getCurrentInstance().addMessage("add_article:rulesok",
@@ -226,6 +320,79 @@ public class ArticleEditBean {
             }
 
     }
+
+    public String iWillEdit(){
+        //System.out.println("iWillEdit currSelIDArticle=" + currSelIDArticle);
+        ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+        if (currSelIDArticle == 0) {
+            FacesContext.getCurrentInstance().addMessage("formEditorReadyArticle",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, null, msg.getString("err.idarticle")));
+            return "#";
+        }else{
+            if ((err=ManagerContent.changeStatusArticleToEditEditor(currSelIDArticle)) !=0 ){
+                //System.out.println("err="+err);
+                String text;
+                switch (err){
+                    case 1010:
+                        text = msg.getString("err.db.1010");
+                        break;
+                    case 1011:
+                        text = msg.getString("err.db.1011");
+                        break;
+                    default:
+                        text = msg.getString("err.refused") + " err=" + err;
+                        break;
+                }
+                FacesContext.getCurrentInstance().addMessage("formEditorReadyArticle",
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, null, text));
+                return "#";
+            }else {
+                //System.out.println("articleBean.ReadyEdit="+articleBean.getEditorReadyEdit().size());
+                articleBean.loadEditorMyListEdit();
+                articleBean.loadEditorReadyEdit();
+                articleBean.loadEditorForeignEdit();
+                //System.out.println("articleBean.ReadyEdit="+articleBean.getEditorReadyEdit().size());
+            }
+        }
+        return "#";
+    }
+
+    public String redoToReadyPublic(){
+        //System.out.println("redoToReadyPublic currSelIDArticle=" + currSelIDArticle);
+        ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+        if (currSelIDArticle == 0) {
+            FacesContext.getCurrentInstance().addMessage("formEditorMyArticle",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, null, msg.getString("err.idarticle")));
+            return "#";
+        }else{
+            if ((err=ManagerContent.changeStatusArticleToReadyPublic(currSelIDArticle)) !=0 ){
+                //System.out.println("err="+err);
+                String text;
+                switch (err){
+                    case 1010:
+                        text = msg.getString("err.db.1010");
+                        break;
+                    case 1011:
+                        text = msg.getString("err.db.1011");
+                        break;
+                    default:
+                        text = msg.getString("err.refused") + " err=" + err;
+                        break;
+                }
+                FacesContext.getCurrentInstance().addMessage("formEditorMyArticle",
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, null, text));
+                return "#";
+            }else {
+                //System.out.println("articleBean.ReadyEdit="+articleBean.getEditorReadyEdit().size());
+                articleBean.loadEditorMyListEdit();
+                articleBean.loadEditorReadyEdit();
+                articleBean.loadEditorForeignEdit();
+                //System.out.println("articleBean.ReadyEdit="+articleBean.getEditorReadyEdit().size());
+            }
+        }
+        return "#";
+    }
+
 
     public String getValue() {
         return value;
@@ -394,5 +561,19 @@ public class ArticleEditBean {
 
     }
 
+    public int getCurrSelIDArticle() {
+        return currSelIDArticle;
+    }
 
+    public void setCurrSelIDArticle(int currSelIDArticle) {
+        this.currSelIDArticle = currSelIDArticle;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }
