@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 @ManagedBean
 @ViewScoped
 public class ArticleEditBean {
-    private int err;
+    private int err = 0;
+    private boolean errCritical = false;
 
     private String shortValue = null;
     private String value = null;
@@ -67,6 +68,7 @@ public class ArticleEditBean {
         System.out.println("sessionBean="+sessionBean);
         System.out.println("typePage="+typePage + "uEditor="+sessionBean.uEditor+" uAdmin="+sessionBean.uAdmin);
 
+        idArticle = null;
         Article article = new Article();
         err = -1;
         String text = "Невідома помилка";
@@ -78,6 +80,7 @@ public class ArticleEditBean {
                 err = ManagerContent.getEditorArticle(idA, article);
             } else {
                 err = 1;
+                errCritical = true;
             }
         }else {//користувач підгружає створену або створюэ "пустишку"
             System.out.println("idArticle="+idArticle);
@@ -91,15 +94,16 @@ public class ArticleEditBean {
                 }
             }
         }
-        if ( err == 0) {
+        if ( err == 0 && idArticle == null) {
             System.out.println("if ( err == 0) {");
             idArticle = article.getArticleId();
             nameArticle = article.getTitle();
             shortValue = article.getShortContent();
             value = article.getContent();
-            language = LocalizationBean.getLanguageByISO(article.getLang().toLowerCase());
+            language = localizationBean.getLanguageByISO(article.getLang().toLowerCase());
             selectedCategory = getCategoryObjList(article.getCategoryIDList());
-        }else {
+        }
+        if ( err !=0 ){
             ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
             switch (err){
                 case -1:
@@ -575,5 +579,13 @@ public class ArticleEditBean {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isErrCritical() {
+        return errCritical;
+    }
+
+    public void setErrCritical(boolean errCritical) {
+        this.errCritical = errCritical;
     }
 }
