@@ -57,13 +57,19 @@ public class UsersDAO {//а навіщо такий конструктор?
         res.put("key_id", cs.getObject(7));
         res.put("lang_id", cs.getObject(8).toString().equals("UA")?"uk":cs.getObject(8).toString().toLowerCase());
 
-        res.put("is_admin",false);
-        ResultSet rset = (ResultSet)cs.getObject(9);
-        while (rset.next ()){
-            if(rset.getString(3).equals("ADMIN")){
-                res.put("is_admin",true);
+
+            res.put("is_admin",false);
+            res.put("is_editor",false);
+            ResultSet rset = (ResultSet)cs.getObject(9);
+            while (rset.next ()){
+                if(rset.getString(3).equals("ADMIN")){
+                    res.put("is_admin",true);
+                }
+                if(rset.getString(3).equals("EDITOR")){
+                    res.put("is_editor",true);
+                }
             }
-        }
+
             cs.close();
             return res;
         } catch (SQLException e) {

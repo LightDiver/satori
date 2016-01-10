@@ -53,11 +53,11 @@ public class ManagerContent {
         return err;
     }
 
-    public static int changeStatusArticleToReadyPublic(Integer articleID) {
+    public static int changeStatusArticleToReadyPublic(Integer articleID, String comment) {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         int err = -1;
         try {
-            err = ArticleDAO.changeStatusArticle((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), articleID, 3, null);
+            err = ArticleDAO.changeStatusArticle((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), articleID, 3, comment);
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         }

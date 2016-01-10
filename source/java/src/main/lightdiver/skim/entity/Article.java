@@ -15,6 +15,7 @@ public class Article {
     private Timestamp editDate;
     private Timestamp publicDate;
     private Integer[] categoryIDList;
+    private String categoryNameList;
 
 
     public Integer getArticleId() {
@@ -111,5 +112,13 @@ public class Article {
 
     public void setPublicDate(Timestamp publicDate) {
         this.publicDate = publicDate;
+    }
+
+    public String getCategoryNameList() {
+        return categoryNameList;
+    }
+
+    public void setCategoryNameList(String categoryNameList) {
+        this.categoryNameList = categoryNameList;
     }
 }

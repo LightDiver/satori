@@ -28,6 +28,7 @@ public class ArticleEditBean {
     private boolean errCritical = false;
 
     private String shortValue = null;
+    private Integer heightShortValue;
     private String value = null;
     private Language language;
     private String nameArticle;
@@ -214,20 +215,27 @@ public class ArticleEditBean {
     }
 
     public String saveToPublic(){
+        //System.out.println("saveToPublic");
         ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
 
         if (err != 0){
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "err= " + err, "err= " + err));
-            return "#";
+            return null;
         }
         if (validNameArticleAjax() != null || validCategoryAjax() != null ){
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.refused"), msg.getString("err.refused")));
-            return "#";
+            return null;
+        }
+        if (heightShortValue > (250 + (sessionBean.uEditor?10:0))){
+            FacesContext.getCurrentInstance().addMessage("add_article:panel",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, null, msg.getString("err.heightshortarticle")));
+            return null;
         }
 
         if ((err=ManagerContent.changeStatusArticleToPublic(idArticle)) !=0 ){
+            //System.out.println("saveToPublic ERR");
             String text;
             switch (err){
                 case 1010:
@@ -242,8 +250,9 @@ public class ArticleEditBean {
             }
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, text, null));
-            return "#";
+            return null;
         }else {
+            System.out.println("saveToPublic OK");
             idArticle = null;
             return "article.xhtml";
         }
@@ -258,7 +267,7 @@ public class ArticleEditBean {
         if (validNameArticleAjax() != null || validCategoryAjax() != null ){
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.refused"), msg.getString("err.refused")));
-            return "editoreditarticle.xhtml?id="+idArticle;
+            return "#";
         }
 
         if ((err=ManagerContent.changeStatusArticleToEditUser(idArticle, comment)) !=0 ){
@@ -270,16 +279,19 @@ public class ArticleEditBean {
                 case 1011:
                     text = msg.getString("err.db.1011");
                     break;
+                case 1013:
+                    text = msg.getString("err.db.1013");
+                    break;
                 default:
                     text = msg.getString("err.refused") + " err=" + err;
                     break;
             }
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, text, null));
-            return "editoreditarticle.xhtml?id="+idArticle;
+            return "#";
         }else {
             idArticle = null;
-            return "article.xhtml";
+            return "editorlistarticle.xhtml";
         }
 
     }
@@ -301,8 +313,13 @@ public class ArticleEditBean {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.refused"), msg.getString("err.refused")));
             return "#";
         }
+        if (heightShortValue > (250 + (sessionBean.uEditor?10:0))){
+            FacesContext.getCurrentInstance().addMessage("add_article:panel",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, null, msg.getString("err.heightshortarticle")));
+            return "#";
+        }
 
-        if ((err=ManagerContent.changeStatusArticleToReadyPublic(idArticle)) !=0 ){
+        if ((err=ManagerContent.changeStatusArticleToReadyPublic(idArticle, null)) !=0 ){
             String text;
             switch (err){
                 case 1010:
@@ -317,7 +334,7 @@ public class ArticleEditBean {
             }
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, text, null));
-            return "#";
+            return null;
         }else {
                 idArticle = null;
                 return "okarticle.xhtml";
@@ -358,7 +375,7 @@ public class ArticleEditBean {
                 //System.out.println("articleBean.ReadyEdit="+articleBean.getEditorReadyEdit().size());
             }
         }
-        return "#";
+        return null;
     }
 
     public String redoToReadyPublic(){
@@ -369,7 +386,7 @@ public class ArticleEditBean {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, null, msg.getString("err.idarticle")));
             return "#";
         }else{
-            if ((err=ManagerContent.changeStatusArticleToReadyPublic(currSelIDArticle)) !=0 ){
+            if ((err=ManagerContent.changeStatusArticleToReadyPublic(currSelIDArticle,null)) !=0 ){
                 //System.out.println("err="+err);
                 String text;
                 switch (err){
@@ -394,7 +411,7 @@ public class ArticleEditBean {
                 //System.out.println("articleBean.ReadyEdit="+articleBean.getEditorReadyEdit().size());
             }
         }
-        return "#";
+        return null;
     }
 
 
@@ -587,5 +604,13 @@ public class ArticleEditBean {
 
     public void setErrCritical(boolean errCritical) {
         this.errCritical = errCritical;
+    }
+
+    public Integer getHeightShortValue() {
+        return heightShortValue;
+    }
+
+    public void setHeightShortValue(Integer heightShortValue) {
+        this.heightShortValue = heightShortValue;
     }
 }

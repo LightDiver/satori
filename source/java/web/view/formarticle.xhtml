@@ -14,17 +14,31 @@
     <c:if test="#{sessionBean.uLogin}">
         <script type="text/javascript">
             function check_h() {
-                if (document.getElementById('add_article:panel').offsetHeight > 250){
+                if (#{sessionBean.uEditor}){
+                    var v_stock = 10;
+                }
+                else
+                {
+                    var v_stock = 0;
+                }
+                if (document.getElementById('add_article:panel').offsetHeight > (250+v_stock)){
                     document.getElementById('add_article:panel').style.color = "red";
                     document.getElementById('p_panel').style.border = "1px dashed green";
                     document.getElementById('p_panel').style.width = document.getElementById('add_article:panel').offsetWidth+'px';
-                    document.getElementById('p_panel').style.height = '250px';
-
+                    document.getElementById('add_article:heightshort').value = document.getElementById('add_article:panel').offsetHeight;
+                    document.getElementById('p_panel').style.height = 250+v_stock+'px';
+                    document.getElementById('add_article:mes_panel').innerHTML = '&lt;span class=&quot;rf-msg-err&quot; id=&quot;add_article:mes_panel:add_article:panel&quot;&gt;&lt;span class=&quot;rf-msg-det&quot;&gt;' + "#{text['err.heightshortarticle']}" + '&lt;/span&gt;&lt;/span&gt;';
                 }
-                alert("Размер элемента:" + document.getElementById('add_article:panel').offsetWidth +"x"+ document.getElementById('add_article:panel').offsetHeight);
+                else{
+                    document.getElementById('p_panel').style.border = "0px dashed green";
+                    document.getElementById('p_panel').style.width = '1px';
+                    document.getElementById('p_panel').style.height = '1px';
+                    document.getElementById('add_article:mes_panel').innerHTML = "";
+                    document.getElementById('add_article:heightshort').value = document.getElementById('add_article:panel').offsetHeight;
+                }
             }
-            frame.onresize = function(){
-                alert('Размеры div #Test изменены.');
+            window.onload = function () {
+                check_h();
             }
         </script>
          <h:form id="add_article">
@@ -64,7 +78,7 @@
 
             <h:outputLabel value="#{text['hint.article.short']}: "/>
             <rich:editor id="editorshort" lang="#{articleEditBean.language.langISO}" value="#{articleEditBean.shortValue}" style="margin-bottom: 1em">
-                <a4j:ajax event="change" render="panel" status="panelUpdateStatus"/>
+                <a4j:ajax event="change" render="panel" status="panelUpdateStatus" oncomplete="check_h()"/>
                 <a4j:ajax event="dirty" render="panel" status="panelUpdateStatus">
                     <a4j:attachQueue requestDelay="300000" />
                 </a4j:ajax>
@@ -89,7 +103,7 @@
             </rich:editor>
 
             <h:outputLabel value="#{text['hint.preview']}: " />
-                 <div id="p_panel" style="position:absolute;width:710px;height:250px;border:1px dashed yellow"></div>
+                 <div id="p_panel" style="position:absolute;width:1px;height:1px;border:1px dashed darkolivegreen"></div>
 
             <rich:panel id="panel" style="background-color: inherit">
                 <f:facet name="header">
@@ -110,7 +124,8 @@
                 #{text['hint.article.published']}: #{sessionBean.userName} | #{text['hint.article.categories']}: #{articleEditBean.getStringSelectedCategory()}
 
             </rich:panel>
-
+                 <h:inputHidden id="heightshort" value="#{articleEditBean.heightShortValue}"/>
+            <rich:message id="mes_panel" for="panel"/>
 
             <h:outputLabel value="#{text['hint.article.content']}: "/>
             <rich:editor id="editor" lang="#{articleEditBean.language.langISO}" value="#{articleEditBean.value}" style="margin-bottom: 1em">
@@ -153,15 +168,14 @@
 
 
                  <c:if test="#{articleEditBean.typePage == 0}">
-                     <h:commandButton action="#{articleEditBean.saveToPublic}" value="#{text['butt.public']}" />
+                     <h:commandButton action="#{articleEditBean.saveToPublic}" value="#{text['butt.public']}" onclick="check_h()"/>
                      <h:commandButton type="button" onclick="#{rich:component('commentPane')}.show()" value="#{text['butt.returnrevision']}" />
                  </c:if>
                  <c:if test="#{articleEditBean.typePage == 1}">
                      <h:commandButton action="#{articleEditBean.saveToReadyPublic}" value="#{text['butt.public']}" />
                  </c:if>
-                 <h:commandButton type="button" onclick="check_h()" value="test" />
 
-                 <rich:popupPanel header="Вкажіть причину" id="commentPane" domElementAttachment="parent" width="400" height="100">
+                 <rich:popupPanel header="#{text['hint.article.reason']}" id="commentPane" domElementAttachment="parent" width="400" height="100">
                      <h:panelGrid columns="2" id="Grid">
                          <h:panelGroup>
                          <h:inputTextarea id="comment" cols="50" a:maxlength="250" value="#{articleEditBean.comment}"  />

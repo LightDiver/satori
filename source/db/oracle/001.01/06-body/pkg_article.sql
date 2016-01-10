@@ -307,6 +307,15 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
           UPDATE article a
              SET a.article_status_id = i_atricle_status_new
            WHERE a.article_id = i_article_id;
+        ELSIF v_article_status = 4 AND v_user_id = v_article_editor_id THEN
+          IF i_comment IS NULL OR length(i_comment) <= 5 THEN
+            RETURN 1013;
+          END IF;
+          UPDATE article a
+             SET a.article_status_id = i_atricle_status_new,
+                 a.article_comment   = i_comment
+           WHERE a.article_id = i_article_id;
+        
         ELSE
           RETURN 1010;
         END IF;
@@ -317,7 +326,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
            v_is_editor THEN
           UPDATE article a
              SET a.article_status_id   = i_atricle_status_new,
-                 a.article_public_date = localtimestamp
+                 a.article_public_date = localtimestamp,
+                 a.article_comment     = NULL
            WHERE a.article_id = i_article_id;
         ELSE
           RETURN 1010;
@@ -582,7 +592,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                        o_public_date      OUT article.article_public_date%TYPE,
                        o_article_category OUT VARCHAR2)
     RETURN error_desc.error_desc_id%TYPE AS
-    /* Повернути статтю яка в статусі Опублікована
+    /* Повернути статтю яка в статусі Опублікована (або якщо власник чи редактор, то в любому статусі)
     Помилки:
                      1004 - Недостатньо повноважень
                      1002 - Сесія не існує або минула
@@ -617,7 +627,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
            o_public_date
       FROM article a, users uc
      WHERE a.article_id = i_article_id
-       AND a.article_status_id = 4
+       AND (a.article_status_id = 4 OR a.article_creator_id = v_user_id OR
+           a.article_editor_id = v_user_id)
        AND a.article_creator_id = uc.user_id;
   
     SELECT listagg(c.category_id, ',') within GROUP(ORDER BY c.category_id)

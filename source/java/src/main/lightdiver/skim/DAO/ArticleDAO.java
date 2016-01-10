@@ -283,7 +283,15 @@ public class ArticleDAO {
                     article.setCreateDate(rset.getTimestamp(7));
                     article.setPublicDate(rset.getTimestamp(8));
                     article.setEditDate(rset.getTimestamp(9));
-                    //get Cat
+
+                    if (rset.getString(10) != null) {
+                        String[] s = rset.getString(10).split(",");
+                        Integer[] n_val = new Integer[s.length];
+                        for (int i = 0; i < s.length; i++) {
+                            n_val[i] = Integer.parseInt(s[i]);
+                        }
+                        article.setCategoryIDList(n_val);
+                    }
 
                     outListArticle.add(article);
 

@@ -4,29 +4,82 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:rich="http://richfaces.org/rich"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui"
                 template="../templates/userTemplate1.xhtml">
     <f:metadata>
         <f:viewAction action="#{sessionBean.canVisitPage}"/>
     </f:metadata>
     <ui:define name="content">
+        <h:outputStylesheet>
+            .sectl {
+                text-align: left;
+                margin: 0px;
+                padding: 0px;
+            }
+
+            .sectr {
+                text-align: right;
+                margin: 0px;
+                padding: 0px;
+            }
+        </h:outputStylesheet>
         <h2> #{text['menu.article']}</h2>
+        <form id="articlelist">
+            <p:growl id="msgR" showSummary="true" showDetail="true" globalOnly="true" sticky="true" />
+            <h:panelGrid columns="1" width="100%">
+                <a4j:outputPanel id="panel" layout="block">
+                <a4j:repeat value="#{articleBean.previewArticle}" var="preview" rows="10" id="repeat">
+                    <rich:panel style="background-color: inherit">
+                        <f:facet name="header">
+                            #{preview.title}
+                        </f:facet>
+                        <h:outputText escape="false" value="#{preview.shortContent}" />
+                        <h:panelGrid style="width: 100%; text-align: right">
+                            <h:outputLink value="article_read.xhtml?id=#{preview.articleId}" target="_blank" styleClass="ui-commandlink">#{text['butt.readmore']}</h:outputLink>
+                        </h:panelGrid>
 
-        <c:forEach items="#{articleBean.previewArticle}" var="preview">
+                        <hr style="margin: 0; width: 100%; height: 1px; background: floralwhite; border: none;" />
+                        <h:panelGrid columns="2" width="100%" columnClasses="sectl,sectr" style="border-collapse:collapse;border-spacing:0;">
+                            <h:panelGroup>
+                                #{text['hint.article.published']}: #{preview.creator} | #{text['hint.article.categories']}: #{preview.categoryNameList}
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:inputHidden value="#{preview.articleId}"/>
+                                <a4j:commandLink onclick="#{rich:component('confirmPaneRedo')}.show()" execute="@this">
+                                    <h:graphicImage value="/resources/images/content/redo_ready2.png" alt="redo" title="#{text['hint.article.redoready']}"/>
+                                    <a4j:param value="#{preview.articleId}" assignTo="#{articleBean.currSelIDArticle}" />
+                                </a4j:commandLink>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </rich:panel>
+                    <br/>
+                </a4j:repeat>
+                </a4j:outputPanel>
+                <a4j:outputPanel layout="block">
+                    <rich:dataScroller for="repeat" render="panel" fastStep="3"/>
+                </a4j:outputPanel>
+            </h:panelGrid>
 
-            <rich:panel id="panel" style="background-color: inherit">
-                <f:facet name="header">
-                    #{preview.title}
-                </f:facet>
-                <h:outputText escape="false" value="#{preview.shortContent}" />
-                <h:panelGrid style="width: 100%; text-align: right">
-                    <h:outputLink value="article_read.xhtml?id=#{preview.articleId}" target="_blank" styleClass="ui-commandlink">#{text['butt.readmore']}</h:outputLink>
+
+            <rich:popupPanel header="#{text['hint.article.reason']}" id="confirmPaneRedo" domElementAttachment="parent" width="400" height="120">
+                #{text['hint.article.redoready.quest']}
+                <h:panelGrid columns="2" id="Grid">
+                    <h:panelGroup>
+                        <h:inputTextarea id="comment" cols="50" a:maxlength="250" value="#{articleBean.comment}"/>
+                        <rich:message id="msg_comment" for="comment" />
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <a4j:commandButton value="Ok" action="#{articleBean.returnToReadyPublic}" render="panel" execute="confirmPaneRedo"
+                                           onclick="#{rich:component('confirmPaneRedo')}.hide();" />
+                        <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPaneRedo')}.hide(); return false;" />
+                    </h:panelGroup>
                 </h:panelGrid>
-                <hr style="margin: 0; width: 100%; height: 1px; background: floralwhite; border: none;" />
-                #{text['hint.article.published']}: #{preview.creator} | #{text['hint.article.categories']}: #{preview.categoryIDList}
-            </rich:panel>
-            <br/>
-        </c:forEach>
+            </rich:popupPanel>
+            <rich:messages/>
+
+        </form>
 
         <h:outputLink value="addarticle.xhtml" styleClass="ui-commandlink">#{text['butt.addarticle']}</h:outputLink>
     </ui:define>

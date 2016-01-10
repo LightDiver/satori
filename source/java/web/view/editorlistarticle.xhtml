@@ -70,6 +70,7 @@
 
             <rich:popupPanel id="confirmPaneRedo" autosized="true">
                 #{text['hint.article.redoready.quest']}
+                <br/>
                 <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPaneRedo')}.hide(); return false;" />
                 <a4j:commandButton render="tableMy,table" value="Ok" action="#{articleEditBean.redoToReadyPublic()}" onclick="#{rich:component('confirmPaneRedo')}.hide();" />
             </rich:popupPanel>
@@ -125,6 +126,7 @@
 
             <rich:popupPanel id="confirmPane" autosized="true">
                 #{text['hint.article.ieditor.quest']}
+                <br/>
                 <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPane')}.hide(); return false;" />
                 <a4j:commandButton render="tableMy,table" value="Ok" action="#{articleEditBean.iWillEdit()}" onclick="#{rich:component('confirmPane')}.hide();" />
             </rich:popupPanel>
@@ -194,6 +196,7 @@
 
             <rich:popupPanel id="confirmPaneForeign" autosized="true">
                 #{text['hint.article.ieditor.quest']}
+                <br/>
                 <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPaneForeign')}.hide(); return false;" />
                 <a4j:commandButton render="tableMy,tableForeign" value="Ok" action="#{articleEditBean.iWillEdit()}" onclick="#{rich:component('confirmPaneForeign')}.hide();" />
             </rich:popupPanel>

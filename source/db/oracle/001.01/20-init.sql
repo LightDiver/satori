@@ -131,6 +131,8 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,9);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,11);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,12);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,13);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,24);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,25);
 
 --EDITOR
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,16);

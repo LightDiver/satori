@@ -5,7 +5,9 @@ import main.lightdiver.skim.entity.Article;
 import main.lightdiver.skim.entity.Category;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -22,6 +24,11 @@ public class ArticleBean {
     private List<Article> editorForeignEdit;
     private List<Article> previewArticle;
     private Article readArticle;
+    private int currSelIDArticle;
+    private String comment;
+
+    @ManagedProperty("#{localizationBean}")
+    private LocalizationBean localizationBean;
 
     @PostConstruct
     public void init(){
@@ -29,10 +36,26 @@ public class ArticleBean {
         LocalizationBean localizationBean = (LocalizationBean) externalContext.getSessionMap().get("localizationBean");
         ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
         category = new ArrayList<>();
-        category.add(new Category(1,msg.getString("cata.others")));
-        category.add(new Category(2,msg.getString("cata.skimread")));
-        category.add(new Category(3,msg.getString("cata.attentionmemory")));
-        category.add(new Category(4,msg.getString("cata.interestingmathematics")));
+        category.add(new Category(1, msg.getString("cata.others")));
+        category.add(new Category(2, msg.getString("cata.skimread")));
+        category.add(new Category(3, msg.getString("cata.attentionmemory")));
+        category.add(new Category(4, msg.getString("cata.interestingmathematics")));
+    }
+
+    public String convStringCategory(Integer[] listIDCategory) {
+        if (listIDCategory!= null && listIDCategory.length > 0){
+            String stringSelectedCategory = "";
+            for (int i = 0; i < listIDCategory.length; i++) {
+                for(Category cat : category){
+                    if(listIDCategory[i] == cat.getCategoryId()){
+                        stringSelectedCategory = stringSelectedCategory + cat.getCategoryName() + ",";
+                        break;
+                    }
+                }
+            }
+            return stringSelectedCategory.substring(0, stringSelectedCategory.length() - 1);
+        }
+        return "";
     }
 
     public void loadArticle(){
@@ -42,6 +65,7 @@ public class ArticleBean {
         if (idA != null && idA.length() > 0) {
             if (readArticle == null) readArticle = new Article();
             err = ManagerContent.getArticle(idA, readArticle);
+            if (err==0) readArticle.setCategoryNameList(convStringCategory(readArticle.getCategoryIDList()));
         } else {
             err = 1;
         }
@@ -63,7 +87,11 @@ public class ArticleBean {
     public void loadPreviewArticle(){
        // System.out.println("start loadPreviewArticle");
         if (previewArticle == null) previewArticle = new ArrayList<>();
-        ManagerContent.getPublicArticleList(previewArticle);
+        if (ManagerContent.getPublicArticleList(previewArticle)==0){
+         for (Article art: previewArticle){
+             art.setCategoryNameList(convStringCategory(art.getCategoryIDList()));
+         }
+        }
        // System.out.println("end loadPreviewArticle="+previewArticle.size());
     }
 
@@ -107,6 +135,51 @@ public class ArticleBean {
         return previewArticle;
     }
 
+    public String returnToReadyPublic(){
+        System.out.println("returnToReadyPublic: currSelIDArticle="+currSelIDArticle + " commnet="+comment);
+        ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+
+        if (currSelIDArticle == 0 || comment == null || comment.length() == 0){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.db.1013"), msg.getString("err.db.1013")));
+            return "#";
+        }
+
+        int err;
+
+        if ((err=ManagerContent.changeStatusArticleToReadyPublic(currSelIDArticle, comment)) !=0 ){
+            String text;
+            switch (err){
+                case 1010:
+                    text = msg.getString("err.db.1010");
+                    break;
+                case 1011:
+                    text = msg.getString("err.db.1011");
+                    break;
+                case 1013:
+                    text = msg.getString("err.db.1011");
+                    break;
+                default:
+                    text = msg.getString("err.refused") + " err=" + err;
+                    break;
+            }
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, text, text));
+            return null;
+        }else {
+            for (Article art: previewArticle){
+                if(art.getArticleId() == currSelIDArticle){
+                    previewArticle.remove(art);
+                    break;
+                }
+
+            }
+            return null;
+        }
+
+
+    }
+
     public void setPreviewArticle(List<Article> previewArticle) {
         this.previewArticle = previewArticle;
     }
@@ -117,5 +190,29 @@ public class ArticleBean {
 
     public void setReadArticle(Article readArticle) {
         this.readArticle = readArticle;
+    }
+
+    public int getCurrSelIDArticle() {
+        return currSelIDArticle;
+    }
+
+    public void setCurrSelIDArticle(int currSelIDArticle) {
+        this.currSelIDArticle = currSelIDArticle;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public LocalizationBean getLocalizationBean() {
+        return localizationBean;
+    }
+
+    public void setLocalizationBean(LocalizationBean localizationBean) {
+        this.localizationBean = localizationBean;
     }
 }

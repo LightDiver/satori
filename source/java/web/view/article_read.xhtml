@@ -17,7 +17,7 @@
             </f:facet>
             <h:outputText escape="false" value="#{articleBean.readArticle.content}" />
             <hr style="margin: 0; width: 100%; height: 1px; background: floralwhite; border: none;" />
-            #{text['hint.article.published']}: #{articleBean.readArticle.creator} | #{text['hint.article.categories']}:
+            #{text['hint.article.published']}: #{articleBean.readArticle.creator} | #{text['hint.article.categories']}: #{articleBean.readArticle.categoryNameList}
         </rich:panel>
 
     </ui:define>

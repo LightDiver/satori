@@ -49,12 +49,11 @@ public class SessionBean implements Serializable {
     public void init() {
         String msgErr = null;
 
-        if (userName == null || userName.length() == 0){
-            userSession = getCookie("userSession")==null?null:getCookie("userSession").getValue();
-            if (userSession!=null) userKey = getCookie("userKey").getValue();
-            try {
-                if (userSession == null || userKey == null || Users.checkUserSessActive(userSession, userKey, 1) != 0) {
-                    userName = "GUEST";
+        userSession = getCookie("userSession")==null?null:getCookie("userSession").getValue();
+        if (userSession!=null) userKey = getCookie("userKey").getValue();
+        try {
+            if (userSession == null || userKey == null || Users.checkUserSessActive(userSession, userKey, 1) != 0) {
+                userName = "GUEST";
                     /*
                     if (login().equals("error.xhtml")){
                         try {
@@ -64,41 +63,43 @@ public class SessionBean implements Serializable {
                         }
                     }
                     */
-                    login();
-                    userName = "";
-                }
-                else{
-                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userSession",userSession);
-                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userKey",userKey);
-                    UserEntity user = Users.getUserInfoBySess(userSession, userKey);
-                    if (user.getUserLogin().equals("GUEST")){
-                        uLogin = false;
-                        uAdmin = false;
-                        uEditor = false;
-                    }else {
-                        userName = user.getUserLogin();
-                        uLogin = true;
-                        uAdmin = user.getUserRoles().containsKey("ADMIN");
-                        uEditor = user.getUserRoles().containsKey("EDITOR");
-                    }
-
-                }
-            } catch (FileNotRead fileNotRead) {
-                msgErr = "?error=fileNotRead";
-            } catch (InvalidParameter invalidParameter) {
-                msgErr = "?error=invalidParameter";
-            } catch (BaseNotConnect baseNotConnect) {
-                msgErr = "?error=baseNotConnect";
+                login();
+                userName = "";
             }
-            if (msgErr != null) {
+            else{
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userSession",userSession);
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userKey",userKey);
+                UserEntity user = Users.getUserInfoBySess(userSession, userKey);
+                if (user.getUserLogin().equals("GUEST")){
+                    uLogin = false;
+                    uAdmin = false;
+                    uEditor = false;
+                }else {
+                    userName = user.getUserLogin();
+                    uLogin = true;
+                    uAdmin = user.getUserRoles().containsKey("ADMIN");
+                    uEditor = user.getUserRoles().containsKey("EDITOR");
+                }
+
+            }
+        } catch (FileNotRead fileNotRead) {
+            msgErr = "?error=fileNotRead";
+        } catch (InvalidParameter invalidParameter) {
+            msgErr = "?error=invalidParameter";
+        } catch (BaseNotConnect baseNotConnect) {
+            msgErr = "?error=baseNotConnect";
+        }
+        if (msgErr != null) {
                 /*try {
                     FacesContext.getCurrentInstance().getExternalContext().dispatch("/view/error.xhtml" + msgErr);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 */
-            }
         }
+
+
+
 
     }
 
@@ -154,10 +155,13 @@ public class SessionBean implements Serializable {
                 userKey = userInfo.get("key_id").toString();
                 if (userName.equals("GUEST")){
                     uLogin = false;
+                    uAdmin =false;
+                    uEditor = false;
                 }
                 else {
                     uLogin = true;
                     uAdmin = (Boolean)userInfo.get("is_admin");
+                    uEditor = (Boolean)userInfo.get("is_editor");
                     String uLang = (String)userInfo.get("lang_id");
                     setCookie("userLang",uLang, CONST_EXPIRE_COOKIE);
                     localizationBean.setElectLocale(uLang);
