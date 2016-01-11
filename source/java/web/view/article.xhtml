@@ -7,6 +7,7 @@
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 template="../templates/userTemplate1.xhtml">
     <f:metadata>
         <f:viewAction action="#{sessionBean.canVisitPage}"/>
@@ -26,8 +27,20 @@
             }
         </h:outputStylesheet>
         <h2> #{text['menu.article']}</h2>
+
+        <rich:collapsiblePanel header="#{text['hint.article.filtr']}" expanded="false" switchType="client" style="background-color: inherit">
+            <form id="filt">
+                <h:outputLabel value="#{text['hint.article.categories']}"/>
+                <rich:select id="selCat" enableManualInput="false" value="#{articleBean.categoryID}">
+                    <f:selectItem itemLabel="" itemValue="-1"/>
+                    <f:selectItems value="#{articleBean.categorySelectItemList}" />
+                    <a4j:ajax listener="#{articleBean.loadPreviewArticle}" event="selectitem" render="panel"/>
+                </rich:select>
+            </form>
+        </rich:collapsiblePanel>
+
         <form id="articlelist">
-            <p:growl id="msgR" showSummary="true" showDetail="true" globalOnly="true" sticky="true" />
+            <p:growl id="msgr" showSummary="true" showDetail="true" globalOnly="true" sticky="true" />
             <h:panelGrid columns="1" width="100%">
                 <a4j:outputPanel id="panel" layout="block">
                 <a4j:repeat value="#{articleBean.previewArticle}" var="preview" rows="10" id="repeat">
@@ -47,10 +60,12 @@
                             </h:panelGroup>
                             <h:panelGroup>
                                 <h:inputHidden value="#{preview.articleId}"/>
+                                <c:if test="#{sessionBean.uEditor}">
                                 <a4j:commandLink onclick="#{rich:component('confirmPaneRedo')}.show()" execute="@this">
                                     <h:graphicImage value="/resources/images/content/redo_ready2.png" alt="redo" title="#{text['hint.article.redoready']}"/>
                                     <a4j:param value="#{preview.articleId}" assignTo="#{articleBean.currSelIDArticle}" />
                                 </a4j:commandLink>
+                                </c:if>
                             </h:panelGroup>
                         </h:panelGrid>
                     </rich:panel>

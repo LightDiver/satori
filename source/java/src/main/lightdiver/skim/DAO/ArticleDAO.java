@@ -253,25 +253,26 @@ public class ArticleDAO {
     }
 
 
-    public static int getPublicArticleList(String userSession, String userKey, String ipAddress, List<Article> outListArticle) throws BaseNotConnect {
+    public static int getPublicArticleList(String userSession, String userKey, String ipAddress, Integer CategoryID, List<Article> outListArticle) throws BaseNotConnect {
         Connection con = ConnectionPool.takeConn();
         CallableStatement cs = null;
         outListArticle.clear();
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_article_list_public(?, ?, ?, ?)}");
+            cs = con.prepareCall("{? = call pkg_article.get_article_list_public(?, ?, ?, ?, ?)}");
 
             cs.registerOutParameter(1, Types.INTEGER);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
-            cs.registerOutParameter(5, ConnectionPool.TypeCursor());
+            if(CategoryID==null) cs.setNull(5,Types.INTEGER) ;else cs.setInt(5, CategoryID);
+            cs.registerOutParameter(6, ConnectionPool.TypeCursor());
 
             cs.execute();
 
             res = cs.getInt(1);
             if (res == 0) {
-                ResultSet rset = (ResultSet)cs.getObject(5);
+                ResultSet rset = (ResultSet)cs.getObject(6);
                 while (rset.next ()){
                     Article article = new Article();
                     article.setArticleId(rset.getInt(1));

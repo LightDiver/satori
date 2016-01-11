@@ -31,7 +31,7 @@ public class CategoryConverter implements Converter {
         private List<Category> getCategory(FacesContext facesContext){
             if (category == null){
                 ArticleBean articleBean = (ArticleBean)facesContext.getViewRoot().getViewMap().get("articleBean");
-                category = articleBean.getCategory();
+                category = articleBean.getCategoryList();
             }
             return category;
         }

@@ -11,6 +11,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -18,7 +19,9 @@ import java.util.ResourceBundle;
 @ManagedBean
 @ViewScoped
 public class ArticleBean {
-    private List<Category> category;
+    private List<Category> categoryList;
+    private List<SelectItem> categorySelectItemList;
+    private Integer categoryID = -1;
     private List<Article> editorMyListEdit;
     private List<Article> editorReadyEdit;
     private List<Article> editorForeignEdit;
@@ -35,18 +38,18 @@ public class ArticleBean {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         LocalizationBean localizationBean = (LocalizationBean) externalContext.getSessionMap().get("localizationBean");
         ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
-        category = new ArrayList<>();
-        category.add(new Category(1, msg.getString("cata.others")));
-        category.add(new Category(2, msg.getString("cata.skimread")));
-        category.add(new Category(3, msg.getString("cata.attentionmemory")));
-        category.add(new Category(4, msg.getString("cata.interestingmathematics")));
+        categoryList = new ArrayList<>();
+        categoryList.add(new Category(1, msg.getString("cata.others")));
+        categoryList.add(new Category(2, msg.getString("cata.skimread")));
+        categoryList.add(new Category(3, msg.getString("cata.attentionmemory")));
+        categoryList.add(new Category(4, msg.getString("cata.interestingmathematics")));
     }
 
     public String convStringCategory(Integer[] listIDCategory) {
         if (listIDCategory!= null && listIDCategory.length > 0){
             String stringSelectedCategory = "";
             for (int i = 0; i < listIDCategory.length; i++) {
-                for(Category cat : category){
+                for(Category cat : categoryList){
                     if(listIDCategory[i] == cat.getCategoryId()){
                         stringSelectedCategory = stringSelectedCategory + cat.getCategoryName() + ",";
                         break;
@@ -87,7 +90,7 @@ public class ArticleBean {
     public void loadPreviewArticle(){
        // System.out.println("start loadPreviewArticle");
         if (previewArticle == null) previewArticle = new ArrayList<>();
-        if (ManagerContent.getPublicArticleList(previewArticle)==0){
+        if (ManagerContent.getPublicArticleList(categoryID==-1?null:categoryID, previewArticle)==0){
          for (Article art: previewArticle){
              art.setCategoryNameList(convStringCategory(art.getCategoryIDList()));
          }
@@ -95,12 +98,12 @@ public class ArticleBean {
        // System.out.println("end loadPreviewArticle="+previewArticle.size());
     }
 
-    public List<Category> getCategory() {
-        return category;
+    public List<Category> getCategoryList() {
+        return categoryList;
     }
 
-    public void setCategory(List<Category> category) {
-        this.category = category;
+    public void setCategoryList(List<Category> categoryList) {
+        this.categoryList = categoryList;
     }
 
     public List<Article> getEditorMyListEdit() {
@@ -165,7 +168,7 @@ public class ArticleBean {
             }
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, text, text));
-            return null;
+            return "#";
         }else {
             for (Article art: previewArticle){
                 if(art.getArticleId() == currSelIDArticle){
@@ -214,5 +217,27 @@ public class ArticleBean {
 
     public void setLocalizationBean(LocalizationBean localizationBean) {
         this.localizationBean = localizationBean;
+    }
+
+    public Integer getCategoryID() {
+        return categoryID;
+    }
+
+    public void setCategoryID(Integer categoryID) {
+        this.categoryID = categoryID;
+    }
+
+    public List<SelectItem> getCategorySelectItemList() {
+        if (categorySelectItemList == null){
+            categorySelectItemList = new ArrayList<>();
+            for(Category cat: categoryList){
+                categorySelectItemList.add(new SelectItem(cat.getCategoryId(), cat.getCategoryName()));
+            }
+        }
+        return categorySelectItemList;
+    }
+
+    public void setCategorySelectItemList(List<SelectItem> categorySelectItemList) {
+        this.categorySelectItemList = categorySelectItemList;
     }
 }

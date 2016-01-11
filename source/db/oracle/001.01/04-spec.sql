@@ -258,10 +258,11 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                    1002 - Сесія не існує або минула
                    1003 - IP сесії невірне
   */
-  FUNCTION get_article_list_public(i_session_id  user_session.session_id%TYPE,
-                                   i_key_id      user_session.key_id%TYPE,
-                                   i_terminal_ip user_session.terminal_ip%TYPE,
-                                   o_items       OUT SYS_REFCURSOR)
+  FUNCTION get_article_list_public(i_session_id     user_session.session_id%TYPE,
+                                   i_key_id         user_session.key_id%TYPE,
+                                   i_terminal_ip    user_session.terminal_ip%TYPE,
+                                   i_article_cat_id category_article.category_id%TYPE,
+                                   o_items          OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE;
 
   /* Повернути статтю яка в статусі Опублікована

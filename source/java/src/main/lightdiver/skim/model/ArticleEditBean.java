@@ -89,6 +89,7 @@ public class ArticleEditBean {
             err = ManagerContent.getMyActiveArticle(article);
             System.out.println("ManagerContent.getMyActiveArticle(article)=" + err);
             if (err != 0) {
+                nameArticle = "empty";
                 if ((err=ManagerContent.createArticle(article, nameArticle, shortValue, value, language.getLangName().toUpperCase())) == 0) {
                     System.out.println("ManagerContent.createArticle=0");
                     idArticle = article.getArticleId();
@@ -491,7 +492,7 @@ public class ArticleEditBean {
         if (n_id != null && n_id.length > 0){
             //ArticleBean articleBean = (ArticleBean)FacesContext.getCurrentInstance().getViewRoot().getViewMap().get("articleBean");
             for (int i = 0; i < n_id.length; i++) {
-                for (Category cat : articleBean.getCategory()){
+                for (Category cat : articleBean.getCategoryList()){
                    if (cat.getCategoryId() == n_id[i]){
                        list.add(cat);
                        break;

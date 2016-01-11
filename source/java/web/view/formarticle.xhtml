@@ -158,12 +158,12 @@
                 <f:facet name="header">
                     <h:outputText value="#{text['input.articlecat']}: " />
                 </f:facet>
-                <rich:pickList id="category" value="#{articleEditBean.selectedCategory}" sourceCaption="#{text['hint.article.categories']}" targetCaption="#{text['hint.article.selcategories']}" listWidth="270px" listHeight="100px" orderable="false">
-                    <f:selectItems value="#{articleBean.category}" var="category" itemValue="#{category}" itemLabel="#{category.categoryName}" />
+                <rich:pickList id="categoryList" value="#{articleEditBean.selectedCategory}" sourceCaption="#{text['hint.article.categories']}" targetCaption="#{text['hint.article.selcategories']}" listWidth="270px" listHeight="100px" orderable="false">
+                    <f:selectItems value="#{articleBean.categoryList}" var="categoryList" itemValue="#{categoryList}" itemLabel="#{categoryList.categoryName}" />
                     <f:ajax event="change" execute="@this" render="mes_category, panel"/>
                     <f:converter converterId="categoryConverter" />
                 </rich:pickList>
-                <rich:message id="mes_category" for="category"/>
+                <rich:message id="mes_category" for="categoryList"/>
             </rich:panel>
 
 

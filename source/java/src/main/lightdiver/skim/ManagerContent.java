@@ -108,11 +108,11 @@ public class ManagerContent {
         return err;
     }
 
-    public static int getPublicArticleList(List<Article> outListArticle) {
+    public static int getPublicArticleList(Integer CategoryID, List<Article> outListArticle) {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         int err = -1;
         try {
-            err = ArticleDAO.getPublicArticleList((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), outListArticle);
+            err = ArticleDAO.getPublicArticleList((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), CategoryID, outListArticle);
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         }

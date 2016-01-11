@@ -1,3 +1,4 @@
+
 CREATE OR REPLACE PACKAGE BODY pkg_article IS
 
   FUNCTION create_new_article(i_session_id      user_session.session_id%TYPE,
@@ -527,10 +528,11 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
   END get_editor_article_list;
 
-  FUNCTION get_article_list_public(i_session_id  user_session.session_id%TYPE,
-                                   i_key_id      user_session.key_id%TYPE,
-                                   i_terminal_ip user_session.terminal_ip%TYPE,
-                                   o_items       OUT SYS_REFCURSOR)
+  FUNCTION get_article_list_public(i_session_id     user_session.session_id%TYPE,
+                                   i_key_id         user_session.key_id%TYPE,
+                                   i_terminal_ip    user_session.terminal_ip%TYPE,
+                                   i_article_cat_id category_article.category_id%TYPE,
+                                   o_items          OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE AS
     /* Повернути статті що опубліковані
     Помилки:
@@ -571,7 +573,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
           ON uc.user_id = a.article_creator_id
         LEFT JOIN users ue
           ON ue.user_id = a.article_editor_id
-       WHERE a.article_status_id = 4;
+       WHERE a.article_status_id = 4
+         AND (i_article_cat_id IS NULL OR
+             a.article_id IN
+             (SELECT l.article_id
+                 FROM category_article_link l
+                WHERE i_article_cat_id = l.category_id));
   
     RETURN v_error_id;
   EXCEPTION
