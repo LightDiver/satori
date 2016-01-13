@@ -5,6 +5,7 @@ import main.lightdiver.skim.Users;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
 import main.lightdiver.skim.exceptions.ErrorInBase;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -27,6 +28,7 @@ public class RegistrationNewUserBean implements Serializable{
     protected String userEMail;
     protected String sex;
     protected String userLang = "UA";
+
 
     public String registr() throws BaseNotConnect {
         String res = null;

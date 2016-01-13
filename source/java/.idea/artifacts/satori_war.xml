@@ -6,9 +6,8 @@
       <element id="directory" name="WEB-INF">
         <element id="directory" name="lib">
           <element id="library" level="project" name="ojdbc6" />
-          <element id="library" level="project" name="PrimeFaces-5.2" />
           <element id="library" level="project" name="javax.faces-2.2.12" />
-          <element id="library" level="project" name="richfaces-rich-4.5.11.Final" />
+          <element id="library" level="project" name="primefaces-5.3" />
         </element>
       </element>
     </root>

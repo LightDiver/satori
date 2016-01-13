@@ -12,13 +12,15 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 @ManagedBean
 @ViewScoped
-public class ArticleBean {
+public class ArticleBean implements Serializable{
     private List<Category> categoryList;
     private List<SelectItem> categorySelectItemList;
     private Integer categoryID = -1;
@@ -88,14 +90,12 @@ public class ArticleBean {
     }
 
     public void loadPreviewArticle(){
-       // System.out.println("start loadPreviewArticle");
         if (previewArticle == null) previewArticle = new ArrayList<>();
         if (ManagerContent.getPublicArticleList(categoryID==-1?null:categoryID, previewArticle)==0){
          for (Article art: previewArticle){
              art.setCategoryNameList(convStringCategory(art.getCategoryIDList()));
          }
         }
-       // System.out.println("end loadPreviewArticle="+previewArticle.size());
     }
 
     public List<Category> getCategoryList() {
@@ -139,12 +139,11 @@ public class ArticleBean {
     }
 
     public String returnToReadyPublic(){
-        System.out.println("returnToReadyPublic: currSelIDArticle="+currSelIDArticle + " commnet="+comment);
         ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
 
         if (currSelIDArticle == 0 || comment == null || comment.length() == 0){
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.db.1013"), msg.getString("err.db.1013")));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("err.refused"), msg.getString("err.db.1013")));
             return "#";
         }
 
