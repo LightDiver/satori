@@ -46,7 +46,7 @@ CREATE SEQUENCE users_id_seq
 create sequence ARTICLE_ID_SEQ
 minvalue 1
 maxvalue 100000
-start with 1
+start with 1001
 increment by 1
 nocache;
 

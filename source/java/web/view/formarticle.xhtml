@@ -105,10 +105,7 @@
                              <rich:dataGrid columns="1" value="#{articleEditBean.files}" var="file" rowKeyVar="row">
                                  <rich:panel bodyClass="rich-laguna-panel-no-header">
                                      <h:panelGrid columns="2">
-                                         <a4j:mediaOutput element="img" mimeType="image/jpeg" createContent="#{articleEditBean.paint}"
-                                                          value="#{row}" style="width:50px; height:50px;" cacheable="false">
-                                             <f:param value="#{articleEditBean.timeStamp}" name="time" />
-                                         </a4j:mediaOutput>
+                                         <h:graphicImage value="/resources/images/articles/#{articleEditBean.idArticle}/#{file.name}" width="50" height="50" title="click for copy image address"/>
                                          <h:panelGrid columns="2">
                                              <h:outputText value="File Name:" />
                                              <h:outputText value="     #{file.name}" />

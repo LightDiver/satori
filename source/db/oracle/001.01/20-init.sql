@@ -160,10 +160,20 @@ VALUES(2,'GUEST',
        'пароль невикористовується',
        'Гість',NULL, 1, localtimestamp, 'UA','W'
        );
+INSERT INTO users(user_id,user_login, user_pass, user_name, user_email, state_id, r_date, lang_id, user_sex)
+VALUES(3,'EDITOR',
+       lower(rawtohex(dbms_crypto.hash(src => utl_raw.cast_to_raw('EDITORqwerty'), typ => /*dbms_crypto.hash_sh1*/3))),
+       'Редактор',NULL, 1, localtimestamp, 'UA','M'
+       );
+
 --assign role
 INSERT INTO users_role(user_id, role_id) VALUES(1, 1);
 INSERT INTO users_role(user_id, role_id) VALUES(1, 4);
+
 INSERT INTO users_role(user_id, role_id) VALUES(2, 3);
+
+INSERT INTO users_role(user_id, role_id) VALUES(3, 2);
+INSERT INTO users_role(user_id, role_id) VALUES(3, 4);
 
 
 INSERT INTO article_status(status_id, status_name)VALUES(1,'Редагується автором');
@@ -211,5 +221,9 @@ INSERT INTO category_article(category_id, category_name) VALUES(1, 'Інше');
 INSERT INTO category_article(category_id, category_name) VALUES(2, 'Швидке читання');
 INSERT INTO category_article(category_id, category_name) VALUES(3, 'Увага та пам''ять');
 INSERT INTO category_article(category_id, category_name) VALUES(4, 'Цікава математика');
+
+
+
+
 
 COMMIT;

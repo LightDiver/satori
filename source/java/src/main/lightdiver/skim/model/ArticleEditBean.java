@@ -16,10 +16,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -53,6 +52,8 @@ public class ArticleEditBean implements Serializable {
     private List<Article> myListIEdit;
     private List<Article> myListRedyToPublic;
     private List<Article> myListEditEditor;
+
+    private final transient String IMAGES_PATH = File.separator + "resources" + File.separator + "images"+File.separator + "articles";
 
     @ManagedProperty("#{sessionBean}")
     private SessionBean sessionBean;
@@ -202,6 +203,7 @@ public class ArticleEditBean implements Serializable {
                 language = localizationBean.getLanguageByISO(article.getLang().toLowerCase());
                 selectedCategory = getCategoryObjList(article.getCategoryIDList());
                 showComment = article.getComment();
+                searchFilesForArticle();
             }
         }
 
@@ -223,6 +225,15 @@ public class ArticleEditBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage("MyArticleIEdit",
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, null, text));
         }else {
+            ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+            String filePath = servletContext.getRealPath(IMAGES_PATH + File.separator + idArticle);
+            File dir = new File(filePath);
+            for(File f : dir.listFiles()){
+                f.delete();
+            }
+            dir.delete();
+            uploadsAvailable = 10;
+            setFiles(null);
             catchArticleID();
             loadMyListIEdit();
         }
@@ -766,28 +777,58 @@ public class ArticleEditBean implements Serializable {
         this.myListEditEditor = myListEditEditor;
     }
 
-
-    public void paint(OutputStream stream, Object object) throws IOException {
-        stream.write(getFiles().get((Integer) object).getData());
-        stream.close();
-    }
-
-    public long getTimeStamp() {
-        return System.currentTimeMillis();
-    }
-
     public void listenerUpload(FileUploadEvent event) throws Exception {
         UploadedFile item = event.getUploadedFile();
         UploadedImage file = new UploadedImage();
+        String fileNameUploaded;
+        int i = item.getName().lastIndexOf(File.separator);
+        if (i != -1) fileNameUploaded = item.getName().substring(i+1);
+        else fileNameUploaded = item.getName();
+
+
+        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        String filePath = servletContext.getRealPath(IMAGES_PATH + File.separator + idArticle);
+        //System.out.println("filePath="+filePath);
+        File filePathServer = new File(filePath);
+        //System.out.println("filePathServer.exists():"+filePathServer.exists());
+        if (!filePathServer.exists()) filePathServer.mkdirs();
+        InputStream input = item.getInputStream();
+        OutputStream output = new FileOutputStream(new File(filePath, fileNameUploaded));
+        int read = 0;
+        byte[] bytes = new byte[1024];
+        while ((read = input.read(bytes)) != -1) {
+            output.write(bytes, 0, read);
+        }
+
+        input.close();
+        output.flush();
+        output.close();
+
+
         file.setLength(item.getData().length/1024);
-        file.setName(item.getName());
-        file.setData(item.getData());
+        file.setName(fileNameUploaded);
+        //file.setData(item.getData());
         files.add(file);
+
         uploadsAvailable--;
     }
 
     public void searchFilesForArticle(){
         if (files == null) files = new ArrayList();
+        files.clear();
+        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        String filePath = servletContext.getRealPath(IMAGES_PATH + File.separator + idArticle);
+        //System.out.println("filePath="+filePath);
+        File filePathServer = new File(filePath);
+        for(File f : filePathServer.listFiles()){
+            UploadedImage file = new UploadedImage();
+            file.setLength(f.length()/1024);
+            file.setName(f.getName());
+            //file.setData(item.getData());
+            files.add(file);
+
+            uploadsAvailable--;
+        }
     }
 
     public ArrayList<UploadedImage> getFiles() {
@@ -806,4 +847,6 @@ public class ArticleEditBean implements Serializable {
     public void setUploadsAvailable(int uploadsAvailable) {
         this.uploadsAvailable = uploadsAvailable;
     }
+
+
 }

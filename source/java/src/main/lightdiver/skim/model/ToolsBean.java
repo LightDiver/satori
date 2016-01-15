@@ -5,6 +5,9 @@ package main.lightdiver.skim.model;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 
 /**
@@ -13,5 +16,6 @@ import java.io.Serializable;
 @ManagedBean
 @SessionScoped
 public class ToolsBean implements Serializable{
+
 
 }
