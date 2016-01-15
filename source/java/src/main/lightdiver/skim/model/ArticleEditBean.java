@@ -300,7 +300,7 @@ public class ArticleEditBean implements Serializable {
     }
 
     public String validNameArticleAjax(){
-        final String PATTERN_NAME = "^[а-яА-ЯёЁa-zA-Z0-9 іІїЇєЄҐґ.!,?']{1,300}$";
+        final String PATTERN_NAME = "^[а-яА-ЯёЁa-zA-Z0-9 іІїЇєЄҐґ.!,?:']{1,300}$";
         Pattern pattern;
         Matcher matcher;
         pattern = Pattern.compile(PATTERN_NAME);

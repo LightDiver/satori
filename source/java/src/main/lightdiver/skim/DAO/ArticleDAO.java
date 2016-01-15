@@ -92,7 +92,7 @@ public class ArticleDAO {
             cs.registerOutParameter(5, Types.INTEGER);
             cs.registerOutParameter(6, Types.VARCHAR);
             cs.registerOutParameter(7, Types.VARCHAR);
-            cs.registerOutParameter(8, Types.VARCHAR);
+            cs.registerOutParameter(8, Types.CLOB);
             cs.registerOutParameter(9, Types.VARCHAR);
             cs.registerOutParameter(10, Types.VARCHAR);
             cs.registerOutParameter(11, Types.VARCHAR);
@@ -141,7 +141,7 @@ public class ArticleDAO {
             cs.setInt(5, ArticleID);
             cs.registerOutParameter(6, Types.VARCHAR);
             cs.registerOutParameter(7, Types.VARCHAR);
-            cs.registerOutParameter(8, Types.VARCHAR);
+            cs.registerOutParameter(8, Types.CLOB);
             cs.registerOutParameter(9, Types.VARCHAR);
             cs.registerOutParameter(10, Types.VARCHAR);
             cs.registerOutParameter(11, Types.VARCHAR);
@@ -191,7 +191,7 @@ public class ArticleDAO {
             cs.setInt(5, ArticleID);
             cs.registerOutParameter(6, Types.VARCHAR);
             cs.registerOutParameter(7, Types.VARCHAR);
-            cs.registerOutParameter(8, Types.VARCHAR);
+            cs.registerOutParameter(8, Types.CLOB);
             cs.registerOutParameter(9, Types.VARCHAR);
             cs.registerOutParameter(10, Types.VARCHAR);
             cs.registerOutParameter(11, Types.VARCHAR);
@@ -470,7 +470,7 @@ public class ArticleDAO {
             cs.setInt(5, articleID);
             cs.registerOutParameter(6, Types.VARCHAR);
             cs.registerOutParameter(7, Types.VARCHAR);
-            cs.registerOutParameter(8, Types.VARCHAR);
+            cs.registerOutParameter(8, Types.CLOB);
             cs.registerOutParameter(9, Types.VARCHAR);
             cs.registerOutParameter(10, Types.VARCHAR);
             cs.registerOutParameter(11, Types.TIMESTAMP);
