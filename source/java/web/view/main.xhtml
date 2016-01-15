@@ -3,42 +3,48 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:rich="http://richfaces.org/rich"
                 template="../templates/userTemplate1.xhtml">
     <f:metadata>
         <f:viewAction action="#{sessionBean.canVisitPage}"/>
     </f:metadata>
     <ui:define name="content">
-        <table>
-            <tr>
-                <td>Name:</td>
-                <td>
-                    <h:inputText label="Name" id="fname" value="#{sessionBean.userName}" required="true"/>
-                    <h:message for="fname" />
-                </td>
-            </tr>
-            <tr>
-                <td>Session:</td>
-                <td>
-                    <h:inputText label="Session"
-                                 id="sess" value="#{sessionBean.userSession}"
-                                 required="true"/>
-                    <h:message for="sess" />
-                </td>
-            </tr>
-            <tr>
-                <td>Key:</td>
-                <td>
-                    <h:inputText label="Key"
-                                 id="key" value="#{sessionBean.userKey}"
-                                 required="true"/>
-                    <h:message for="key" />
-                </td>
-            </tr>
-        </table>
 
+        <h:graphicImage value="/resources/images/content/otkritay_kniga.jpg" style="float:left;margin: 7px 7px 7px 0;"/>
         <ui:include src="part_text_localisation/main_#{localizationBean.electLocale}.xhtml" />
+        <hr style="margin: 0; width: 100%; height: 1px; background: floralwhite; border: none;" />
 
         <h2><a id="newarticle"/> #{text['menu.article']}</h2>
+            <rich:panel header="#{text['hint.article.published']}" style="background-color: inherit" id="ArticlePublic">
+                <rich:message for="ArticlePublic"/>
+                <rich:dataTable value="#{articleBean.previewArticleNew5}" var="article" id="tableArticle" rows="5" styleClass="stable">
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['input.namearticle']}" />
+                        </f:facet>
+                        <h:inputHidden value="#{article.articleId}" />
+                        <h:outputText value="#{article.title}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['hint.article.published']}" />
+                        </f:facet>
+                        <h:outputText  value="#{article.publicDate}" >
+                            <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                        </h:outputText>
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['hint.article.creator']}" />
+                        </f:facet>
+                        <h:outputText value="#{article.creator}" />
+                    </rich:column>
+                    <rich:column>
+                        <h:outputLink value="article_read.xhtml?id=#{article.articleId}" styleClass="ui-commandlink">#{text['butt.readmore']}</h:outputLink>
+                    </rich:column>
+                </rich:dataTable>
+            </rich:panel>
+
             <h:outputLink value="article.xhtml" styleClass="ui-commandlink" >#{text['content.main.all']}
                 <h:graphicImage id="articledetail" value="/resources/images/content/next1.png"
                                 onmouseover="document.getElementById('articledetail').src='/resources/images/content/next2.png'"
@@ -54,12 +60,15 @@
                             onmousedown="document.getElementById('interestdetail').src='/resources/images/content/next3.png'"/>
         </h:outputLink>
         <h2><a id="news"/> #{text['menu.news']}</h2>
+        01.01.2016 Перша версія сайту.
+        <ui:remove>
         <h:outputLink value="news.xhtml" styleClass="ui-commandlink" >#{text['content.main.all']}
             <h:graphicImage id="newsdetail" value="/resources/images/content/next1.png"
                             onmouseover="document.getElementById('newsdetail').src='/resources/images/content/next2.png'"
                             onmouseout ="document.getElementById('newsdetail').src='/resources/images/content/next1.png'"
                             onmousedown="document.getElementById('newsdetail').src='/resources/images/content/next3.png'"/>
         </h:outputLink>
+        </ui:remove>
     </ui:define>
 
 </ui:composition>

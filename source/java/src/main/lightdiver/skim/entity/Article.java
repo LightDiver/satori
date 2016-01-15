@@ -16,6 +16,7 @@ public class Article {
     private Timestamp publicDate;
     private Integer[] categoryIDList;
     private String categoryNameList;
+    private String comment;
 
 
     public Integer getArticleId() {
@@ -120,5 +121,13 @@ public class Article {
 
     public void setCategoryNameList(String categoryNameList) {
         this.categoryNameList = categoryNameList;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

@@ -59,7 +59,7 @@
 
     <h:panelGrid columns="4" columnClasses="section_lang,section,section,section" style="border-collapse:collapse;border-spacing:0;float: right;">
         <h:form id="localfrom">
-        <p:selectOneMenu id="selLang" value="#{localizationBean.language}" onchange="submit()" converter="localeConverter" panelStyle="width:100px" effect="fade" var="l" style="width:40px;font-size:14px;">
+        <p:selectOneMenu id="selLang" value="#{localizationBean.language}" onchange="submit()" converter="localeConverter" panelStyle="width:100px" effect="fade" var="l" style="width:20px;font-size:14px;">
             <f:selectItems value="#{localizationBean.selectedLanguage}" var="language" itemLabel="#{language.langName}" itemValue="#{language}" />
             <p:column>
                 <p:graphicImage value="/resources/images/menu/#{l.langPict}" />

@@ -15,7 +15,6 @@ import javax.faces.model.SelectItem;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 @ManagedBean
@@ -28,6 +27,7 @@ public class ArticleBean implements Serializable{
     private List<Article> editorReadyEdit;
     private List<Article> editorForeignEdit;
     private List<Article> previewArticle;
+    private List<Article> previewArticleNew5;
     private Article readArticle;
     private int currSelIDArticle;
     private String comment;
@@ -98,6 +98,11 @@ public class ArticleBean implements Serializable{
         }
     }
 
+    public void loadPreviewArticleNew5(){
+        if (previewArticleNew5 == null) previewArticleNew5 = new ArrayList<>();
+        ManagerContent.getPublicArticleListNew5(previewArticleNew5);
+    }
+
     public List<Category> getCategoryList() {
         return categoryList;
     }
@@ -140,6 +145,7 @@ public class ArticleBean implements Serializable{
 
     public String returnToReadyPublic(){
         ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+        //System.out.println("returnToReadyPublic: currSelIDArticle=" + currSelIDArticle + " comment=" + comment);
 
         if (currSelIDArticle == 0 || comment == null || comment.length() == 0){
             FacesContext.getCurrentInstance().addMessage(null,
@@ -238,5 +244,14 @@ public class ArticleBean implements Serializable{
 
     public void setCategorySelectItemList(List<SelectItem> categorySelectItemList) {
         this.categorySelectItemList = categorySelectItemList;
+    }
+
+    public List<Article> getPreviewArticleNew5() {
+        if (previewArticleNew5 == null) loadPreviewArticleNew5();
+        return previewArticleNew5;
+    }
+
+    public void setPreviewArticleNew5(List<Article> previewArticleNew5) {
+        this.previewArticleNew5 = previewArticleNew5;
     }
 }

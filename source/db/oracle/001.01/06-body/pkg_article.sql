@@ -1,4 +1,3 @@
-
 CREATE OR REPLACE PACKAGE BODY pkg_article IS
 
   FUNCTION create_new_article(i_session_id      user_session.session_id%TYPE,
@@ -353,7 +352,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                                         o_article_short    OUT article.article_short%TYPE,
                                         o_article_content  OUT article.article_content%TYPE,
                                         o_article_lang     OUT article.article_lang%TYPE,
-                                        o_article_category OUT VARCHAR2)
+                                        o_article_category OUT VARCHAR2,
+                                        o_comment          OUT article.article_comment%TYPE)
     RETURN error_desc.error_desc_id%TYPE AS
     /* Повернути статтю яка в статусі Редагування автором
     Помилки:
@@ -380,12 +380,14 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
            a.article_title,
            a.article_short,
            a.article_content,
-           a.article_lang
+           a.article_lang,
+           a.article_comment
       INTO o_article_id,
            o_article_title,
            o_article_short,
            o_article_content,
-           o_article_lang
+           o_article_lang,
+           o_comment
       FROM article a
      WHERE a.article_creator_id = v_user_id
        AND a.article_status_id = 1
@@ -405,6 +407,68 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
   END get_last_edit_active_article;
 
+  FUNCTION get_edit_my_article(i_session_id       user_session.session_id%TYPE,
+                               i_key_id           user_session.key_id%TYPE,
+                               i_terminal_ip      user_session.terminal_ip%TYPE,
+                               i_article_id       article.article_id%TYPE,
+                               o_article_title    OUT article.article_title%TYPE,
+                               o_article_short    OUT article.article_short%TYPE,
+                               o_article_content  OUT article.article_content%TYPE,
+                               o_article_lang     OUT article.article_lang%TYPE,
+                               o_article_category OUT VARCHAR2,
+                               o_comment          OUT article.article_comment%TYPE)
+    RETURN error_desc.error_desc_id%TYPE AS
+    /* Повернути статтю яка в статусі Редагування користувачем за умови що створювачем він і є
+    Помилки:
+                     1004 - Недостатньо повноважень
+                     1002 - Сесія не існує або минула
+                     1003 - IP сесії невірне
+                 1011 - Пусто
+    */
+    v_error_id error_desc.error_desc_id%TYPE := 0;
+    v_user_id  user_session.user_id%TYPE;
+    c_perm_act action_type.action_type_id%TYPE := 20;
+  
+  BEGIN
+    v_error_id := pkg_users.active_session(i_session_id,
+                                           i_key_id,
+                                           i_terminal_ip,
+                                           c_perm_act,
+                                           v_user_id);
+  
+    IF v_error_id <> 0 THEN
+      RETURN v_error_id;
+    END IF;
+  
+    SELECT a.article_title,
+           a.article_short,
+           a.article_content,
+           a.article_lang,
+           a.article_comment
+      INTO o_article_title,
+           o_article_short,
+           o_article_content,
+           o_article_lang,
+           o_comment
+      FROM article a
+     WHERE a.article_creator_id = v_user_id
+       AND a.article_status_id = 1
+       AND a.article_id = i_article_id;
+  
+    SELECT listagg(c.category_id, ',') within GROUP(ORDER BY c.category_id)
+      INTO o_article_category
+      FROM category_article_link c
+     WHERE c.article_id = i_article_id;
+  
+    RETURN v_error_id;
+  EXCEPTION
+    WHEN no_data_found THEN
+      RETURN 1011;
+    WHEN pkg_users.insufficient_privileges THEN
+      v_error_id := 1004;
+      RETURN v_error_id;
+  END get_edit_my_article;
+
   FUNCTION get_edit_editor_article(i_session_id       user_session.session_id%TYPE,
                                    i_key_id           user_session.key_id%TYPE,
                                    i_terminal_ip      user_session.terminal_ip%TYPE,
@@ -413,7 +477,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                                    o_article_short    OUT article.article_short%TYPE,
                                    o_article_content  OUT article.article_content%TYPE,
                                    o_article_lang     OUT article.article_lang%TYPE,
-                                   o_article_category OUT VARCHAR2)
+                                   o_article_category OUT VARCHAR2,
+                                   o_comment          OUT article.article_comment%TYPE)
     RETURN error_desc.error_desc_id%TYPE AS
     /* Повернути статтю яка в статусі Редагування редактором за умови що редактором він і є
     Помилки:
@@ -443,11 +508,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
     SELECT a.article_title,
            a.article_short,
            a.article_content,
-           a.article_lang
+           a.article_lang,
+           a.article_comment
       INTO o_article_title,
            o_article_short,
            o_article_content,
-           o_article_lang
+           o_article_lang,
+           o_comment
       FROM article a
      WHERE a.article_editor_id = v_user_id
        AND a.article_status_id = 2
@@ -466,6 +533,56 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       v_error_id := 1004;
       RETURN v_error_id;
   END get_edit_editor_article;
+
+  FUNCTION get_my_article_list(i_session_id        user_session.session_id%TYPE,
+                               i_key_id            user_session.key_id%TYPE,
+                               i_terminal_ip       user_session.terminal_ip%TYPE,
+                               i_article_status_id article.article_status_id%TYPE,
+                               o_items             OUT SYS_REFCURSOR)
+    RETURN error_desc.error_desc_id%TYPE AS
+    /* Повернути мої статті яка в певному статусі 
+    Помилки:
+                     1004 - Недостатньо повноважень
+                     1002 - Сесія не існує або минула
+                     1003 - IP сесії невірне
+    */
+    v_error_id error_desc.error_desc_id%TYPE := 0;
+    v_user_id  user_session.user_id%TYPE;
+    c_perm_act action_type.action_type_id%TYPE := 26;
+  
+  BEGIN
+    v_error_id := pkg_users.active_session(i_session_id,
+                                           i_key_id,
+                                           i_terminal_ip,
+                                           c_perm_act,
+                                           v_user_id);
+  
+    IF v_error_id <> 0 THEN
+      RETURN v_error_id;
+    END IF;
+  
+    OPEN o_items FOR
+      SELECT a.article_id,
+             a.article_title,
+             a.article_lang,
+             a.article_create_date,
+             a.article_public_date,
+             a.article_edit_date,
+             (SELECT listagg(c.category_id, ',') within GROUP(ORDER BY c.category_id)
+                FROM category_article_link c
+               WHERE c.article_id = a.article_id) article_category,
+             a.article_comment
+        FROM article a
+       WHERE (i_article_status_id IS NULL OR
+             a.article_status_id = i_article_status_id)
+         AND a.article_creator_id = v_user_id;
+  
+    RETURN v_error_id;
+  EXCEPTION
+    WHEN pkg_users.insufficient_privileges THEN
+      v_error_id := 1004;
+      RETURN v_error_id;
+  END get_my_article_list;
 
   FUNCTION get_editor_article_list(i_session_id        user_session.session_id%TYPE,
                                    i_key_id            user_session.key_id%TYPE,
@@ -509,7 +626,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
              a.article_edit_date,
              (SELECT listagg(c.category_id, ',') within GROUP(ORDER BY c.category_id)
                 FROM category_article_link c
-               WHERE c.article_id = a.article_id) article_category
+               WHERE c.article_id = a.article_id) article_category,
+             a.article_comment
         FROM article a
        INNER JOIN users uc
           ON uc.user_id = a.article_creator_id
@@ -578,7 +696,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
              a.article_id IN
              (SELECT l.article_id
                  FROM category_article_link l
-                WHERE i_article_cat_id = l.category_id));
+                WHERE i_article_cat_id = l.category_id) OR
+             --Якщо 1.Інше і стаття не привязана до жодної категорії
+             (i_article_cat_id = 1 AND
+             0 = (SELECT COUNT(1)
+                      FROM category_article_link l2
+                     WHERE l2.article_id = a.article_id)));
   
     RETURN v_error_id;
   EXCEPTION
@@ -586,6 +709,52 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       v_error_id := 1004;
       RETURN v_error_id;
   END get_article_list_public;
+
+  FUNCTION get_article_list_public_new5(i_session_id  user_session.session_id%TYPE,
+                                        i_key_id      user_session.key_id%TYPE,
+                                        i_terminal_ip user_session.terminal_ip%TYPE,
+                                        o_items       OUT SYS_REFCURSOR)
+    RETURN error_desc.error_desc_id%TYPE AS
+    /* Повернути статті що опубліковані (Останных 5 опублікованих)
+    Помилки:
+                     1004 - Недостатньо повноважень
+                     1002 - Сесія не існує або минула
+                     1003 - IP сесії невірне
+    */
+    v_error_id error_desc.error_desc_id%TYPE := 0;
+    v_user_id  user_session.user_id%TYPE;
+    c_perm_act action_type.action_type_id%TYPE := 24;
+  
+  BEGIN
+    v_error_id := pkg_users.active_session(i_session_id,
+                                           i_key_id,
+                                           i_terminal_ip,
+                                           c_perm_act,
+                                           v_user_id);
+  
+    IF v_error_id <> 0 THEN
+      RETURN v_error_id;
+    END IF;
+  
+    OPEN o_items FOR
+      SELECT sort.*
+        FROM (SELECT a.article_id,
+                     a.article_title,
+                     a.article_lang,
+                     a.article_public_date,
+                     u.user_login
+                FROM article a, users u
+               WHERE a.article_status_id = 4
+                 AND a.article_creator_id = u.user_id
+               ORDER BY a.article_public_date DESC) sort
+       WHERE rownum < 5;
+  
+    RETURN v_error_id;
+  EXCEPTION
+    WHEN pkg_users.insufficient_privileges THEN
+      v_error_id := 1004;
+      RETURN v_error_id;
+  END get_article_list_public_new5;
 
   FUNCTION get_article(i_session_id       user_session.session_id%TYPE,
                        i_key_id           user_session.key_id%TYPE,
@@ -651,6 +820,43 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       v_error_id := 1004;
       RETURN v_error_id;
   END get_article;
+
+  FUNCTION del_my_article(i_session_id  user_session.session_id%TYPE,
+                          i_key_id      user_session.key_id%TYPE,
+                          i_terminal_ip user_session.terminal_ip%TYPE,
+                          i_article_id  article.article_id%TYPE)
+    RETURN error_desc.error_desc_id%TYPE AS
+    /* Видалити мою статтю в статусі Редагування користувачем
+    Помилки:
+                     1004 - Недостатньо повноважень
+                     1002 - Сесія не існує або минула
+                     1003 - IP сесії невірне
+    */
+    v_error_id error_desc.error_desc_id%TYPE := 0;
+    v_user_id  user_session.user_id%TYPE;
+    c_perm_act action_type.action_type_id%TYPE := 27;
+  BEGIN
+    v_error_id := pkg_users.active_session(i_session_id,
+                                           i_key_id,
+                                           i_terminal_ip,
+                                           c_perm_act,
+                                           v_user_id);
+  
+    IF v_error_id <> 0 THEN
+      RETURN v_error_id;
+    END IF;
+  
+    DELETE FROM article a
+     WHERE a.article_id = i_article_id
+       AND a.article_status_id = 1
+       AND a.article_creator_id = v_user_id;
+  
+    RETURN v_error_id;
+  EXCEPTION
+    WHEN pkg_users.insufficient_privileges THEN
+      v_error_id := 1004;
+      RETURN v_error_id;
+  END del_my_article;
 
 END pkg_article;
 /

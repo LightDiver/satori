@@ -31,12 +31,14 @@
             <p:growl id="msgr" showSummary="true" showDetail="true" sticky="true" />
 
             <rich:collapsiblePanel header="#{text['hint.article.filtr']}" expanded="false" switchType="client" style="background-color: inherit">
-                <h:outputLabel value="#{text['hint.article.categories']}"/>
-                <rich:select id="selCat" enableManualInput="false" value="#{articleBean.categoryID}">
-                    <f:selectItem itemLabel="" itemValue="-1"/>
-                    <f:selectItems value="#{articleBean.categorySelectItemList}" />
-                    <a4j:ajax listener="#{articleBean.loadPreviewArticle}" event="selectitem" render="panel"/>
-                </rich:select>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{text['hint.article.categories']}"/>
+                    <rich:select id="selCat" enableManualInput="false" value="#{articleBean.categoryID}">
+                        <f:selectItem itemLabel="" itemValue="-1"/>
+                        <f:selectItems value="#{articleBean.categorySelectItemList}" />
+                        <a4j:ajax listener="#{articleBean.loadPreviewArticle}" event="selectitem" render="panel"/>
+                    </rich:select>
+                </h:panelGrid>
             </rich:collapsiblePanel>
 
 

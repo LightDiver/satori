@@ -64,6 +64,10 @@ INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(24, 'Список опублікованих статтей',NULL);
 INSERT INTO action_type(action_type_id, action_name, action_description)
 VALUES(25, 'Опублікована стаття',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(26, 'Мої статті',NULL);
+INSERT INTO action_type(action_type_id, action_name, action_description)
+VALUES(27, 'Видалити мою статтю',NULL);
 
 
 
@@ -100,6 +104,8 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,19);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,20);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,24);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,25);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,26);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(1,27);
 
 --REGISTERED
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,1);
@@ -119,6 +125,8 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,19);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,20);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,24);
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,25);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,26);
+INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(2,27);
 
 --GUEST
 INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(3,1);

@@ -4,8 +4,11 @@ import main.lightdiver.skim.ManagerContent;
 import main.lightdiver.skim.entity.Article;
 import main.lightdiver.skim.entity.Category;
 import main.lightdiver.skim.entity.Language;
+import main.lightdiver.skim.entity.UploadedImage;
 import main.lightdiver.skim.exceptions.BaseNotConnect;
 import main.lightdiver.skim.exceptions.ErrorInBase;
+import org.richfaces.event.FileUploadEvent;
+import org.richfaces.model.UploadedFile;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -15,6 +18,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -23,7 +28,7 @@ import java.util.regex.Pattern;
 
 @ManagedBean
 @ViewScoped
-public class ArticleEditBean {
+public class ArticleEditBean implements Serializable {
     private int err = 0;
     private boolean errCritical = false;
 
@@ -40,6 +45,14 @@ public class ArticleEditBean {
 
     private int currSelIDArticle;
     private String comment;
+    private String showComment;
+
+    private ArrayList<UploadedImage> files;
+    private int uploadsAvailable = 10;
+
+    private List<Article> myListIEdit;
+    private List<Article> myListRedyToPublic;
+    private List<Article> myListEditEditor;
 
     @ManagedProperty("#{sessionBean}")
     private SessionBean sessionBean;
@@ -104,6 +117,7 @@ public class ArticleEditBean {
             value = article.getContent();
             language = localizationBean.getLanguageByISO(article.getLang().toLowerCase());
             selectedCategory = getCategoryObjList(article.getCategoryIDList());
+            showComment = article.getComment();
         }
         if ( err !=0 ){
             ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
@@ -125,6 +139,93 @@ public class ArticleEditBean {
             System.out.println("else if ( err == 0) {");
         }
         System.out.println("END catchArticleID=" + idArticle);
+    }
+
+    public void backArticleForEdit(){
+        System.out.println("backArticleForEdit");
+        ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+        if (currSelIDArticle == 0) {
+            FacesContext.getCurrentInstance().addMessage("MyArticleReadyToPublic",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, null, msg.getString("err.idarticle")));
+        }else{
+            Article article = new Article();
+            if ((err=ManagerContent.changeStatusArticleToEditUser(currSelIDArticle, null)) !=0 ){
+                //System.out.println("err="+err);
+                String text;
+                switch (err){
+                    case 1011:
+                        text = msg.getString("err.db.1011");
+                        break;
+                    default:
+                        text = msg.getString("err.refused") + " err=" + err;
+                        break;
+                }
+                FacesContext.getCurrentInstance().addMessage("MyArticleReadyToPublic",
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, text, text));
+            }else {
+                System.out.println(myListRedyToPublic.size());
+                loadArticleForEdit();
+                loadMyListIEdit();
+                loadMyListRedyToPublic();
+                System.out.println(myListRedyToPublic.size());
+            }
+        }
+
+    }
+
+    public void loadArticleForEdit(){
+        System.out.println("loadArticleForEdit: currSelIDArticle="+currSelIDArticle);
+        ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+        if (currSelIDArticle == 0) {
+            FacesContext.getCurrentInstance().addMessage("MyArticleIEdit",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, null, msg.getString("err.idarticle")));
+        }else{
+            Article article = new Article();
+            if ((err=ManagerContent.getMyArticle(currSelIDArticle, article)) !=0 ){
+                //System.out.println("err="+err);
+                String text;
+                switch (err){
+                    case 1011:
+                        text = msg.getString("err.db.1011");
+                        break;
+                    default:
+                        text = msg.getString("err.refused") + " err=" + err;
+                        break;
+                }
+                FacesContext.getCurrentInstance().addMessage("MyArticleIEdit",
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, null, text));
+            }else {
+                idArticle = article.getArticleId();
+                nameArticle = article.getTitle();
+                shortValue = article.getShortContent();
+                value = article.getContent();
+                language = localizationBean.getLanguageByISO(article.getLang().toLowerCase());
+                selectedCategory = getCategoryObjList(article.getCategoryIDList());
+                showComment = article.getComment();
+            }
+        }
+
+    }
+
+    public void delMyArticle(){
+        ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
+        if ((err=ManagerContent.delMyArticle(idArticle)) !=0 ){
+            //System.out.println("err="+err);
+            String text;
+            switch (err){
+                case 1004:
+                    text = msg.getString("err.db.1004");
+                    break;
+                default:
+                    text = msg.getString("err.refused") + " err=" + err;
+                    break;
+            }
+            FacesContext.getCurrentInstance().addMessage("MyArticleIEdit",
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, null, text));
+        }else {
+            catchArticleID();
+            loadMyListIEdit();
+        }
     }
 
     private void edit(boolean shortEdit){
@@ -181,7 +282,7 @@ public class ArticleEditBean {
     public String validCategoryAjax(){
         if (selectedCategory!= null && selectedCategory.size() > 3) {
             ResourceBundle msg = localizationBean.getTextDependLangList().get(localizationBean.getElectLocale());
-            FacesContext.getCurrentInstance().addMessage("add_article:category", new FacesMessage(FacesMessage.SEVERITY_ERROR, null, msg.getString("err.manycategories")));
+            FacesContext.getCurrentInstance().addMessage("add_article:categoryList", new FacesMessage(FacesMessage.SEVERITY_ERROR, null, msg.getString("err.manycategories")));
             return "#";
         }
         return null;
@@ -613,5 +714,96 @@ public class ArticleEditBean {
 
     public void setHeightShortValue(Integer heightShortValue) {
         this.heightShortValue = heightShortValue;
+    }
+
+    public String getShowComment() {
+        return showComment;
+    }
+
+    public void setShowComment(String showComment) {
+        this.showComment = showComment;
+    }
+
+    public void loadMyListIEdit(){
+        if (myListIEdit == null) myListIEdit = new ArrayList<>();
+        ManagerContent.getMyArticleList(1, myListIEdit);
+    }
+
+    public List<Article> getMyListIEdit() {
+        if (myListIEdit == null) loadMyListIEdit();
+        return myListIEdit;
+    }
+
+    public void setMyListIEdit(List<Article> myListIEdit) {
+        this.myListIEdit = myListIEdit;
+    }
+
+    public void loadMyListRedyToPublic(){
+        if (myListRedyToPublic == null) myListRedyToPublic = new ArrayList<>();
+        ManagerContent.getMyArticleList(3, myListRedyToPublic);
+    }
+
+    public List<Article> getMyListRedyToPublic() {
+        if (myListRedyToPublic == null) loadMyListRedyToPublic();
+        return myListRedyToPublic;
+    }
+
+    public void setMyListRedyToPublic(List<Article> myListRedyToPublic) {
+        this.myListRedyToPublic = myListRedyToPublic;
+    }
+
+    public void loadMyListEditEditor(){
+        if (myListEditEditor == null) myListEditEditor = new ArrayList<>();
+        ManagerContent.getMyArticleList(2, myListEditEditor);
+    }
+
+    public List<Article> getMyListEditEditor() {
+        if (myListEditEditor == null) loadMyListEditEditor();
+        return myListEditEditor;
+    }
+
+    public void setMyListEditEditor(List<Article> myListEditEditor) {
+        this.myListEditEditor = myListEditEditor;
+    }
+
+
+    public void paint(OutputStream stream, Object object) throws IOException {
+        stream.write(getFiles().get((Integer) object).getData());
+        stream.close();
+    }
+
+    public long getTimeStamp() {
+        return System.currentTimeMillis();
+    }
+
+    public void listenerUpload(FileUploadEvent event) throws Exception {
+        UploadedFile item = event.getUploadedFile();
+        UploadedImage file = new UploadedImage();
+        file.setLength(item.getData().length/1024);
+        file.setName(item.getName());
+        file.setData(item.getData());
+        files.add(file);
+        uploadsAvailable--;
+    }
+
+    public void searchFilesForArticle(){
+        if (files == null) files = new ArrayList();
+    }
+
+    public ArrayList<UploadedImage> getFiles() {
+        if (files==null) searchFilesForArticle();
+        return files;
+    }
+
+    public void setFiles(ArrayList<UploadedImage> files) {
+        this.files = files;
+    }
+
+    public int getUploadsAvailable() {
+        return uploadsAvailable;
+    }
+
+    public void setUploadsAvailable(int uploadsAvailable) {
+        this.uploadsAvailable = uploadsAvailable;
     }
 }

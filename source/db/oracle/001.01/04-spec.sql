@@ -217,7 +217,27 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                                         o_article_short    OUT article.article_short%TYPE,
                                         o_article_content  OUT article.article_content%TYPE,
                                         o_article_lang     OUT article.article_lang%TYPE,
-                                        o_article_category OUT VARCHAR2)
+                                        o_article_category OUT VARCHAR2,
+                                        o_comment          OUT article.article_comment%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Повернути статтю яка в статусі Редагування користувачем за умови що створювачем він і є
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+               1011 - Пусто
+  */
+  FUNCTION get_edit_my_article(i_session_id       user_session.session_id%TYPE,
+                               i_key_id           user_session.key_id%TYPE,
+                               i_terminal_ip      user_session.terminal_ip%TYPE,
+                               i_article_id       article.article_id%TYPE,
+                               o_article_title    OUT article.article_title%TYPE,
+                               o_article_short    OUT article.article_short%TYPE,
+                               o_article_content  OUT article.article_content%TYPE,
+                               o_article_lang     OUT article.article_lang%TYPE,
+                               o_article_category OUT VARCHAR2,
+                               o_comment          OUT article.article_comment%TYPE)
     RETURN error_desc.error_desc_id%TYPE;
 
   /* Повернути статтю яка в статусі Редагування редактором за умови що редактором він і є
@@ -235,7 +255,21 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                                    o_article_short    OUT article.article_short%TYPE,
                                    o_article_content  OUT article.article_content%TYPE,
                                    o_article_lang     OUT article.article_lang%TYPE,
-                                   o_article_category OUT VARCHAR2)
+                                   o_article_category OUT VARCHAR2,
+                                   o_comment          OUT article.article_comment%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Повернути мої статті яка в певному статусі 
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+  */
+  FUNCTION get_my_article_list(i_session_id        user_session.session_id%TYPE,
+                               i_key_id            user_session.key_id%TYPE,
+                               i_terminal_ip       user_session.terminal_ip%TYPE,
+                               i_article_status_id article.article_status_id%TYPE,
+                               o_items             OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE;
 
   /* Повернути статті яка в певному статусі або всі якщо null 
@@ -283,6 +317,30 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                        o_creator          OUT VARCHAR2,
                        o_public_date      OUT article.article_public_date%TYPE,
                        o_article_category OUT VARCHAR2)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Видалити мою статтю в статусі Редагування користувачем
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+  */
+  FUNCTION del_my_article(i_session_id  user_session.session_id%TYPE,
+                          i_key_id      user_session.key_id%TYPE,
+                          i_terminal_ip user_session.terminal_ip%TYPE,
+                          i_article_id  article.article_id%TYPE)
+    RETURN error_desc.error_desc_id%TYPE;
+
+  /* Повернути статті що опубліковані (Останных 5 опублікованих)
+  Помилки:
+                   1004 - Недостатньо повноважень
+                   1002 - Сесія не існує або минула
+                   1003 - IP сесії невірне
+  */
+  FUNCTION get_article_list_public_new5(i_session_id  user_session.session_id%TYPE,
+                                        i_key_id      user_session.key_id%TYPE,
+                                        i_terminal_ip user_session.terminal_ip%TYPE,
+                                        o_items       OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE;
 
 END pkg_article;

@@ -23,6 +23,18 @@ public class ManagerContent {
         }
 
     }
+
+
+    public static int getMyArticle(Integer ArticleID, Article outArticle) {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        try {
+            return ArticleDAO.getMyArticle(ArticleID, (String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), outArticle);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+            return -1;
+        }
+
+    }
     public static int getEditorArticle(String sArticleID, Article outArticle) {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         int ArticleID = Integer.parseInt(sArticleID);
@@ -97,6 +109,17 @@ public class ManagerContent {
     }
 
 
+    public static int getMyArticleList(Integer statusID, List<Article> outListArticle) {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        int err = -1;
+        try {
+            err = ArticleDAO.getMyArticleList((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), statusID, outListArticle);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+        }
+        return err;
+    }
+
     public static int getEditorArticleList(Integer statusID,Integer iEditor, List<Article> outListArticle) {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         int err = -1;
@@ -113,6 +136,17 @@ public class ManagerContent {
         int err = -1;
         try {
             err = ArticleDAO.getPublicArticleList((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), CategoryID, outListArticle);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+        }
+        return err;
+    }
+
+    public static int getPublicArticleListNew5(List<Article> outListArticle) {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        int err = -1;
+        try {
+            err = ArticleDAO.getPublicArticleListNew5((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), outListArticle);
         } catch (BaseNotConnect baseNotConnect) {
             baseNotConnect.printStackTrace();
         }
@@ -139,5 +173,15 @@ public class ManagerContent {
         return ipAddress;
     }
 
+    public static int delMyArticle(Integer articleID) {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        int err = -1;
+        try {
+            err = ArticleDAO.delMyArticle((String) externalContext.getSessionMap().get("userSession"), (String) externalContext.getSessionMap().get("userKey"), getIP(), articleID);
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
+        }
+        return err;
+    }
 
 }

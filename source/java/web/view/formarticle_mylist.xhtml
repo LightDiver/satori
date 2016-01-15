@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <rich:collapsiblePanel header="#{text['hint.article.myarticle']}" expanded="true" switchType="client" style="background-color: inherit">
+            <rich:panel header="#{text['hint.article.myarticleiedit']}" style="background-color: inherit" id="MyArticleIEdit">
+                <rich:message for="MyArticleIEdit"/>
+                <rich:dataTable value="#{articleEditBean.myListIEdit}" var="myarticle" id="tableMyI" rows="5" styleClass="stable">
+                    <rich:column>
+                        <f:facet name="header">#</f:facet>
+                        <h:outputText value="#{myarticle.articleId}" style="color: #BFF08E;background-color: #333333"  rendered="#{myarticle.articleId == articleEditBean.idArticle}"/>
+                        <h:outputText value="#{myarticle.articleId}"  rendered="#{myarticle.articleId != articleEditBean.idArticle}"/>
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['input.namearticle']}" />
+                        </f:facet>
+                        <h:outputText value="#{myarticle.title}" />
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['hint.article.createdate']}" />
+                        </f:facet>
+                        <h:outputText  value="#{myarticle.createDate}" >
+                            <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                        </h:outputText>
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['hint.article.editdate']}" />
+                        </f:facet>
+                        <h:outputText  value="#{myarticle.editDate}" >
+                            <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                        </h:outputText>
+                    </rich:column>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{text['hint.article.comment']}" />
+                        </f:facet>
+                        <h:outputText value="#{myarticle.comment}" />
+                    </rich:column>
+                    <rich:column>
+                        <a4j:commandLink styleClass="no-decor" execute="@this"
+                                         action="#{articleEditBean.loadArticleForEdit}"
+                                         oncomplete="check_h()"
+                                         render="@form">
+                            <h:graphicImage value="/resources/images/content/editorarticle.png" alt="edit" title="#{text['hint.edit']}"/>
+                            <a4j:param value="#{myarticle.articleId}" assignTo="#{articleEditBean.currSelIDArticle}" />
+                        </a4j:commandLink>
+                    </rich:column>
+                    <f:facet name="footer">
+                        <rich:dataScroller />
+                    </f:facet>
+                </rich:dataTable>
+            </rich:panel>
+
+        <rich:panel header="#{text['hint.article.readyedit']}" style="background-color: inherit" id="MyArticleReadyToPublic">
+            <rich:message for="MyArticleReadyToPublic"/>
+            <rich:dataTable value="#{articleEditBean.myListRedyToPublic}" var="myarticle" id="tableMyReady" rows="5" styleClass="stable">
+                <rich:column>
+                    <f:facet name="header">#</f:facet>
+                    <h:outputText value="#{myarticle.articleId}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['input.namearticle']}" />
+                    </f:facet>
+                    <h:outputText value="#{myarticle.title}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.createdate']}" />
+                    </f:facet>
+                    <h:outputText  value="#{myarticle.createDate}" >
+                        <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.editdate']}" />
+                    </f:facet>
+                    <h:outputText  value="#{myarticle.editDate}" >
+                        <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.comment']}" />
+                    </f:facet>
+                    <h:outputText value="#{myarticle.comment}" />
+                </rich:column>
+                <rich:column>
+                    <a4j:commandLink styleClass="no-decor" execute="@this"
+                                     action="#{articleEditBean.backArticleForEdit}"
+                                     render="@form">
+                        <h:graphicImage value="/resources/images/content/redo_ready2.png" alt="back" title="#{text['hint.article.icreator']}"/>
+                        <a4j:param value="#{myarticle.articleId}" assignTo="#{articleEditBean.currSelIDArticle}" />
+                    </a4j:commandLink>
+                </rich:column>
+                <f:facet name="footer">
+                    <rich:dataScroller />
+                </f:facet>
+            </rich:dataTable>
+        </rich:panel>
+
+        <rich:panel header="#{text['hint.article.checkeditor']}" style="background-color: inherit" id="MyArticleEditEditor">
+            <rich:message for="MyArticleEditEditor"/>
+            <rich:dataTable value="#{articleEditBean.myListEditEditor}" var="myarticle" id="tableMyEditEditor" rows="5" styleClass="stable">
+                <rich:column>
+                    <f:facet name="header">#</f:facet>
+                    <h:outputText value="#{myarticle.articleId}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['input.namearticle']}" />
+                    </f:facet>
+                    <h:outputText value="#{myarticle.title}" />
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.createdate']}" />
+                    </f:facet>
+                    <h:outputText  value="#{myarticle.createDate}" >
+                        <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.editdate']}" />
+                    </f:facet>
+                    <h:outputText  value="#{myarticle.editDate}" >
+                        <f:convertDateTime  type="both" dateStyle="short"  locale="#{localizationBean.electLocale}" timeZone="Europe/Kiev"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{text['hint.article.comment']}" />
+                    </f:facet>
+                    <h:outputText value="#{myarticle.comment}" />
+                </rich:column>
+                <f:facet name="footer">
+                    <rich:dataScroller />
+                </f:facet>
+            </rich:dataTable>
+        </rich:panel>
+
+    </rich:collapsiblePanel>
+
+</ui:composition>
