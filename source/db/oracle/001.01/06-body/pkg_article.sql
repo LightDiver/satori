@@ -747,7 +747,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                WHERE a.article_status_id = 4
                  AND a.article_creator_id = u.user_id
                ORDER BY a.article_public_date DESC) sort
-       WHERE rownum < 5;
+       WHERE rownum <= 5;
   
     RETURN v_error_id;
   EXCEPTION

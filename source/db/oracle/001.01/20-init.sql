@@ -203,7 +203,7 @@ VALUES (1009, 'Параметр _новий статус статті_ задано невірно');
 INSERT INTO error_desc (error_desc_id, error_desc)
 VALUES (1010, 'Зміна статусу статті неможлива');
 INSERT INTO error_desc (error_desc_id, error_desc)
-VALUES (1011, 'Даних немає');--!(select empty)
+VALUES (1011, 'Даних немає');
 INSERT INTO error_desc (error_desc_id, error_desc)
 VALUES (1012, 'Не задано ні заголовку ні тексту статті');
 INSERT INTO error_desc (error_desc_id, error_desc)
