@@ -259,7 +259,7 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                                    o_comment          OUT article.article_comment%TYPE)
     RETURN error_desc.error_desc_id%TYPE;
 
-  /* Повернути мої статті яка в певному статусі 
+  /* Повернути мої статті яка в певному статусі
   Помилки:
                    1004 - Недостатньо повноважень
                    1002 - Сесія не існує або минула
@@ -272,7 +272,7 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                                o_items             OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE;
 
-  /* Повернути статті яка в певному статусі або всі якщо null 
+  /* Повернути статті яка в певному статусі або всі якщо null
   Помилки:
                    1004 - Недостатньо повноважень
                    1002 - Сесія не існує або минула
@@ -296,6 +296,7 @@ CREATE OR REPLACE PACKAGE pkg_article IS
                                    i_key_id         user_session.key_id%TYPE,
                                    i_terminal_ip    user_session.terminal_ip%TYPE,
                                    i_article_cat_id category_article.category_id%TYPE,
+                                   i_lang_id        article.article_lang%TYPE,
                                    o_items          OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE;
 

@@ -3,6 +3,7 @@ package main.lightdiver.skim.model;
 import main.lightdiver.skim.ManagerContent;
 import main.lightdiver.skim.entity.Article;
 import main.lightdiver.skim.entity.Category;
+import main.lightdiver.skim.entity.Language;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -32,6 +33,10 @@ public class ArticleBean implements Serializable{
     private int currSelIDArticle;
     private String comment;
 
+    private String languageID = "-1";
+    private List<SelectItem> LanguageSelectedItemList;
+
+
     @ManagedProperty("#{localizationBean}")
     private LocalizationBean localizationBean;
 
@@ -45,6 +50,12 @@ public class ArticleBean implements Serializable{
         categoryList.add(new Category(2, msg.getString("cata.skimread")));
         categoryList.add(new Category(3, msg.getString("cata.attentionmemory")));
         categoryList.add(new Category(4, msg.getString("cata.interestingmathematics")));
+
+        LanguageSelectedItemList = new ArrayList<>();
+        for (Language l : localizationBean.getSelectedLanguage()){
+            LanguageSelectedItemList.add(new SelectItem(l.getLangName()));
+        }
+
     }
 
     public String convStringCategory(Integer[] listIDCategory) {
@@ -91,7 +102,7 @@ public class ArticleBean implements Serializable{
 
     public void loadPreviewArticle(){
         if (previewArticle == null) previewArticle = new ArrayList<>();
-        if (ManagerContent.getPublicArticleList(categoryID==-1?null:categoryID, previewArticle)==0){
+        if (ManagerContent.getPublicArticleList(categoryID==-1?null:categoryID, languageID.equals("-1")?null:languageID,previewArticle)==0){
          for (Article art: previewArticle){
              art.setCategoryNameList(convStringCategory(art.getCategoryIDList()));
          }
@@ -253,5 +264,21 @@ public class ArticleBean implements Serializable{
 
     public void setPreviewArticleNew5(List<Article> previewArticleNew5) {
         this.previewArticleNew5 = previewArticleNew5;
+    }
+
+    public String getLanguageID() {
+        return languageID;
+    }
+
+    public void setLanguageID(String languageID) {
+        this.languageID = languageID;
+    }
+
+    public List<SelectItem> getLanguageSelectedItemList() {
+        return LanguageSelectedItemList;
+    }
+
+    public void setLanguageSelectedItemList(List<SelectItem> languageSelectedItemList) {
+        LanguageSelectedItemList = languageSelectedItemList;
     }
 }

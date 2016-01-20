@@ -14,3 +14,7 @@ REPLACE
 BEGINDATA
 1,Одна книга в неделю,RU,2:1,article_short1.txt,article_content1.txt
 2,Как начать много читать,RU,2,article_short2.txt,article_content2.txt
+3,Числа Фибоначчи: нескучные математические факты,RU,4,article_short3.txt,article_content3.txt
+4,Читання для діток. Цікаво знати.,UA,2,article_short4.txt,article_content4.txt
+5,Як навчитися швидко читати,UA,2,article_short5.txt,article_content5.txt
+6,Класичне оцінювання техніки читання у школах.,UA,1,article_short6.txt,article_content6.txt

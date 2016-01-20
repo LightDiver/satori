@@ -238,7 +238,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
         --Редагується редактором
         c_perm_act := 16;
       WHEN 3 THEN
-        --Готова до публікації 
+        --Готова до публікації
         c_perm_act := 17;
       WHEN 4 THEN
         --Опубліковано
@@ -297,7 +297,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
           RETURN 1010;
         END IF;
       WHEN 3 THEN
-        --Готова до публікації 
+        --Готова до публікації
         IF v_article_status = 1 AND v_user_id = v_article_creator_id THEN
           UPDATE article a
              SET a.article_status_id   = i_atricle_status_new,
@@ -540,7 +540,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                                i_article_status_id article.article_status_id%TYPE,
                                o_items             OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE AS
-    /* Повернути мої статті яка в певному статусі 
+    /* Повернути мої статті яка в певному статусі
     Помилки:
                      1004 - Недостатньо повноважень
                      1002 - Сесія не існує або минула
@@ -591,7 +591,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                                    i_my_working        NUMBER, --1 я редактор, 2-інші, null-неважливо
                                    o_items             OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE AS
-    /* Повернути статті яка в певному статусі або всі якщо null 
+    /* Повернути статті яка в певному статусі або всі якщо null
     Помилки:
                      1004 - Недостатньо повноважень
                      1002 - Сесія не існує або минула
@@ -650,6 +650,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                                    i_key_id         user_session.key_id%TYPE,
                                    i_terminal_ip    user_session.terminal_ip%TYPE,
                                    i_article_cat_id category_article.category_id%TYPE,
+                                   i_lang_id        article.article_lang%TYPE,
                                    o_items          OUT SYS_REFCURSOR)
     RETURN error_desc.error_desc_id%TYPE AS
     /* Повернути статті що опубліковані
@@ -701,7 +702,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
              (i_article_cat_id = 1 AND
              0 = (SELECT COUNT(1)
                       FROM category_article_link l2
-                     WHERE l2.article_id = a.article_id)));
+                     WHERE l2.article_id = a.article_id)))
+            --Мова
+         AND (i_lang_id IS NULL OR a.article_lang = i_lang_id);
   
     RETURN v_error_id;
   EXCEPTION
