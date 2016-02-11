@@ -1,5 +1,8 @@
 /* БАЗОВЫЕ скрипты инициализации */      
 PROMPT --===========================--
+INSERT INTO SYS_VERSION (ID, MAJOR, MINOR, USER_NOTE, USER_NAME, USER_DATE)
+VALUES (1, 1, 1, 'Релиз 001.01', USER, SYSDATE);
+
 PROMPT insert data for USERS (State, Type Roles i.e.)
 
 INSERT INTO supp_lang VALUES('UA','Українська мова солов''їна',1);

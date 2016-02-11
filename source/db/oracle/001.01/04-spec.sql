@@ -145,6 +145,11 @@ CREATE OR REPLACE PACKAGE pkg_systeminfo IS
 
   FUNCTION get_langs RETURN SYS_REFCURSOR;    
 
+  /* 0 - Остання версія не співпадає
+    > 0 - Співпадає
+  */
+  FUNCTION check_version(i_major NUMBER) RETURN NUMBER;
+
 END pkg_systeminfo;
 /
 CREATE OR REPLACE PACKAGE pkg_article IS

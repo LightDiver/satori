@@ -199,6 +199,16 @@ create table CATEGORY_ARTICLE_LINK
   article_id  NUMBER(5) not null
 );
 
+create table SYS_VERSION
+(
+  id        NUMBER not null,
+  major     NUMBER,
+  minor     NUMBER,
+  user_note VARCHAR2(255),
+  user_name VARCHAR2(30),
+  user_date DATE
+);
+
 /* -------------------------------- */
 /*             INDEXES              */
 /* -------------------------------- */
@@ -278,6 +288,7 @@ CREATE UNIQUE INDEX users_role_idx ON users_role (user_id, role_id);
 create unique index ERROR_DESC_ID_IDX1 on ERROR_DESC (ERROR_DESC_ID);
 create unique index ARTICLE_CATEGORY_UNIQ on CATEGORY_ARTICLE_LINK (ARTICLE_ID, CATEGORY_ID);
 create unique index role_action_idx on ROLES_PERM_ACTION (role_id, action_type_id);
+create unique index VERS_UNIQ on SYS_VERSION (MAJOR, MINOR);
 /* -------------------------------- */
 /*            TYPES                 */
 /* -------------------------------- */

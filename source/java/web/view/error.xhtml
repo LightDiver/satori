@@ -17,6 +17,7 @@
             }
         </h:outputStylesheet>
         <h:messages />
+        <h:outputText value="Не співпадає версія БД і додатка" rendered="#{param.error == 'version'}" />
         <h:outputText value="Помилка файлу налаштувань" rendered="#{param.error == 'fileNotRead'}" />
         <h:outputText value="Помилка параметрів" rendered="#{param.error == 'invalidParameter'}" />
         <h:outputText value="Помилка доступу до БД" rendered="#{param.error == 'baseNotConnect'}" />

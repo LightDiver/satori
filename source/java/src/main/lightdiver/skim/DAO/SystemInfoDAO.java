@@ -62,4 +62,26 @@ public class SystemInfoDAO {
         return langs;
     }
 
+    public static Integer checkVersion(Integer major) throws BaseNotConnect {
+        Connection con = ConnectionPool.takeConn();
+        CallableStatement cs = null;
+        try {
+            cs = con.prepareCall("{? = call pkg_systeminfo.check_version(?)}");
+
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setInt(2, major);
+            cs.execute();
+            return cs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            logger.severe("Error version query " + e);
+            return 0;
+        }
+        finally {
+            ConnectionPool.putConn(con);
+        }
+
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package main.lightdiver.skim.model;
 
+import main.lightdiver.skim.DAO.SystemInfoDAO;
 import main.lightdiver.skim.LoadMenu;
 import main.lightdiver.skim.Users;
 import main.lightdiver.skim.entity.UserEntity;
@@ -34,6 +35,7 @@ public class SessionBean implements Serializable {
     private LocalizationBean localizationBean;
 
     public static final int CONST_EXPIRE_COOKIE = 60*60*24*30;
+    private static final int VERS_MAJOR = 1;
 
     protected String userName;
     protected transient String userPass;
@@ -89,14 +91,29 @@ public class SessionBean implements Serializable {
         } catch (BaseNotConnect baseNotConnect) {
             msgErr = "?error=baseNotConnect";
         }
-        if (msgErr != null) {
-                /*try {
-                    FacesContext.getCurrentInstance().getExternalContext().dispatch("/view/error.xhtml" + msgErr);
+        try {
+            if (SystemInfoDAO.checkVersion(VERS_MAJOR) ==0 ) {
+                msgErr =  "?error=version";
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/view/error.xhtml" + msgErr);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                */
+            }
+        } catch (BaseNotConnect baseNotConnect) {
+            baseNotConnect.printStackTrace();
         }
+        /*
+        if (msgErr != null) {
+                try {
+                    //FacesContext.getCurrentInstance().getExternalContext().dispatch("/view/error.xhtml" + msgErr);
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/view/error.xhtml" + msgErr);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        */
 
 
 
