@@ -32,5 +32,6 @@
     <orderEntry type="library" name="javax.faces-2.2.12" level="project" />
     <orderEntry type="library" name="richfaces-rich-4.5.12.Final" level="project" />
     <orderEntry type="library" name="primefaces-5.3" level="project" />
+    <orderEntry type="library" name="postgresql-9.4.1207.jre7" level="project" />
   </component>
 </module>

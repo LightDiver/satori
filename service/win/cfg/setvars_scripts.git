@@ -28,6 +28,17 @@ rem ==============================
 @set sql_util="C:\OracleClient11g\product\11.2.0\client_1\BIN\sqlplus.exe"
 @set sql_load="C:\OracleClient11g\product\11.2.0\client_1\BIN\sqlldr.exe"
 
+rem ==============================
+rem Change The Options  For Postgres
+rem Примітка: пароль не спрацювує з PGPASSWORD в psql.exe якщо великими літерами
+rem ==============================
+@set pg_install=C:\app\PostgreSQL\9.4\bin
+@set pg_host=localhost
+@set Postgres_DB=db_dev
+@set User_name=dev_test
+@set User_pass=dev_test
+
+
 rem ==============
 rem Do Not Change!
 rem ==============

@@ -1,12 +1,12 @@
 /* БАЗОВЫЕ скрипты инициализации */      
-PROMPT --===========================--
+-- --===========================--
 
-PROMPT insert sys_version
+-- insert sys_version
 
 INSERT INTO SYS_VERSION (ID, MAJOR, MINOR, USER_NOTE, USER_NAME, USER_DATE)
-VALUES (1, 1, 1, 'Релиз 001.01', USER, SYSDATE);
+VALUES (1, 1, 1, 'Релиз 001.01', USER, current_date);
 
-PROMPT insert data for USERS (State, Type Roles i.e.)
+-- insert data for USERS (State, Type Roles i.e.)
 
 INSERT INTO supp_lang VALUES('UA','Українська мова солов''їна',1);
 INSERT INTO supp_lang VALUES('EN','English',0);
@@ -158,7 +158,7 @@ INSERT INTO roles_perm_action(role_id, action_type_id) VALUES(4,23);
 --Special users
 INSERT INTO users(user_id,user_login, user_pass, user_name, user_email, state_id, r_date, lang_id, user_sex)
 VALUES(1,'ADMIN',
-       lower(rawtohex(dbms_crypto.hash(src => utl_raw.cast_to_raw('ADMINqwerty'), typ => /*dbms_crypto.hash_sh1*/3))),
+	encode(digest('ADMINqwerty','sha1'),'hex'),
        'Адмін',NULL, 1, localtimestamp, 'EN','M'
        );
 INSERT INTO users(user_id,user_login, user_pass, user_name, user_email, state_id, r_date, lang_id, user_sex)
@@ -168,7 +168,7 @@ VALUES(2,'GUEST',
        );
 INSERT INTO users(user_id,user_login, user_pass, user_name, user_email, state_id, r_date, lang_id, user_sex)
 VALUES(3,'EDITOR',
-       lower(rawtohex(dbms_crypto.hash(src => utl_raw.cast_to_raw('EDITORqwerty'), typ => /*dbms_crypto.hash_sh1*/3))),
+	encode(digest('EDITORqwerty','sha1'),'hex'),
        'Редактор',NULL, 1, localtimestamp, 'UA','M'
        );
 

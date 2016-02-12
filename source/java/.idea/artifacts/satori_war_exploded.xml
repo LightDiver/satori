@@ -11,6 +11,7 @@
           <element id="library" level="project" name="javax.faces-2.2.12" />
           <element id="library" level="project" name="richfaces-rich-4.5.12.Final" />
           <element id="library" level="project" name="primefaces-5.3" />
+          <element id="library" level="project" name="postgresql-9.4.1207.jre7" />
         </element>
       </element>
       <element id="directory" name="META-INF">

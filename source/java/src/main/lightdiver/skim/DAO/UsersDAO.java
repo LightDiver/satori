@@ -251,7 +251,7 @@ public class UsersDAO {//а навіщо такий конструктор?
             con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.check_user_sess_active(?,?,?,?)}");
             cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
+            cs.setInt(2, Integer.parseInt(userSession));
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
             cs.setInt(5, action);
