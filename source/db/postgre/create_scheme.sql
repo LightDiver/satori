@@ -1,3 +1,4 @@
+SET CLIENT_ENCODING TO 'WIN1251';
 --—хеми тут зам≥нник пакет≥в в ќракл≥
 CREATE SCHEMA pkg_users AUTHORIZATION :User_name;
 CREATE SCHEMA pkg_systeminfo AUTHORIZATION :User_name;

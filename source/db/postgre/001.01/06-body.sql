@@ -1,6 +1,7 @@
+SET CLIENT_ENCODING TO 'WIN1251';
 --PACKAGE BODY pkg_systeminfo
 
-  CREATE OR REPLACE FUNCTION pkg_systeminfo.get_description_error(i_error_id error_desc.error_desc_id%TYPE)
+  CREATE OR REPLACE FUNCTION pkg_systeminfo.get_description_error(i_error_id integer)
     RETURNS VARCHAR AS
     $BODY$
   DECLARE 
@@ -28,10 +29,10 @@
   $BODY$
   LANGUAGE 'plpgsql';
 
-  CREATE OR REPLACE FUNCTION pkg_systeminfo.check_version(i_major NUMERIC) RETURNS NUMERIC AS
+  CREATE OR REPLACE FUNCTION pkg_systeminfo.check_version(i_major integer) RETURNS NUMERIC AS
   $BODY$
   DECLARE 
-    v_res NUMERIC(1);
+    v_res NUMERIC(1,0);
     /* 0 - Остання версія не співпадає
       > 0 - Співпадає
     */
@@ -52,10 +53,10 @@
 /*===============================*/
 --PACKAGE BODY pkg_users
 /*===============================*/
-CREATE OR REPLACE FUNCTION pkg_users.get_roles_list(i_user_id    user_session.user_id%TYPE,
-                          i_session_id user_session.session_id%TYPE,
+CREATE OR REPLACE FUNCTION pkg_users.get_roles_list(i_user_id    numeric(18,0),
+                          i_session_id numeric(18,0),
                           i_key_id     user_session.key_id%TYPE,
-                          o_error_id   OUT error_desc.error_desc_id%TYPE,
+                          o_error_id   OUT integer,
                           o_items      OUT refcursor) RETURNS record AS
 $BODY$
 DECLARE
@@ -85,15 +86,15 @@ DECLARE
 $BODY$
   LANGUAGE 'plpgsql';
 
-CREATE OR REPLACE FUNCTION pkg_users.login(i_user_login      users.user_login%TYPE,
-                 i_pass            users.user_pass%TYPE,
-                 i_terminal_ip     user_session.terminal_ip%TYPE,
-                 i_terminal_client user_session.terminal_client%TYPE,
-		 o_error_id 	   OUT error_desc.error_desc_id%TYPE,
-                 o_session_id      OUT user_session.session_id%TYPE,
-                 o_key_id          OUT user_session.key_id%TYPE,
-                 o_lang_id         OUT users.lang_id%TYPE,
-                 o_roles_list      OUT REFCURSOR)
+CREATE OR REPLACE FUNCTION pkg_users.login(IN i_user_login character varying,
+    IN i_pass character varying,
+    IN i_terminal_ip character varying,
+    IN i_terminal_client character varying,
+    OUT o_error_id integer,
+    OUT o_session_id numeric(18,0),
+    OUT o_key_id character varying,
+    OUT o_lang_id character varying,
+    OUT o_roles_list refcursor)
     RETURNS record AS
   $body$
 DECLARE
@@ -118,10 +119,8 @@ DECLARE
       RETURN;
     end if;  
   
-    o_session_id = session_id_seq.nextval;
-    o_key_id     = rawtohex(dbms_crypto.hash(src => utl_raw.cast_to_raw(o_session_id ||
-                                                                         v_user_id),
-                                              typ => dbms_crypto.hash_sh1));
+    o_session_id = nextval('session_id_seq');
+    select encode(digest('' || o_session_id ||  v_user_id,'sha1'),'hex') into o_key_id ;                                         
   
     INSERT INTO user_session
       (session_id,
@@ -142,17 +141,17 @@ DECLARE
        1,
        localtimestamp);
   
-    o_error_id = get_roles_list(v_user_id, NULL, NULL, o_roles_list);
+    select  o.o_error_id, o.o_items from  pkg_users.get_roles_list(v_user_id, NULL, NULL) o into o_error_id, o_roles_list;
     RETURN;      
     
   END;
 $body$
 LANGUAGE 'plpgsql';
 
-  CREATE OR REPLACE FUNCTION pkg_users.update_user_session(i_session_id   user_session.session_id%TYPE,
+  CREATE OR REPLACE FUNCTION pkg_users.update_user_session(i_session_id   numeric(18,0),
                                 i_key_id       user_session.key_id%TYPE,
-                                i_act          user_session.l_action_type_id%TYPE,
-                                i_l_is_success user_session.l_is_success%TYPE) RETURNS void AS $$
+                                i_act          numeric(10,0),
+                                i_l_is_success numeric(1,0)) RETURNS void AS $$
   BEGIN
     UPDATE user_session
        SET l_date           = localtimestamp,
@@ -164,8 +163,8 @@ LANGUAGE 'plpgsql';
   $$
    LANGUAGE 'plpgsql';
 
-  CREATE OR REPLACE FUNCTION pkg_users.is_permission(i_user_id  users.user_id%TYPE,
-                         i_perm_act action_type.action_type_id%TYPE)
+  CREATE OR REPLACE FUNCTION pkg_users.is_permission(i_user_id  numeric(18,0),
+                         i_perm_act numeric(10,0))
     RETURNS BOOLEAN AS
     $$
     DECLARE
@@ -188,14 +187,15 @@ LANGUAGE 'plpgsql';
   $$
    LANGUAGE 'plpgsql';
 
-  CREATE OR REPLACE FUNCTION pkg_users.active_session(i_session_id  user_session.session_id%TYPE,
-                          i_key_id      user_session.key_id%TYPE,
-                          i_terminal_ip user_session.terminal_ip%TYPE,
-                          i_act         user_session.l_action_type_id%TYPE,
-                          o_error_id 	OUT error_desc.error_desc_id%TYPE,
-                          o_user_id     OUT user_session.user_id%TYPE)
+CREATE OR REPLACE FUNCTION pkg_users.active_session(
+    IN i_session_id numeric(18,0),
+    IN i_key_id character varying,
+    IN i_terminal_ip character varying,
+    IN i_act numeric(10,0),
+    OUT o_error_id integer,
+    OUT o_user_id numeric(18,0))
     RETURNS record AS
-    $$
+$BODY$
     /* Перевірка на аткивність сесії.
         Оновлює сесію часом і типом останньої дії користувача
         Перевіряє дозвіл на виконання дії i_act
@@ -226,16 +226,16 @@ LANGUAGE 'plpgsql';
       RETURN;
     END IF;
   
-    IF is_permission(o_user_id, i_act) THEN
+    IF pkg_users.is_permission(o_user_id, i_act) THEN
       v_l_is_success = 1;
     ELSE
       v_l_is_success = 0;
     END IF;
   
     --відпрацювати задачу автономної транзакції (dblink ?)
-    perform update_user_session(i_session_id, i_key_id, i_act, v_l_is_success);
+    perform pkg_users.update_user_session(i_session_id, i_key_id, i_act, v_l_is_success);
   
-    IF v_l_is_success == 0 THEN
+    IF v_l_is_success = 0 THEN
       RAISE EXCEPTION SQLSTATE 'NPRIV';
     END IF;
   
@@ -246,17 +246,15 @@ LANGUAGE 'plpgsql';
       o_error_id = 1002; --Сесія не існує або минула
       RETURN;
   END;
-  $$
+$BODY$
     LANGUAGE 'plpgsql';
 
-
-
-
-  create or replace FUNCTION pkg_users.check_user_sess_active(i_session_id  user_session.session_id%TYPE,
-                                  i_key_id      user_session.key_id%TYPE,
-                                  i_terminal_ip user_session.terminal_ip%TYPE,
-                                  i_act         user_session.l_action_type_id%TYPE)
-    RETURNS error_desc.error_desc_id%TYPE AS
+CREATE OR REPLACE FUNCTION pkg_users.check_user_sess_active(
+    i_session_id numeric(18,0),
+    i_key_id character varying,
+    i_terminal_ip character varying,
+    i_act numeric(10,0))
+  RETURNS integer AS
     $$
     DECLARE
     /*Обгортка active_session ДЛЯ ВИКОРИСТАННЯ ВИКЛИКІВ ІЗ ЗОВНІ
