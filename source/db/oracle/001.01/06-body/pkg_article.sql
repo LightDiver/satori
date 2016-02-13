@@ -1,32 +1,33 @@
 CREATE OR REPLACE PACKAGE BODY pkg_article IS
 
-  FUNCTION create_new_article(i_session_id      user_session.session_id%TYPE,
-                              i_key_id          user_session.key_id%TYPE,
-                              i_terminal_ip     user_session.terminal_ip%TYPE,
-                              o_article_id      OUT article.article_id%TYPE,
-                              i_article_title   article.article_title%TYPE,
-                              i_article_short   article.article_short%TYPE,
-                              i_article_content article.article_content%TYPE,
-                              i_article_lang    article.article_lang%TYPE)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE create_new_article(i_session_id      user_session.session_id%TYPE,
+                               i_key_id          user_session.key_id%TYPE,
+                               i_terminal_ip     user_session.terminal_ip%TYPE,
+                               i_article_title   article.article_title%TYPE,
+                               i_article_short   article.article_short%TYPE,
+                               i_article_content article.article_content%TYPE,
+                               i_article_lang    article.article_lang%TYPE,
+                               o_error_id        OUT error_desc.error_desc_id%TYPE,
+                               o_article_id      OUT article.article_id%TYPE) AS
     /* Додавання статті
     Помилки:
                      1004 - Недостатньо повноважень
                      1002 - Сесія не існує або минула
                      1003 - IP сесії невірне
     */
-    v_error_id error_desc.error_desc_id%TYPE;
+  
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 14;
   
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
-    IF v_error_id <> 0 THEN
-      RETURN v_error_id;
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             o_error_id,
+                             v_user_id);
+    IF o_error_id <> 0 THEN
+      RETURN;
     END IF;
   
     o_article_id := article_id_seq.nextval;
@@ -54,12 +55,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
        NULL,
        i_article_lang);
   
-    RETURN v_error_id;
+    RETURN;
   
   EXCEPTION
     WHEN pkg_users.insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
+      RETURN;
   END create_new_article;
 
   FUNCTION edit_article(i_session_id       user_session.session_id%TYPE,
@@ -90,11 +91,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
     v_article_creator_id article.article_creator_id%TYPE;
     v_article_editor_id  article.article_editor_id%TYPE;
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             v_error_id,
+                             v_user_id);
   
     IF v_error_id <> 0 THEN
       RETURN v_error_id;
@@ -245,11 +247,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
         c_perm_act := 18;
     END CASE;
   
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             v_error_id,
+                             v_user_id);
     IF v_error_id <> 0 THEN
       RETURN v_error_id;
     END IF;
@@ -307,7 +310,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
           UPDATE article a
              SET a.article_status_id = i_atricle_status_new
            WHERE a.article_id = i_article_id;
-        ELSIF v_article_status = 4 AND v_user_id = v_article_editor_id THEN
+        ELSIF v_article_status = 4 AND v_is_editor THEN
           IF i_comment IS NULL OR length(i_comment) <= 5 THEN
             RETURN 1013;
           END IF;
@@ -344,17 +347,17 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       RETURN v_error_id;
   END change_status_article;
 
-  FUNCTION get_last_edit_active_article(i_session_id       user_session.session_id%TYPE,
-                                        i_key_id           user_session.key_id%TYPE,
-                                        i_terminal_ip      user_session.terminal_ip%TYPE,
-                                        o_article_id       OUT article.article_id%TYPE,
-                                        o_article_title    OUT article.article_title%TYPE,
-                                        o_article_short    OUT article.article_short%TYPE,
-                                        o_article_content  OUT article.article_content%TYPE,
-                                        o_article_lang     OUT article.article_lang%TYPE,
-                                        o_article_category OUT VARCHAR2,
-                                        o_comment          OUT article.article_comment%TYPE)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE get_last_edit_active_article(i_session_id       user_session.session_id%TYPE,
+                                         i_key_id           user_session.key_id%TYPE,
+                                         i_terminal_ip      user_session.terminal_ip%TYPE,
+                                         o_error_id         OUT error_desc.error_desc_id%TYPE,
+                                         o_article_id       OUT article.article_id%TYPE,
+                                         o_article_title    OUT article.article_title%TYPE,
+                                         o_article_short    OUT article.article_short%TYPE,
+                                         o_article_content  OUT article.article_content%TYPE,
+                                         o_article_lang     OUT article.article_lang%TYPE,
+                                         o_article_category OUT VARCHAR2,
+                                         o_comment          OUT article.article_comment%TYPE) AS
     /* Повернути статтю яка в статусі Редагування автором
     Помилки:
                      1004 - Недостатньо повноважень
@@ -362,18 +365,18 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                      1003 - IP сесії невірне
                  1011 - Пусто
     */
-    v_error_id error_desc.error_desc_id%TYPE := 0;
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 19;
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             o_error_id,
+                             v_user_id);
   
-    IF v_error_id <> 0 THEN
-      RETURN v_error_id;
+    IF o_error_id <> 0 THEN
+      RETURN;
     END IF;
   
     SELECT a.article_id,
@@ -398,26 +401,27 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       FROM category_article_link c
      WHERE c.article_id = o_article_id;
   
-    RETURN v_error_id;
+    RETURN;
   EXCEPTION
     WHEN no_data_found THEN
-      RETURN 1011;
+      o_error_id := 1011;
+      RETURN;
     WHEN pkg_users.insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
+      RETURN;
   END get_last_edit_active_article;
 
-  FUNCTION get_edit_my_article(i_session_id       user_session.session_id%TYPE,
-                               i_key_id           user_session.key_id%TYPE,
-                               i_terminal_ip      user_session.terminal_ip%TYPE,
-                               i_article_id       article.article_id%TYPE,
-                               o_article_title    OUT article.article_title%TYPE,
-                               o_article_short    OUT article.article_short%TYPE,
-                               o_article_content  OUT article.article_content%TYPE,
-                               o_article_lang     OUT article.article_lang%TYPE,
-                               o_article_category OUT VARCHAR2,
-                               o_comment          OUT article.article_comment%TYPE)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE get_edit_my_article(i_session_id       user_session.session_id%TYPE,
+                                i_key_id           user_session.key_id%TYPE,
+                                i_terminal_ip      user_session.terminal_ip%TYPE,
+                                i_article_id       article.article_id%TYPE,
+                                o_error_id         OUT error_desc.error_desc_id%TYPE,
+                                o_article_title    OUT article.article_title%TYPE,
+                                o_article_short    OUT article.article_short%TYPE,
+                                o_article_content  OUT article.article_content%TYPE,
+                                o_article_lang     OUT article.article_lang%TYPE,
+                                o_article_category OUT VARCHAR2,
+                                o_comment          OUT article.article_comment%TYPE) AS
     /* Повернути статтю яка в статусі Редагування користувачем за умови що створювачем він і є
     Помилки:
                      1004 - Недостатньо повноважень
@@ -425,19 +429,19 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                      1003 - IP сесії невірне
                  1011 - Пусто
     */
-    v_error_id error_desc.error_desc_id%TYPE := 0;
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 20;
   
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             o_error_id,
+                             v_user_id);
   
-    IF v_error_id <> 0 THEN
-      RETURN v_error_id;
+    IF o_error_id <> 0 THEN
+      RETURN;
     END IF;
   
     SELECT a.article_title,
@@ -460,26 +464,27 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       FROM category_article_link c
      WHERE c.article_id = i_article_id;
   
-    RETURN v_error_id;
+    RETURN;
   EXCEPTION
     WHEN no_data_found THEN
-      RETURN 1011;
+      o_error_id := 1011;
+      RETURN;
     WHEN pkg_users.insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
+      RETURN;
   END get_edit_my_article;
 
-  FUNCTION get_edit_editor_article(i_session_id       user_session.session_id%TYPE,
-                                   i_key_id           user_session.key_id%TYPE,
-                                   i_terminal_ip      user_session.terminal_ip%TYPE,
-                                   i_article_id       article.article_id%TYPE,
-                                   o_article_title    OUT article.article_title%TYPE,
-                                   o_article_short    OUT article.article_short%TYPE,
-                                   o_article_content  OUT article.article_content%TYPE,
-                                   o_article_lang     OUT article.article_lang%TYPE,
-                                   o_article_category OUT VARCHAR2,
-                                   o_comment          OUT article.article_comment%TYPE)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE get_edit_editor_article(i_session_id       user_session.session_id%TYPE,
+                                    i_key_id           user_session.key_id%TYPE,
+                                    i_terminal_ip      user_session.terminal_ip%TYPE,
+                                    i_article_id       article.article_id%TYPE,
+                                    o_error_id         OUT error_desc.error_desc_id%TYPE,
+                                    o_article_title    OUT article.article_title%TYPE,
+                                    o_article_short    OUT article.article_short%TYPE,
+                                    o_article_content  OUT article.article_content%TYPE,
+                                    o_article_lang     OUT article.article_lang%TYPE,
+                                    o_article_category OUT VARCHAR2,
+                                    o_comment          OUT article.article_comment%TYPE) AS
     /* Повернути статтю яка в статусі Редагування редактором за умови що редактором він і є
     Помилки:
                      1004 - Недостатньо повноважень
@@ -487,22 +492,23 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                      1003 - IP сесії невірне
                  1011 - Пусто
     */
-    v_error_id error_desc.error_desc_id%TYPE := 0;
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 21;
   
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             o_error_id,
+                             v_user_id);
   
-    IF v_error_id <> 0 THEN
-      RETURN v_error_id;
+    IF o_error_id <> 0 THEN
+      RETURN;
     END IF;
     IF NOT user_is_editor(v_user_id) THEN
-      RETURN 1004;
+      o_error_id := 1004;
+      RETURN;
     END IF;
   
     SELECT a.article_title,
@@ -525,40 +531,41 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       FROM category_article_link c
      WHERE c.article_id = i_article_id;
   
-    RETURN v_error_id;
+    RETURN;
   EXCEPTION
     WHEN no_data_found THEN
-      RETURN 1011;
+      o_error_id := 1011;
+      RETURN;
     WHEN pkg_users.insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
+      RETURN;
   END get_edit_editor_article;
 
-  FUNCTION get_my_article_list(i_session_id        user_session.session_id%TYPE,
-                               i_key_id            user_session.key_id%TYPE,
-                               i_terminal_ip       user_session.terminal_ip%TYPE,
-                               i_article_status_id article.article_status_id%TYPE,
-                               o_items             OUT SYS_REFCURSOR)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE get_my_article_list(i_session_id        user_session.session_id%TYPE,
+                                i_key_id            user_session.key_id%TYPE,
+                                i_terminal_ip       user_session.terminal_ip%TYPE,
+                                i_article_status_id article.article_status_id%TYPE,
+                                o_error_id          OUT error_desc.error_desc_id%TYPE,
+                                o_items             OUT SYS_REFCURSOR) AS
     /* Повернути мої статті яка в певному статусі
     Помилки:
                      1004 - Недостатньо повноважень
                      1002 - Сесія не існує або минула
                      1003 - IP сесії невірне
     */
-    v_error_id error_desc.error_desc_id%TYPE := 0;
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 26;
   
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             o_error_id,
+                             v_user_id);
   
-    IF v_error_id <> 0 THEN
-      RETURN v_error_id;
+    IF o_error_id <> 0 THEN
+      RETURN;
     END IF;
   
     OPEN o_items FOR
@@ -577,42 +584,43 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
              a.article_status_id = i_article_status_id)
          AND a.article_creator_id = v_user_id;
   
-    RETURN v_error_id;
+    RETURN;
   EXCEPTION
     WHEN pkg_users.insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
+      RETURN;
   END get_my_article_list;
 
-  FUNCTION get_editor_article_list(i_session_id        user_session.session_id%TYPE,
-                                   i_key_id            user_session.key_id%TYPE,
-                                   i_terminal_ip       user_session.terminal_ip%TYPE,
-                                   i_article_status_id article.article_status_id%TYPE,
-                                   i_my_working        NUMBER, --1 я редактор, 2-інші, null-неважливо
-                                   o_items             OUT SYS_REFCURSOR)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE get_editor_article_list(i_session_id        user_session.session_id%TYPE,
+                                    i_key_id            user_session.key_id%TYPE,
+                                    i_terminal_ip       user_session.terminal_ip%TYPE,
+                                    i_article_status_id article.article_status_id%TYPE,
+                                    i_my_working        NUMBER, --1 я редактор, 2-інші, null-неважливо
+                                    o_error_id          OUT error_desc.error_desc_id%TYPE,
+                                    o_items             OUT SYS_REFCURSOR) AS
     /* Повернути статті яка в певному статусі або всі якщо null
     Помилки:
                      1004 - Недостатньо повноважень
                      1002 - Сесія не існує або минула
                      1003 - IP сесії невірне
     */
-    v_error_id error_desc.error_desc_id%TYPE := 0;
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 23;
   
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             o_error_id,
+                             v_user_id);
   
-    IF v_error_id <> 0 THEN
-      RETURN v_error_id;
+    IF o_error_id <> 0 THEN
+      RETURN;
     END IF;
     IF NOT user_is_editor(v_user_id) THEN
-      RETURN 1004;
+      o_error_id := 1004;
+      RETURN;
     END IF;
   
     OPEN o_items FOR
@@ -639,39 +647,39 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
              (i_my_working = 1 AND a.article_editor_id = v_user_id) OR
              (i_my_working = 2 AND a.article_editor_id <> v_user_id));
   
-    RETURN v_error_id;
+    RETURN;
   EXCEPTION
     WHEN pkg_users.insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
+      RETURN;
   END get_editor_article_list;
 
-  FUNCTION get_article_list_public(i_session_id     user_session.session_id%TYPE,
-                                   i_key_id         user_session.key_id%TYPE,
-                                   i_terminal_ip    user_session.terminal_ip%TYPE,
-                                   i_article_cat_id category_article.category_id%TYPE,
-                                   i_lang_id        article.article_lang%TYPE,
-                                   o_items          OUT SYS_REFCURSOR)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE get_article_list_public(i_session_id     user_session.session_id%TYPE,
+                                    i_key_id         user_session.key_id%TYPE,
+                                    i_terminal_ip    user_session.terminal_ip%TYPE,
+                                    i_article_cat_id category_article.category_id%TYPE,
+                                    i_lang_id        article.article_lang%TYPE,
+                                    o_error_id       OUT error_desc.error_desc_id%TYPE,
+                                    o_items          OUT SYS_REFCURSOR) AS
     /* Повернути статті що опубліковані
     Помилки:
                      1004 - Недостатньо повноважень
                      1002 - Сесія не існує або минула
                      1003 - IP сесії невірне
     */
-    v_error_id error_desc.error_desc_id%TYPE := 0;
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 24;
   
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             o_error_id,
+                             v_user_id);
   
-    IF v_error_id <> 0 THEN
-      RETURN v_error_id;
+    IF o_error_id <> 0 THEN
+      RETURN;
     END IF;
   
     OPEN o_items FOR
@@ -706,37 +714,37 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
             --Мова
          AND (i_lang_id IS NULL OR a.article_lang = i_lang_id);
   
-    RETURN v_error_id;
+    RETURN;
   EXCEPTION
     WHEN pkg_users.insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
+      RETURN;
   END get_article_list_public;
 
-  FUNCTION get_article_list_public_new5(i_session_id  user_session.session_id%TYPE,
-                                        i_key_id      user_session.key_id%TYPE,
-                                        i_terminal_ip user_session.terminal_ip%TYPE,
-                                        o_items       OUT SYS_REFCURSOR)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE get_article_list_public_new5(i_session_id  user_session.session_id%TYPE,
+                                         i_key_id      user_session.key_id%TYPE,
+                                         i_terminal_ip user_session.terminal_ip%TYPE,
+                                         o_error_id    OUT error_desc.error_desc_id%TYPE,
+                                         o_items       OUT SYS_REFCURSOR) AS
     /* Повернути статті що опубліковані (Останных 5 опублікованих)
     Помилки:
                      1004 - Недостатньо повноважень
                      1002 - Сесія не існує або минула
                      1003 - IP сесії невірне
     */
-    v_error_id error_desc.error_desc_id%TYPE := 0;
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 24;
   
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             o_error_id,
+                             v_user_id);
   
-    IF v_error_id <> 0 THEN
-      RETURN v_error_id;
+    IF o_error_id <> 0 THEN
+      RETURN;
     END IF;
   
     OPEN o_items FOR
@@ -752,25 +760,23 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                ORDER BY a.article_public_date DESC) sort
        WHERE rownum <= 5;
   
-    RETURN v_error_id;
   EXCEPTION
     WHEN pkg_users.insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
   END get_article_list_public_new5;
 
-  FUNCTION get_article(i_session_id       user_session.session_id%TYPE,
-                       i_key_id           user_session.key_id%TYPE,
-                       i_terminal_ip      user_session.terminal_ip%TYPE,
-                       i_article_id       article.article_id%TYPE,
-                       o_article_title    OUT article.article_title%TYPE,
-                       o_article_short    OUT article.article_short%TYPE,
-                       o_article_content  OUT article.article_content%TYPE,
-                       o_article_lang     OUT article.article_lang%TYPE,
-                       o_creator          OUT VARCHAR2,
-                       o_public_date      OUT article.article_public_date%TYPE,
-                       o_article_category OUT VARCHAR2)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE get_article(i_session_id       user_session.session_id%TYPE,
+                        i_key_id           user_session.key_id%TYPE,
+                        i_terminal_ip      user_session.terminal_ip%TYPE,
+                        i_article_id       article.article_id%TYPE,
+                        o_error_id         OUT error_desc.error_desc_id%TYPE,
+                        o_article_title    OUT article.article_title%TYPE,
+                        o_article_short    OUT article.article_short%TYPE,
+                        o_article_content  OUT article.article_content%TYPE,
+                        o_article_lang     OUT article.article_lang%TYPE,
+                        o_creator          OUT VARCHAR2,
+                        o_public_date      OUT article.article_public_date%TYPE,
+                        o_article_category OUT VARCHAR2) AS
     /* Повернути статтю яка в статусі Опублікована (або якщо власник чи редактор, то в любому статусі)
     Помилки:
                      1004 - Недостатньо повноважень
@@ -778,18 +784,18 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
                      1003 - IP сесії невірне
                  1011 - Пусто
     */
-    v_error_id error_desc.error_desc_id%TYPE := 0;
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 25;
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             o_error_id,
+                             v_user_id);
   
-    IF v_error_id <> 0 THEN
-      RETURN v_error_id;
+    IF o_error_id <> 0 THEN
+      RETURN;
     END IF;
   
     SELECT a.article_title,
@@ -815,13 +821,14 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
       FROM category_article_link c
      WHERE c.article_id = i_article_id;
   
-    RETURN v_error_id;
+    RETURN;
   EXCEPTION
     WHEN no_data_found THEN
-      RETURN 1011;
+      o_error_id := 1011;
+      RETURN;
     WHEN pkg_users.insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
+      RETURN;
   END get_article;
 
   FUNCTION del_my_article(i_session_id  user_session.session_id%TYPE,
@@ -839,11 +846,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_article IS
     v_user_id  user_session.user_id%TYPE;
     c_perm_act action_type.action_type_id%TYPE := 27;
   BEGIN
-    v_error_id := pkg_users.active_session(i_session_id,
-                                           i_key_id,
-                                           i_terminal_ip,
-                                           c_perm_act,
-                                           v_user_id);
+    pkg_users.active_session(i_session_id,
+                             i_key_id,
+                             i_terminal_ip,
+                             c_perm_act,
+                             v_error_id,
+                             v_user_id);
   
     IF v_error_id <> 0 THEN
       RETURN v_error_id;

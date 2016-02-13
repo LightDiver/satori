@@ -59,7 +59,7 @@
 
 <p><big><em><strong>не можна читати лежачи.</strong></em></big></p>
 
-<p style="margin-left: 120px;"><img alt="" src="http://localhost:8080/resources/images/articles/1003/book80.jpg" style="height:604px; width:482px" /></p>
+<p style="margin-left: 120px;"><img alt="" src="http://localhost:8080/resources/images/articles/4/book80.jpg" style="height:604px; width:482px" /></p>
 
 <p style="margin-left: 320px;"><big>Цікава книжечка...</big></p>
 

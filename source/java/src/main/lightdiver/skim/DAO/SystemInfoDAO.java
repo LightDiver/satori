@@ -2,6 +2,7 @@ package main.lightdiver.skim.DAO;
 
 import main.lightdiver.skim.exceptions.BaseNotConnect;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -68,10 +69,10 @@ public class SystemInfoDAO {
         try {
             cs = con.prepareCall("{? = call pkg_systeminfo.check_version(?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
+            cs.registerOutParameter(1, Types.NUMERIC);
             cs.setInt(2, major);
             cs.execute();
-            return cs.getInt(1);
+            return DAO.getNumericAsInt(cs,1);
         } catch (SQLException e) {
             e.printStackTrace();
             logger.severe("Error version query " + e);

@@ -18,21 +18,24 @@ public class ArticleDAO {
         CallableStatement cs = null;
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.create_new_article(?, ?, ?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{call pkg_article.create_new_article(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            cs.registerOutParameter(5, Types.INTEGER);
-            cs.setString(6, title);
-            cs.setString(7, shortContent);
-            cs.setString(8, content);
-            cs.setString(9, lang);
+
+            cs.setString(1, userSession);
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+
+            cs.setString(4, title);
+            cs.setString(5, shortContent);
+            cs.setString(6, content);
+            cs.setString(7, lang);
+            cs.registerOutParameter(8, Types.NUMERIC);
+            cs.registerOutParameter(9, Types.NUMERIC);
+
             cs.execute();
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,8);
             if (res == 0){
-                outArticle.setArticleId(cs.getInt(5));
+                outArticle.setArticleId(DAO.getNumericAsInt(cs, 9));
             }
             cs.close();
             return res;
@@ -53,7 +56,7 @@ public class ArticleDAO {
         try {
             cs = con.prepareCall("{? = call pkg_article.edit_article(?, ?, ?, ?, ?, ?, ?, ?,?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
+            cs.registerOutParameter(1, Types.NUMERIC);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
@@ -64,7 +67,7 @@ public class ArticleDAO {
             cs.setString(9, lang);
             cs.setString(10,categoryIDList);
             cs.execute();
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,1);
             cs.close();
             return res;
         } catch (SQLException e) {
@@ -83,13 +86,14 @@ public class ArticleDAO {
         CallableStatement cs = null;
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_last_edit_active_article(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{call pkg_article.get_last_edit_active_article(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            cs.registerOutParameter(5, Types.INTEGER);
+
+            cs.setString(1, userSession);
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            cs.registerOutParameter(4, Types.NUMERIC);
+            cs.registerOutParameter(5, Types.NUMERIC);
             cs.registerOutParameter(6, Types.VARCHAR);
             cs.registerOutParameter(7, Types.VARCHAR);
             cs.registerOutParameter(8, Types.CLOB);
@@ -98,9 +102,9 @@ public class ArticleDAO {
             cs.registerOutParameter(11, Types.VARCHAR);
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,4);
             if (res == 0){
-                outArticle.setArticleId(cs.getInt(5)) ;
+                outArticle.setArticleId(DAO.getNumericAsInt(cs, 5)) ;
                 outArticle.setTitle(cs.getString(6));
                 outArticle.setShortContent(cs.getString(7));
                 outArticle.setContent(cs.getString(8));
@@ -132,13 +136,14 @@ public class ArticleDAO {
         CallableStatement cs = null;
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_edit_my_article(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{call pkg_article.get_edit_my_article(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            cs.setInt(5, ArticleID);
+
+            cs.setString(1, userSession);
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            cs.setInt(4, ArticleID);
+            cs.registerOutParameter(5, Types.NUMERIC);
             cs.registerOutParameter(6, Types.VARCHAR);
             cs.registerOutParameter(7, Types.VARCHAR);
             cs.registerOutParameter(8, Types.CLOB);
@@ -147,7 +152,7 @@ public class ArticleDAO {
             cs.registerOutParameter(11, Types.VARCHAR);
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,5);
             if (res == 0){
                 outArticle.setArticleId(ArticleID);
                 outArticle.setTitle(cs.getString(6));
@@ -182,13 +187,14 @@ public class ArticleDAO {
         CallableStatement cs = null;
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_edit_editor_article(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{call pkg_article.get_edit_editor_article(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            cs.setInt(5, ArticleID);
+
+            cs.setString(1, userSession);
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            cs.setInt(4, ArticleID);
+            cs.registerOutParameter(5, Types.NUMERIC);
             cs.registerOutParameter(6, Types.VARCHAR);
             cs.registerOutParameter(7, Types.VARCHAR);
             cs.registerOutParameter(8, Types.CLOB);
@@ -197,7 +203,7 @@ public class ArticleDAO {
             cs.registerOutParameter(11, Types.VARCHAR);
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,5);
             if (res == 0){
                 outArticle.setArticleId(ArticleID);
                 outArticle.setTitle(cs.getString(6));
@@ -233,7 +239,7 @@ public class ArticleDAO {
         try {
             cs = con.prepareCall("{? = call pkg_article.change_status_article(?, ?, ?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
+            cs.registerOutParameter(1, Types.NUMERIC);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
@@ -242,7 +248,7 @@ public class ArticleDAO {
             cs.setString(7, comment);
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,1);
 
             cs.close();
             return res;
@@ -263,18 +269,19 @@ public class ArticleDAO {
         outListArticle.clear();
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_my_article_list(?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{call pkg_article.get_my_article_list(?, ?, ?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            if(statusID==null) cs.setNull(5,Types.INTEGER) ;else cs.setInt(5, statusID);
+
+            cs.setString(1, userSession);
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            if(statusID==null) cs.setNull(4,Types.INTEGER) ;else cs.setInt(4, statusID);
+            cs.registerOutParameter(5, Types.NUMERIC);
             cs.registerOutParameter(6, ConnectionPool.TypeCursor());
 
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,5);
             if (res == 0) {
                 ResultSet rset = (ResultSet)cs.getObject(6);
                 while (rset.next ()){
@@ -311,19 +318,20 @@ public class ArticleDAO {
         outListArticle.clear();
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_editor_article_list(?, ?, ?, ?, ?,?)}");
+            cs = con.prepareCall("{call pkg_article.get_editor_article_list(?, ?, ?, ?, ?, ?,?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            if(statusID==null) cs.setNull(5,Types.INTEGER) ;else cs.setInt(5, statusID);
-            if(iEditor==null) cs.setNull(6,Types.INTEGER) ;else cs.setInt(6, iEditor);
+
+            cs.setString(1, userSession);
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            if(statusID==null) cs.setNull(4,Types.INTEGER) ;else cs.setInt(4, statusID);
+            if(iEditor==null) cs.setNull(5,Types.INTEGER) ;else cs.setInt(5, iEditor);
+            cs.registerOutParameter(6, Types.NUMERIC);
             cs.registerOutParameter(7, ConnectionPool.TypeCursor());
 
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,6);
             if (res == 0) {
                 ResultSet rset = (ResultSet)cs.getObject(7);
                 while (rset.next ()){
@@ -362,19 +370,20 @@ public class ArticleDAO {
         outListArticle.clear();
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_article_list_public(?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{call pkg_article.get_article_list_public(?, ?, ?, ?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            if(CategoryID==null) cs.setNull(5,Types.INTEGER) ;else cs.setInt(5, CategoryID);
-            if(LangID==null) cs.setNull(6,Types.VARCHAR) ;else cs.setString(6, LangID.toUpperCase());
+
+            cs.setString(1, userSession);
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            if(CategoryID==null) cs.setNull(4,Types.INTEGER) ;else cs.setInt(4, CategoryID);
+            if(LangID==null) cs.setNull(5,Types.VARCHAR) ;else cs.setString(5, LangID.toUpperCase());
+            cs.registerOutParameter(6, Types.NUMERIC);
             cs.registerOutParameter(7, ConnectionPool.TypeCursor());
 
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,6);
             if (res == 0) {
                 ResultSet rset = (ResultSet)cs.getObject(7);
                 while (rset.next ()){
@@ -420,17 +429,17 @@ public class ArticleDAO {
         outListArticle.clear();
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_article_list_public_new5(?, ?, ?, ?)}");
+            cs = con.prepareCall("{call pkg_article.get_article_list_public_new5(?, ?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
+            cs.setInt(1, Integer.parseInt(userSession));
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            cs.registerOutParameter(4, Types.NUMERIC);
             cs.registerOutParameter(5, ConnectionPool.TypeCursor());
 
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,4);
             if (res == 0) {
                 ResultSet rset = (ResultSet)cs.getObject(5);
                 while (rset.next ()){
@@ -462,13 +471,14 @@ public class ArticleDAO {
         CallableStatement cs = null;
         int res = -1;
         try {
-            cs = con.prepareCall("{? = call pkg_article.get_article(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{call pkg_article.get_article(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            cs.setInt(5, articleID);
+
+            cs.setString(1, userSession);
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            cs.setInt(4, articleID);
+            cs.registerOutParameter(5, Types.NUMERIC);
             cs.registerOutParameter(6, Types.VARCHAR);
             cs.registerOutParameter(7, Types.VARCHAR);
             cs.registerOutParameter(8, Types.CLOB);
@@ -478,7 +488,7 @@ public class ArticleDAO {
             cs.registerOutParameter(12, Types.VARCHAR);
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,5);
             if (res == 0){
                 outArticle.setArticleId(articleID) ;
                 outArticle.setTitle(cs.getString(6));
@@ -517,7 +527,7 @@ public class ArticleDAO {
         try {
             cs = con.prepareCall("{? = call pkg_article.del_my_article(?, ?, ?, ?)}");
 
-            cs.registerOutParameter(1, Types.INTEGER);
+            cs.registerOutParameter(1, Types.NUMERIC);
             cs.setString(2, userSession);
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
@@ -525,7 +535,7 @@ public class ArticleDAO {
 
             cs.execute();
 
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,1);
 
             cs.close();
             return res;

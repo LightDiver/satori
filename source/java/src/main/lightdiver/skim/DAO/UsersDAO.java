@@ -36,20 +36,21 @@ public class UsersDAO {//а навіщо такий конструктор?
         CallableStatement cs = null;
         try {
             con = ConnectionPool.takeConn();
-            cs = con.prepareCall("{? = call pkg_users.login(?, ?, ?, ?, ?, ?, ?, ?)}");
+            cs = con.prepareCall("{call pkg_users.login(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 
-        cs.registerOutParameter(1, Types.INTEGER);
-        cs.setString(2, user_login);
-        cs.setString(3, pass);
-        cs.setString(4, terminal_ip);
-        cs.setString(5, terminal_client);
-        cs.registerOutParameter(6, Types.VARCHAR);
-        cs.registerOutParameter(7, Types.VARCHAR);
-        cs.registerOutParameter(8, Types.VARCHAR);
-        cs.registerOutParameter(9, ConnectionPool.TypeCursor());
-        cs.execute();
-        res.put("err_id", cs.getObject(1));
-        if (cs.getInt(1) != 0){
+
+            cs.setString(1, user_login);
+            cs.setString(2, pass);
+            cs.setString(3, terminal_ip);
+            cs.setString(4, terminal_client);
+            cs.registerOutParameter(5, Types.NUMERIC);
+            cs.registerOutParameter(6, Types.NUMERIC);
+            cs.registerOutParameter(7, Types.VARCHAR);
+            cs.registerOutParameter(8, Types.VARCHAR);
+            cs.registerOutParameter(9, ConnectionPool.TypeCursor());
+            cs.execute();
+        res.put("err_id", DAO.getNumericAsInt(cs, 5));
+        if (DAO.getNumericAsInt(cs, 5) != 0){
             res.put("err_text", "Some troubles(Виводити на мові користувача)");
             return res;
         }
@@ -87,7 +88,7 @@ public class UsersDAO {//а навіщо такий конструктор?
         try {
             con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.logout(?, ?)}");
-            cs.registerOutParameter(1, Types.INTEGER);
+            cs.registerOutParameter(1, Types.NUMERIC);
             cs.setString(2, user_session);
             cs.setString(3, user_key);
             cs.execute();
@@ -107,7 +108,7 @@ public class UsersDAO {//а навіщо такий конструктор?
      try {
          con = ConnectionPool.takeConn();
          cs = con.prepareCall("{? = call pkg_users.registr(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
-         cs.registerOutParameter(1, Types.INTEGER);
+         cs.registerOutParameter(1, Types.NUMERIC);
          cs.setString(2, userSession);
          cs.setString(3, userKey);
          cs.setString(4, ipAddress);
@@ -118,8 +119,8 @@ public class UsersDAO {//а навіщо такий конструктор?
          cs.setString(9, userSex);
          cs.setString(10, userLang);
          cs.execute();
-         if (cs.getInt(1) != 0) {
-             res = "Some troubles: "+ cs.getInt(1) + "-" + SystemInfoDAO.getDescError(cs.getInt(1), "UA");
+         if (DAO.getNumericAsInt(cs,1) != 0) {
+             res = "Some troubles: "+ DAO.getNumericAsInt(cs, 1) + "-" + SystemInfoDAO.getDescError(DAO.getNumericAsInt(cs, 1), "UA");
          }
          cs.close();
 
@@ -143,10 +144,10 @@ public class UsersDAO {//а навіщо такий конструктор?
             int res;
             con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.is_user_exist(?)}");
-            cs.registerOutParameter(1, Types.INTEGER);
+            cs.registerOutParameter(1, Types.NUMERIC);
             cs.setString(2, userLogin);
             cs.execute();
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,1);
             cs.close();
             return res;
         } catch (SQLException e) {
@@ -163,20 +164,21 @@ public class UsersDAO {//а навіщо такий конструктор?
         CallableStatement cs;
         try {
             con = ConnectionPool.takeConn();
-            cs = con.prepareCall("{? = call pkg_users.list_users_action(?,?,?,?,?,?,?,?)}");
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            cs.setDate(5,startDate);
-            cs.setDate(6,endDate);
-            if(userId==null) cs.setNull(7,Types.INTEGER); else cs.setInt(7,userId);
+            cs = con.prepareCall("{call pkg_users.list_users_action(?,?,?,?,?,?,?,?,?)}");
+
+            cs.setInt(1, Integer.parseInt(userSession));
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            cs.setDate(4,startDate);
+            cs.setDate(5,endDate);
+            if(userId==null) cs.setNull(6,Types.INTEGER); else cs.setInt(6,userId);
             //System.out.println("isSuccess="+isSuccess);
-            if(isSuccess==null) cs.setNull(8,Types.INTEGER) ;else cs.setInt(8, isSuccess);
+            if(isSuccess==null) cs.setNull(7,Types.INTEGER) ;else cs.setInt(7, isSuccess);
+            cs.registerOutParameter(8, Types.NUMERIC);
             cs.registerOutParameter(9, ConnectionPool.TypeCursor());
             cs.execute();
-            if (cs.getInt(1) != 0){
-                logger.severe("Refused execute getUsersAction (session= "+userSession+";key="+userKey+")" + "error code:"+cs.getInt(1));
+            if (DAO.getNumericAsInt(cs,8) != 0){
+                logger.severe("Refused execute getUsersAction (session= "+userSession+";key="+userKey+")" + "error code:"+DAO.getNumericAsInt(cs, 8));
             }
             ResultSet rset = (ResultSet)cs.getObject(9);
             while (rset.next ()){
@@ -211,14 +213,15 @@ public class UsersDAO {//а навіщо такий конструктор?
         CallableStatement cs;
         try {
             con = ConnectionPool.takeConn();
-            cs = con.prepareCall("{? = call pkg_users.list_users(?,?,?,?)}");
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
+            cs = con.prepareCall("{call pkg_users.list_users(?,?,?,?,?)}");
+
+            cs.setString(1, userSession);
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            cs.registerOutParameter(4, Types.NUMERIC);
             cs.registerOutParameter(5, ConnectionPool.TypeCursor());
             cs.execute();
-            if (cs.getInt(1) != 0){
+            if (DAO.getNumericAsInt(cs,4) != 0){
                 logger.severe("Refused execute getUsersList (session= "+userSession+";key="+userKey+")");
             }
             ResultSet rset = (ResultSet)cs.getObject(5);
@@ -250,13 +253,13 @@ public class UsersDAO {//а навіщо такий конструктор?
         try {
             con = ConnectionPool.takeConn();
             cs = con.prepareCall("{? = call pkg_users.check_user_sess_active(?,?,?,?)}");
-            cs.registerOutParameter(1, Types.INTEGER);
+            cs.registerOutParameter(1, Types.NUMERIC);
             cs.setInt(2, Integer.parseInt(userSession));
             cs.setString(3, userKey);
             cs.setString(4, ipAddress);
             cs.setInt(5, action);
             cs.execute();
-            res = cs.getInt(1);
+            res = DAO.getNumericAsInt(cs,1);
             cs.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -273,12 +276,12 @@ public class UsersDAO {//а навіщо такий конструктор?
         CallableStatement cs;
         try {
             con = ConnectionPool.takeConn();
-            cs = con.prepareCall("{? = call pkg_users.user_info(?,?,?,?,?,?,?,?,?,?,?,?)}");
-            cs.registerOutParameter(1, Types.INTEGER);
-            cs.setString(2, userSession);
-            cs.setString(3, userKey);
-            cs.setString(4, ipAddress);
-            cs.registerOutParameter(5,Types.INTEGER);
+            cs = con.prepareCall("{call pkg_users.user_info(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+            cs.setInt(1, Integer.parseInt(userSession));
+            cs.setString(2, userKey);
+            cs.setString(3, ipAddress);
+            cs.registerOutParameter(4, Types.NUMERIC);
+            cs.registerOutParameter(5,Types.NUMERIC);
             cs.registerOutParameter(6,Types.VARCHAR);
             cs.registerOutParameter(7,Types.VARCHAR);
             cs.registerOutParameter(8,Types.VARCHAR);
@@ -290,10 +293,10 @@ public class UsersDAO {//а навіщо такий конструктор?
 
             cs.execute();
 
-            if (cs.getInt(1) == 0){
+            if (DAO.getNumericAsInt(cs,4) == 0){
                 user = new UserEntity();
 
-                user.setUserId(cs.getInt(5));
+                user.setUserId(DAO.getNumericAsInt(cs, 5));
                 user.setUserLogin(cs.getString(6));
                 user.setUserName(cs.getString(7));
                 user.setUserEMail(cs.getString(8));
@@ -312,7 +315,7 @@ public class UsersDAO {//а навіщо такий конструктор?
                 user.setUserRoles(userR);
             }
             else {
-                logger.severe("Refused getUserInfoBySess error_id="+cs.getInt(1));
+                logger.severe("Refused getUserInfoBySess error_id="+DAO.getNumericAsInt(cs, 4));
             }
 
             cs.close();

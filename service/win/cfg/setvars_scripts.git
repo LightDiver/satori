@@ -35,8 +35,8 @@ rem ==============================
 @set pg_install=C:\app\PostgreSQL\9.4\bin
 @set pg_host=localhost
 @set Postgres_DB=db_dev
-@set User_name=dev_test
-@set User_pass=dev_test
+@set pg_User_name=dev_test
+@set pg_User_pass=dev_test
 
 
 rem ==============

@@ -30,25 +30,24 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     RETURN v_error_id;
   END get_roles_list;
 
-  FUNCTION login(i_user_login      users.user_login%TYPE,
-                 i_pass            users.user_pass%TYPE,
-                 i_terminal_ip     user_session.terminal_ip%TYPE,
-                 i_terminal_client user_session.terminal_client%TYPE,
-                 o_session_id      OUT user_session.session_id%TYPE,
-                 o_key_id          OUT user_session.key_id%TYPE,
-                 o_lang_id         OUT users.lang_id%TYPE,
-                 o_roles_list      OUT SYS_REFCURSOR)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE login(i_user_login      users.user_login%TYPE,
+                  i_pass            users.user_pass%TYPE,
+                  i_terminal_ip     user_session.terminal_ip%TYPE,
+                  i_terminal_client user_session.terminal_client%TYPE,
+                  o_error_id        OUT error_desc.error_desc_id%TYPE,
+                  o_session_id      OUT user_session.session_id%TYPE,
+                  o_key_id          OUT user_session.key_id%TYPE,
+                  o_lang_id         OUT users.lang_id%TYPE,
+                  o_roles_list      OUT SYS_REFCURSOR) AS
   
     /* Реєстрація сесії
           Помилки:
                   1001 - помилковий логін або пароль
     */
   
-    v_error_id error_desc.error_desc_id%TYPE;
-    v_user_id  user_session.user_id%TYPE;
+    v_user_id user_session.user_id%TYPE;
   BEGIN
-    v_error_id := 0;
+    o_error_id := 0;
     SELECT user_id, lang_id
       INTO v_user_id, o_lang_id
       FROM users
@@ -80,14 +79,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
        1,
        localtimestamp);
   
-    v_error_id := get_roles_list(v_user_id, NULL, NULL, o_roles_list);
-    RETURN v_error_id;
+    o_error_id := get_roles_list(v_user_id, NULL, NULL, o_roles_list);
   
   EXCEPTION
     WHEN no_data_found THEN
       --помилковий логін або пароль
-      v_error_id := 1001;
-      RETURN v_error_id;
+      o_error_id := 1001;
     
   END login;
 
@@ -146,12 +143,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     COMMIT;
   END;
 
-  FUNCTION active_session(i_session_id  user_session.session_id%TYPE,
-                          i_key_id      user_session.key_id%TYPE,
-                          i_terminal_ip user_session.terminal_ip%TYPE,
-                          i_act         user_session.l_action_type_id%TYPE,
-                          o_user_id     OUT user_session.user_id%TYPE)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE active_session(i_session_id  user_session.session_id%TYPE,
+                           i_key_id      user_session.key_id%TYPE,
+                           i_terminal_ip user_session.terminal_ip%TYPE,
+                           i_act         user_session.l_action_type_id%TYPE,
+                           o_error_id    OUT error_desc.error_desc_id%TYPE,
+                           o_user_id     OUT user_session.user_id%TYPE) AS
     /* Перевірка на аткивність сесії.
         Оновлює сесію часом і типом останньої дії користувача
         Перевіряє дозвіл на виконання дії i_act
@@ -164,11 +161,10 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     
      */
     v_terminal_ip  user_session.terminal_ip%TYPE;
-    v_error_id     error_desc.error_desc_id%TYPE;
     v_l_is_success user_session.l_is_success%TYPE;
   
   BEGIN
-    v_error_id := 0;
+    o_error_id := 0;
     SELECT us.terminal_ip, us.user_id
       INTO v_terminal_ip, o_user_id
       FROM user_session us, users u
@@ -178,8 +174,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
        AND key_id = i_key_id;
   
     IF v_terminal_ip <> i_terminal_ip THEN
-      v_error_id := 1003; --IP сесії невірне
-      RETURN v_error_id;
+      o_error_id := 1003; --IP сесії невірне
+      RETURN;
     END IF;
   
     IF is_permission(o_user_id, i_act) THEN
@@ -194,12 +190,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       RAISE insufficient_privileges;
     END IF;
   
-    RETURN 0;
-  
   EXCEPTION
     WHEN no_data_found THEN
-      v_error_id := 1002; --Сесія не існує або минула
-      RETURN v_error_id;
+      o_error_id := 1002; --Сесія не існує або минула
   END active_session;
 
   FUNCTION active_session(i_session_id  user_session.session_id%TYPE,
@@ -211,11 +204,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     v_error_id error_desc.error_desc_id%TYPE;
     v_user_id  user_session.user_id%TYPE; --то він не всім потрібен
   BEGIN
-    v_error_id := active_session(i_session_id,
-                                 i_key_id,
-                                 i_terminal_ip,
-                                 i_act,
-                                 v_user_id);
+    active_session(i_session_id,
+                   i_key_id,
+                   i_terminal_ip,
+                   i_act,
+                   v_error_id,
+                   v_user_id);
     RETURN v_error_id;
   END active_session;
 
@@ -227,9 +221,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     /*Обгортка active_session ДЛЯ ВИКОРИСТАННЯ ВИКЛИКІВ ІЗ ЗОВНІ
       !Нотебене, Ахтунг: Не використовувати в коді PL/SQL
                         0 - Функція спрацювала без помилок
-                        
+    
                      1004 - Недостатньо повноважень для дії i_act
-         
+    
                      1002 - Сесія не існує або минула
                      1003 - IP сесії невірне
     */
@@ -247,25 +241,23 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
       RETURN v_error_id;
   END check_user_sess_active;
 
-
-
-  FUNCTION list_users(i_session_id  user_session.session_id%TYPE,
-                      i_key_id      user_session.key_id%TYPE,
-                      i_terminal_ip user_session.terminal_ip%TYPE,
-                      o_items       OUT SYS_REFCURSOR)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE list_users(i_session_id  user_session.session_id%TYPE,
+                       i_key_id      user_session.key_id%TYPE,
+                       i_terminal_ip user_session.terminal_ip%TYPE,
+                       o_error_id    OUT error_desc.error_desc_id%TYPE,
+                       o_items       OUT SYS_REFCURSOR) AS
     /* Список всіх користувачів
     Помилки:
                      1004 - Недостатньо повноважень
     */
     c_perm_act action_type.action_type_id%TYPE := 3;
-    v_error_id error_desc.error_desc_id%TYPE;
+  
   BEGIN
-    v_error_id := active_session(i_session_id,
+    o_error_id := active_session(i_session_id,
                                  i_key_id,
                                  i_terminal_ip,
                                  c_perm_act);
-    IF v_error_id = 0 THEN
+    IF o_error_id = 0 THEN
       OPEN o_items FOR
         SELECT u.user_id,
                u.user_login,
@@ -277,41 +269,40 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
           FROM users u, user_state us
          WHERE u.state_id = us.state_id;
     END IF;
-    RETURN v_error_id;
   
   EXCEPTION
     WHEN insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
+    
   END list_users;
 
-  FUNCTION list_users_action(i_session_id   user_session.session_id%TYPE,
-                             i_key_id       user_session.key_id%TYPE,
-                             i_terminal_ip  user_session.terminal_ip%TYPE,
-                             i_start_date   user_session_hist.a_date%TYPE,
-                             i_end_date     user_session_hist.a_date%TYPE,
-                             i_user_id      user_session.user_id%TYPE,
-                             i_l_is_success user_session.l_is_success%TYPE,
-                             o_items        OUT SYS_REFCURSOR)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE list_users_action(i_session_id   user_session.session_id%TYPE,
+                              i_key_id       user_session.key_id%TYPE,
+                              i_terminal_ip  user_session.terminal_ip%TYPE,
+                              i_start_date   user_session_hist.a_date%TYPE,
+                              i_end_date     user_session_hist.a_date%TYPE,
+                              i_user_id      user_session.user_id%TYPE,
+                              i_l_is_success user_session.l_is_success%TYPE,
+                              o_error_id     OUT error_desc.error_desc_id%TYPE,
+                              o_items        OUT SYS_REFCURSOR) AS
     /* Список дій користувачів в системі
        Помилки:
                1004 - Недостатньо повноважень
                1005 - Невірно вказані дата початку або дата кінця
     */
     c_perm_act action_type.action_type_id%TYPE := 4;
-    v_error_id error_desc.error_desc_id%TYPE;
+  
   BEGIN
-    v_error_id := active_session(i_session_id,
+    o_error_id := active_session(i_session_id,
                                  i_key_id,
                                  i_terminal_ip,
                                  c_perm_act);
-    IF v_error_id = 0 THEN
+    IF o_error_id = 0 THEN
       IF i_start_date IS NULL OR i_end_date IS NULL THEN
-        v_error_id := 1005;
-        RETURN v_error_id;
-      
+        o_error_id := 1005;
+        RETURN;
       END IF;
+    
       OPEN o_items FOR
         SELECT ush.user_id,
                u.user_login,
@@ -337,12 +328,10 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
          ORDER BY ush.l_date DESC;
     
     END IF;
-    RETURN v_error_id;
   
   EXCEPTION
     WHEN insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
   END list_users_action;
 
   FUNCTION registr(i_session_id  user_session.session_id%TYPE,
@@ -417,32 +406,33 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
     RETURN v_is;
   END is_user_exist;
 
-  FUNCTION user_info(i_session_id  user_session.session_id%TYPE,
-                     i_key_id      user_session.key_id%TYPE,
-                     i_terminal_ip user_session.terminal_ip%TYPE,
-                     o_user_id     OUT users.user_id%TYPE,
-                     o_user_login  OUT users.user_login%TYPE,
-                     o_user_name   OUT users.user_name%TYPE,
-                     o_user_email  OUT users.user_email%TYPE,
-                     o_state_name  OUT user_state.state_name%TYPE,
-                     o_r_date      OUT users.r_date%TYPE,
-                     o_user_sex    OUT users.user_sex%TYPE,
-                     o_lang_id     OUT supp_lang.lang_id%TYPE,
-                     o_roles       OUT SYS_REFCURSOR)
-    RETURN error_desc.error_desc_id%TYPE AS
+  PROCEDURE user_info(i_session_id  user_session.session_id%TYPE,
+                      i_key_id      user_session.key_id%TYPE,
+                      i_terminal_ip user_session.terminal_ip%TYPE,
+                      o_error_id    OUT error_desc.error_desc_id%TYPE,
+                      o_user_id     OUT users.user_id%TYPE,
+                      o_user_login  OUT users.user_login%TYPE,
+                      o_user_name   OUT users.user_name%TYPE,
+                      o_user_email  OUT users.user_email%TYPE,
+                      o_state_name  OUT user_state.state_name%TYPE,
+                      o_r_date      OUT users.r_date%TYPE,
+                      o_user_sex    OUT users.user_sex%TYPE,
+                      o_lang_id     OUT supp_lang.lang_id%TYPE,
+                      o_roles       OUT SYS_REFCURSOR) AS
     /* Інфо користувача по сессії та ключу
     Помилки:
                      1004 - Недостатньо повноважень
     */
     c_perm_act action_type.action_type_id%TYPE := 6;
-    v_error_id error_desc.error_desc_id%TYPE;
+  
   BEGIN
-    v_error_id := active_session(i_session_id,
-                                 i_key_id,
-                                 i_terminal_ip,
-                                 c_perm_act,
-                                 o_user_id);
-    IF v_error_id = 0 THEN
+    active_session(i_session_id,
+                   i_key_id,
+                   i_terminal_ip,
+                   c_perm_act,
+                   o_error_id,
+                   o_user_id);
+    IF o_error_id = 0 THEN
       SELECT u.user_login,
              u.user_name,
              u.user_email,
@@ -461,15 +451,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_users IS
        WHERE u.state_id = us.state_id
          AND u.user_id = o_user_id;
     
-      v_error_id := get_roles_list(o_user_id, NULL, NULL, o_roles);
+      o_error_id := get_roles_list(o_user_id, NULL, NULL, o_roles);
     
     END IF;
-    RETURN v_error_id;
   
   EXCEPTION
     WHEN insufficient_privileges THEN
-      v_error_id := 1004;
-      RETURN v_error_id;
+      o_error_id := 1004;
   END user_info;
 
 --BEGIN

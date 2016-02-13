@@ -8,7 +8,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_systeminfo IS
       INTO v_error_desc
       FROM error_desc ed
      WHERE ed.error_desc_id = i_error_id;
-  
+
     RETURN v_error_desc;
   END get_description_error;
 
