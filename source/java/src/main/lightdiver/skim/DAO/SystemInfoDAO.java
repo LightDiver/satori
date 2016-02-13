@@ -42,7 +42,7 @@ public class SystemInfoDAO {
         try {
             cs = con.prepareCall("{? = call pkg_systeminfo.get_langs()}");
 
-            cs.registerOutParameter(1, ConnectionPool.TypeCursor());
+            cs.registerOutParameter(1, DAO.TypeCursor());
             cs.execute();
 
             ResultSet rset = (ResultSet)cs.getObject(1);

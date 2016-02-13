@@ -150,14 +150,6 @@ public class ConnectionPool {
         return rdbms;
     }
 
-    public static int TypeCursor(){
-        if (rdbms.equals("Oracle")){
-            return OracleTypes.CURSOR;
-        }
-        else
-        {
-            return Types.OTHER;
-        }
-    }
+
 
 }

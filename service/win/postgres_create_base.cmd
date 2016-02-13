@@ -29,7 +29,13 @@ del %OutTemps%\*.log
 @call "%pg_install%"\psql.exe -h %pg_host% -d %Postgres_DB% -U %pg_User_name% -f 001.01\06-body\pkg_systeminfo.sql -o %OutTemps%\pkg_systeminfo.log
 @call "%pg_install%"\psql.exe -h %pg_host% -d %Postgres_DB% -U %pg_User_name% -f 001.01\06-body\pkg_users.sql -o %OutTemps%\pkg_users.log
 
+@call "%pg_install%"\psql.exe -h %pg_host% -d %Postgres_DB% -U %pg_User_name% -f 001.01\08-func.sql -o %OutTemps%\08-func.log
+@call "%pg_install%"\psql.exe -h %pg_host% -d %Postgres_DB% -U %pg_User_name% -f 001.01\09-trig.sql -o %OutTemps%\09-trig.log
 @call "%pg_install%"\psql.exe -h %pg_host% -d %Postgres_DB% -U %pg_User_name% -f 001.01\20-init.sql -o %OutTemps%\20-init.log
+
+@echo —б≥р статистики
+@call "%pg_install%"\psql.exe -h %pg_host% -d %Postgres_DB% -U %pg_User_name% --command="VACUUM ANALYZE;" -o %OutTemps%\vacuum_analyze.log
+
 
 
 

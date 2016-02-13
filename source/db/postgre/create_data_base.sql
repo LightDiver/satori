@@ -1,5 +1,5 @@
 SET CLIENT_ENCODING TO 'WIN1251';
 CREATE DATABASE db_dev
-  WITH OWNER = :User_name
+  WITH OWNER = :pg_User_name
        ENCODING='UTF8';
 
