@@ -3,14 +3,6 @@
     <output-path>$PROJECT_DIR$/target</output-path>
     <root id="archive" name="satori-1.0.war">
       <element id="artifact" artifact-name="satori:war exploded" />
-      <element id="directory" name="WEB-INF">
-        <element id="directory" name="lib">
-          <element id="library" level="project" name="ojdbc6" />
-          <element id="library" level="project" name="javax.faces-2.2.12" />
-          <element id="library" level="project" name="primefaces-5.3" />
-          <element id="library" level="project" name="postgresql-9.4.1207.jre7" />
-        </element>
-      </element>
     </root>
   </artifact>
 </component>

@@ -7,11 +7,8 @@
           <element id="module-output" name="satori" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="ojdbc6" />
-          <element id="library" level="project" name="javax.faces-2.2.12" />
-          <element id="library" level="project" name="richfaces-rich-4.5.12.Final" />
-          <element id="library" level="project" name="primefaces-5.3" />
-          <element id="library" level="project" name="postgresql-9.4.1207.jre7" />
+          <element id="library" level="project" name="Maven: org.glassfish:javax.faces:2.2.12" />
+          <element id="library" level="project" name="Maven: org.primefaces:primefaces:5.3" />
         </element>
       </element>
       <element id="directory" name="META-INF">

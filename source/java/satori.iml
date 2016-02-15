@@ -7,7 +7,7 @@
           <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/web/WEB-INF/web.xml" />
         </descriptors>
         <webroots>
-          <root url="file://$MODULE_DIR$/web" relative="/" />
+          <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
         <sourceRoots>
           <root url="file://$MODULE_DIR$/src" />
@@ -28,10 +28,16 @@
     <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="TomEE 7.0.62" level="application_server_libraries" />
-    <orderEntry type="library" name="ojdbc6" level="project" />
+    <orderEntry type="library" exported="" name="ojdbc6" level="project" />
     <orderEntry type="library" name="javax.faces-2.2.12" level="project" />
     <orderEntry type="library" name="richfaces-rich-4.5.12.Final" level="project" />
-    <orderEntry type="library" name="primefaces-5.3" level="project" />
+    <orderEntry type="library" exported="" name="primefaces-5.3" level="project" />
     <orderEntry type="library" name="postgresql-9.4.1207.jre7" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish:javax.faces:2.2.12" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.el:javax.el-api:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:javax.servlet-api:3.0.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet.jsp:javax.servlet.jsp-api:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet.jsp.jstl:jstl-api:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.primefaces:primefaces:5.3" level="project" />
   </component>
 </module>

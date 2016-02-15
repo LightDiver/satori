@@ -27,12 +27,13 @@ public class TestUsers {
         } catch (IOException e) {
             System.err.println("Could not setup logger configuration: " + e.toString());
         }
-
+/*
         userName = "GUEST";
         userInfo = new Users().login("GUEST", "GUEST", "Term_ip", "Term_cl");
         userSession = userInfo.get("session_id").toString();
         userKey = userInfo.get("key_id").toString();
 
         System.out.println("userName="+userName+" userSession="+userSession+" userKey="+userKey);
+*/
     }
 }
