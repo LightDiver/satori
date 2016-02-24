@@ -24,6 +24,10 @@
 		<mojarra-version>2.2.12</mojarra-version>
 		<primefaces-version>5.3</primefaces-version>
 		<richfaces-version>4.5.12.Final</richfaces-version>
+
+        <tomee.host>localhost</tomee.host>
+        <tomee.httpPort>8080</tomee.httpPort>
+
 	</properties>
 
 <build>
@@ -36,18 +40,18 @@
 		<executions>
 			<execution>
 				<id>copy</id>
-				<phase>install</phase>
+				<phase>package</phase>
 				<goals>
 					<goal>copy-dependencies</goal>
 				</goals>
 				<configuration>
 					<outputDirectory>
-						${project.basedir}/lib
+						${project.build.directory}/lib
 					</outputDirectory>
 				</configuration>
 			</execution>
 		</executions>
-		-->
+        -->
 	</plugin>
 	<plugin>
 		<groupId>org.apache.maven.plugins</groupId>
@@ -56,6 +60,17 @@
 		<configuration>
 			<webappDirectory>web</webappDirectory>
 			<webXml>web\WEB-INF\web.xml</webXml>
+
+			<webResources>
+				<resource>
+					<directory>lib</directory>
+					<targetPath>WEB-INF\lib</targetPath>
+					<includes>
+						<include>postgresql-9.4.1207.jre7.jar</include>
+						<include>ojdbc6.jar</include>
+					</includes>
+				</resource>
+			</webResources>
 		</configuration>
 	</plugin>
     <plugin>
@@ -67,6 +82,25 @@
             <target>1.7</target>
         </configuration>
     </plugin>
+	<plugin>
+		<groupId>org.apache.openejb.maven</groupId>
+		<artifactId>tomee-maven-plugin</artifactId>
+        <version>1.7.3</version>
+        <configuration>
+			<!--
+			<finalName>myservice</finalName>
+			<host>${tomee.host}</host>
+			<port>${tomee.httpPort}</port>
+			-->
+            <!-- id-шник из settings.xml -->
+            <!--
+            <server>apache-tomee-7</server>
+            <url>http://localhost:8080/manager</url>
+            -->
+			<context>${artifactId}</context>
+            <path>/</path>
+        </configuration>
+	</plugin>
 </plugins>
 
 	<sourceDirectory>${project.basedir}/src</sourceDirectory>
@@ -128,7 +162,8 @@
 	<dependency>
 		<groupId>org.postgresql</groupId>
 		<artifactId>postgresql</artifactId>
-		<version>9.5</version>
+		<version>9.4</version>
+		<type>jar</type>
 		<scope>system</scope>
 		<systemPath>${project.basedir}/lib/postgresql-9.4.1207.jre7.jar</systemPath>
 	</dependency>

@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by Serj on 08.11.2015.
@@ -30,6 +31,7 @@ import java.util.*;
 @ManagedBean
 @SessionScoped
 public class SessionBean implements Serializable {
+    private final static Logger logger = Logger.getLogger(SessionBean.class.getName());
     private transient HashMap<String, Object> userInfo;
     @ManagedProperty("#{localizationBean}")
     private LocalizationBean localizationBean;
@@ -322,30 +324,32 @@ public class SessionBean implements Serializable {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         String uri=request.getRequestURI();
+        uri = uri.substring(uri.lastIndexOf("/"));
 
         //System.out.println("Страница " + uri + " PhaseId=" + facesContext.getCurrentPhaseId());
         //System.out.println(userName + ":" + userSession);
+        //logger.info("Страница " + uri + " PhaseId=" + facesContext.getCurrentPhaseId() + " " + userName + ":" + userSession);
 
         switch (uri){
-            case "/view/main.xhtml":
+            case "/main.xhtml":
                 actionType = 7;
                 break;
-            case "/view/about.xhtml":
+            case "/about.xhtml":
                 actionType = 8;
                 break;
-            case "/view/register.xhtml":
+            case "/register.xhtml":
                 actionType = 9;
                 break;
-            case "/view/news.xhtml":
+            case "/news.xhtml":
                 actionType = 11;
                 break;
-            case "/view/article.xhtml":
+            case "/article.xhtml":
                 actionType = 12;
                 break;
-            case "/view/interest.xhtml":
+            case "/interest.xhtml":
                 actionType = 13;
                 break;
-            case "/view/editoreditarticle.xhtml":
+            case "/editoreditarticle.xhtml":
                 actionType = 22;
                 break;
             default:actionType = 10;break;
