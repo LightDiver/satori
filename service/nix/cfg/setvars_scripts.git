@@ -1,0 +1,41 @@
+#!/bin/bash
+# ==================
+# Change Your Branch
+# ==================
+mv15_RlsBranch=RLS_001.01
+mv15_MstBranch=master
+mv15_DevBranch=dev_all
+
+mv15_Branch=$mv15_DevBranch
+
+# ===============
+# Change The Path
+# ===============
+git_install="\Git"
+git_editor="\gedit" 
+
+# ==============================
+# Change The Options  For Oracle
+# ==============================
+Oracle_Instance=LNXDB
+Sysdba_name=SYS
+Sysdba_pass=1q2w3e4r
+User_name=DEV_TEST
+User_pass=DEV_TEST
+sql_util="/home/oracle/u01/app/product/11.2.0/db_1/bin/sqlplus"
+sql_load="/home/oracle/u01/app/product/11.2.0/db_1/bin/sqlldr"
+
+# ==============================
+# Change The Options  For Postgres
+# PGPASSWORD must lower
+# ==============================
+pg_install="\PostgreSQL\9.4\bin"
+pg_host=localhost
+Postgres_DB=db_dev
+pg_User_name=dev_test
+pg_User_pass=dev_test
+
+# ==============
+# Do Not Change!
+# ==============
+#chcp 1251
