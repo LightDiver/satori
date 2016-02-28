@@ -3,8 +3,16 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                xmlns:p="http://java.sun.com/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:p="http://java.sun.com/jsf/html">
+    <script type="text/javascript">
+        function path_to_img(v_elem, v_img){
+             //var v_prefixPathSite = "/satori";//такий собі хуйоватенький костиль
+             var path = document.location.href;
+             var v_prefixPathSite = path.substr(0, path.indexOf("/view/")); //костиль більш серйоозного рівня
+             document.getElementById(v_elem).src=v_prefixPathSite  + v_img;
+            //alert(v_prefixPathSite);
+        }
+    </script>
     <h:outputStylesheet>
         .section1 {
             width: 10%;
@@ -82,9 +90,14 @@
                     <ui:include src = "userAdminHeaderMenu.xhtml" />
                 </c:if>
                 <h:panelGroup>
+                    <ui:remove>
+                        onmouseover="document.getElementById('userauthpic').src='/resources/images/users/authman2.png'"
+                        onmouseout="document.getElementById('userauthpic').src='/resources/images/users/authman1.png'"
+                    </ui:remove>
                     <h:graphicImage id = "userauthpic" value="/resources/images/users/authman1.png"
-                            onmouseover="document.getElementById('userauthpic').src='/resources/images/users/authman2.png'"
-                            onmouseout="document.getElementById('userauthpic').src='/resources/images/users/authman1.png'"/>
+                                    onmouseover="path_to_img('userauthpic','/resources/images/users/authman1.png')"
+                                    onmouseout="path_to_img('userauthpic','/resources/images/users/authman2.png')"
+                            />
                     <h:outputLabel value="#{sessionBean.userName}" />
 
                     <br/>

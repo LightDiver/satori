@@ -38,6 +38,11 @@ rem ==============================
 @set pg_User_name=dev_test
 @set pg_User_pass=dev_test
 
+rem =====
+rem Для загрузки контенту для визначення повного посилання на зображення
+rem Вказати де буде розміщуватись сайт (без кінцевого /)
+rem =====
+@set path_to_site="http://localhost:8080/satori"
 
 rem ==============
 rem Do Not Change!

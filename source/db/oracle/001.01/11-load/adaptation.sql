@@ -23,8 +23,8 @@ BEGIN
                         article_comment)
                         VALUES(cur.id, --v_i,
                         cur.name_content,
-                        cur.short_content,
-                        cur.clob_content,
+                        REPLACE(cur.short_content,'path_to_site','&5'),
+                        REPLACE(cur.clob_content,'path_to_site','&5'),
                         4,
                         LOCALTIMESTAMP,
                         3,

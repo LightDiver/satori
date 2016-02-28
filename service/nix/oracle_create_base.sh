@@ -21,6 +21,7 @@ fi
 pwd
 echo Create user...
  exec $sql_util /nolog @create_work_user.sql $User_name $User_pass $Sysdba_name $Sysdba_pass $Oracle_Instance $SrcPath >$OutTemps/create_user.log &
+wait
 echo Create objects ...
  exec $sql_util /nolog @create_data_base.sql $User_name $User_pass $Sysdba_name $Sysdba_pass $Oracle_Instance $SrcPath >$OutTemps/create_object.log &
 

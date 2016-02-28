@@ -1,4 +1,4 @@
-<p><img alt="" src="http://localhost:8080/resources/images/articles/1/1_week_1_book.jpg" style="height:285px; width:690px" /></p>
+<p><img alt="" src="path_to_site/resources/images/articles/1/1_week_1_book.jpg" style="height:285px; width:690px" /></p>
 
 <h2>Эрл Найтингейл, Брайан Трейси и Стив Павлина</h2>
 

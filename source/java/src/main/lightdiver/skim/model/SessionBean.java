@@ -1,5 +1,6 @@
 package main.lightdiver.skim.model;
 
+import main.lightdiver.skim.DAO.ConnectionPool;
 import main.lightdiver.skim.DAO.SystemInfoDAO;
 import main.lightdiver.skim.LoadMenu;
 import main.lightdiver.skim.Users;
@@ -38,6 +39,8 @@ public class SessionBean implements Serializable {
 
     public static final int CONST_EXPIRE_COOKIE = 60*60*24*30;
     private static final int VERS_MAJOR = 1;
+    //private static String prefixPathSite = null;
+    private String poweredSite;
 
     protected String userName;
     protected transient String userPass;
@@ -117,7 +120,9 @@ public class SessionBean implements Serializable {
         }
         */
 
-
+        finally {
+            poweredSite = "(c) LightDiver | JSF & " + ConnectionPool.getRdbms();
+        }
 
 
     }
@@ -324,6 +329,15 @@ public class SessionBean implements Serializable {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         String uri=request.getRequestURI();
+        //System.out.println("Страница " + uri + " PhaseId=" + facesContext.getCurrentPhaseId());
+        /*if (prefixPathSite == null){
+            if (uri.indexOf("/view/") == 1){
+                prefixPathSite = "";
+            }
+            else prefixPathSite = uri.substring(0, uri.indexOf("/view/"));
+        }
+        System.out.println("prefixPathSite="+prefixPathSite);
+        */
         uri = uri.substring(uri.lastIndexOf("/"));
 
         //System.out.println("Страница " + uri + " PhaseId=" + facesContext.getCurrentPhaseId());
@@ -395,5 +409,13 @@ public class SessionBean implements Serializable {
 
     public void setLocalizationBean(LocalizationBean localizationBean) {
         this.localizationBean = localizationBean;
+    }
+
+    public String getPoweredSite() {
+        return poweredSite;
+    }
+
+    public void setPoweredSite(String poweredSite) {
+        this.poweredSite = poweredSite;
     }
 }

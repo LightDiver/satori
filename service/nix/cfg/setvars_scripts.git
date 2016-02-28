@@ -35,7 +35,14 @@ Postgres_DB=db_dev
 pg_User_name=dev_test
 pg_User_pass=dev_test
 
+rem =====
+rem Для загрузки контенту для визначення повного посилання на зображення
+rem Вказати де буде розміщуватись сайт (без кінцевого /)
+rem =====
+path_to_site="http://localhost:8080/satori"
+
 # ==============
 # Do Not Change!
 # ==============
 #chcp 1251
+export NLS_LANG=AMERICAN_AMERICA.CL8MSWIN1251

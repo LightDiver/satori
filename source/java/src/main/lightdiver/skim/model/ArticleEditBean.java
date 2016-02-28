@@ -681,13 +681,14 @@ public class ArticleEditBean implements Serializable {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         String uri=request.getRequestURI();
+        uri = uri.substring(uri.lastIndexOf("/"));
 
         System.out.println(uri);
 
 
         FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 
-        if (uri.equals("/view/editoreditarticle.xhtml") && sessionBean.uEditor){
+        if (uri.equals("/editoreditarticle.xhtml") && sessionBean.uEditor){
             rulesok = true;
             return true;
         }

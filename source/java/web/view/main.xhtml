@@ -44,29 +44,35 @@
                     </rich:column>
                 </rich:dataTable>
             </rich:panel>
-
+<ui:remove>
+    onmouseover="document.getElementById('articledetail').src='/resources/images/content/next2.png'"
+    onmouseout ="document.getElementById('articledetail').src='/resources/images/content/next1.png'"
+    onmousedown="document.getElementById('articledetail').src='/resources/images/content/next3.png'"
+</ui:remove>
             <h:outputLink value="article.xhtml" styleClass="ui-commandlink" >#{text['content.main.all']}
                 <h:graphicImage id="articledetail" value="/resources/images/content/next1.png"
-                                onmouseover="document.getElementById('articledetail').src='/resources/images/content/next2.png'"
-                                onmouseout ="document.getElementById('articledetail').src='/resources/images/content/next1.png'"
-                                onmousedown="document.getElementById('articledetail').src='/resources/images/content/next3.png'"/>
+                                onmouseover="path_to_img('articledetail', '/resources/images/content/next2.png')"
+                                onmouseout="path_to_img('articledetail', '/resources/images/content/next1.png')"
+                                onmousedown="path_to_img('articledetail', '/resources/images/content/next3.png')"
+/>
             </h:outputLink>
         <h2><a id="interisting"/> #{text['menu.interisting']}</h2>
             <ui:include src="part_text_localisation/main_interest_#{localizationBean.electLocale}.xhtml" />
         <h:outputLink value="interest.xhtml" styleClass="ui-commandlink" >#{text['content.main.all']}
             <h:graphicImage id="interestdetail" value="/resources/images/content/next1.png"
-                            onmouseover="document.getElementById('interestdetail').src='/resources/images/content/next2.png'"
-                            onmouseout ="document.getElementById('interestdetail').src='/resources/images/content/next1.png'"
-                            onmousedown="document.getElementById('interestdetail').src='/resources/images/content/next3.png'"/>
+                            onmouseover="path_to_img('interestdetail', '/resources/images/content/next2.png')"
+                            onmouseout="path_to_img('interestdetail', '/resources/images/content/next1.png')"
+                            onmousedown="path_to_img('interestdetail', '/resources/images/content/next3.png')"
+                    />
         </h:outputLink>
         <h2><a id="news"/> #{text['menu.news']}</h2>
         01.01.2016 Перша версія сайту.
         <ui:remove>
         <h:outputLink value="news.xhtml" styleClass="ui-commandlink" >#{text['content.main.all']}
             <h:graphicImage id="newsdetail" value="/resources/images/content/next1.png"
-                            onmouseover="document.getElementById('newsdetail').src='/resources/images/content/next2.png'"
-                            onmouseout ="document.getElementById('newsdetail').src='/resources/images/content/next1.png'"
-                            onmousedown="document.getElementById('newsdetail').src='/resources/images/content/next3.png'"/>
+                            onmouseover="path_to_img('newsdetail', '/resources/images/content/next2.png')"
+                            onmouseout="path_to_img('newsdetail', '/resources/images/content/next1.png')"
+                            onmousedown="path_to_img('newsdetail', '/resources/images/content/next3.png')" />
         </h:outputLink>
         </ui:remove>
     </ui:define>

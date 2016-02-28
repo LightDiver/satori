@@ -1,4 +1,4 @@
-<p><big>&nbsp;<img alt="" src="http://localhost:8080/resources/images/articles/6/RS_Lviv_rus_i.jpg" style="border-style:solid; border-width:0px; float:left; height:160px; margin:2px; width:250px" />Одна із шкіл Львову привела свої критерії для оцінки школярів:&nbsp;</big></p>
+<p><big>&nbsp;<img alt="" src="path_to_site/resources/images/articles/6/RS_Lviv_rus_i.jpg" style="border-style:solid; border-width:0px; float:left; height:160px; margin:2px; width:250px" />Одна із шкіл Львову привела свої критерії для оцінки школярів:&nbsp;</big></p>
 
 <p><big>&nbsp; &nbsp;&quot;Відомо, що навички читання дуже важливі для учнів початкової школи. Саме ці навички багато в чому обумовлюють успішність наших учнів у майбутньому. Навики сформованості читання перевіряються, починаючи від 2 класу. Але вже у першому класі можна побачити динаміку збільшення швидкості читання, звернути увагу на свідоме читання учнями та на виразність читання.&quot;</big></p>
 
@@ -149,7 +149,7 @@
 	</tbody>
 </table>
 
-<div><big><strong><em><img alt="" src="http://localhost:8080/resources/images/articles/6/sh77.jpg" style="border-style:solid; border-width:0px; float:right; height:127px; margin:2px; width:180px" />У другому класі основну думку діти визначають за допомогою вчителя.</em></strong></big></div>
+<div><big><strong><em><img alt="" src="path_to_site/resources/images/articles/6/sh77.jpg" style="border-style:solid; border-width:0px; float:right; height:127px; margin:2px; width:180px" />У другому класі основну думку діти визначають за допомогою вчителя.</em></strong></big></div>
 
 <div>&nbsp;</div>
 
