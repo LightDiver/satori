@@ -29,16 +29,16 @@ sql_load="/home/oracle/u01/app/product/11.2.0/db_1/bin/sqlldr"
 # Change The Options  For Postgres
 # PGPASSWORD must lower
 # ==============================
-pg_install="\PostgreSQL\9.4\bin"
+pg_install="/usr/pgsql-9.5/bin"
 pg_host=localhost
 Postgres_DB=db_dev
 pg_User_name=dev_test
 pg_User_pass=dev_test
 
-rem =====
-rem Для загрузки контенту для визначення повного посилання на зображення
-rem Вказати де буде розміщуватись сайт (без кінцевого /)
-rem =====
+# =====
+# Для загрузки контенту для визначення повного посилання на зображення
+# Вказати де буде розміщуватись сайт (без кінцевого /)
+# =====
 path_to_site="http://localhost:8080/satori"
 
 # ==============
