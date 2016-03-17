@@ -24,18 +24,18 @@ pwd
 CLIENT_ENCODING=UTF8
 PGCLIENTENCODING=UTF8
 
-echo Створення Користувача(Роль) ...
- exec $pg_install/psql -h $pg_host -U postgres -v pg_User_name=$pg_User_name -v pg_User_pass='$pg_User_pass' -f create_work_userrole.sql -L $OutTemps/create_work_userrole.log &
+echo "Створення Користувача(Роль) ..."
+ exec $pg_install/psql -h $pg_host -U postgres -v pg_User_name=$pg_User_name -v pg_User_pass="'$pg_User_pass'" -f create_work_userrole.sql -L $OutTemps/create_work_userrole.log &
 wait
-echo Створення BD ...
+echo "Створення BD ..."
  exec $pg_install/psql -h $pg_host -U postgres -v pg_User_name=$pg_User_name -f create_data_base.sql -L $OutTemps/create_db.log &
 wait
     
-echo Створення Схем(потипу як в Ораклі Пакети використувуватись будуть) ...
+echo "Створення Схем(потипу як в Ораклі Пакети використувуватись будуть) ..."
 exec $pg_install/psql -h $pg_host -d $Postgres_DB -U postgres -v pg_User_name=$pg_User_name -f create_scheme.sql -L $OutTemps/create_scheme.log &
 
 PGPASSWORD=$pg_User_pass
-echo Наповнювання даними...
+echo "Наповнювання даними..."
 exec $pg_install/psql -h $pg_host -d $Postgres_DB -U $pg_User_name -f 001.01/02-main.sql -L $OutTemps/02-main.log -o $OutTemps/02-main.log &
 wait
 
@@ -53,10 +53,10 @@ wait
 exec $pg_install/psql -h $pg_host -d $Postgres_DB -U $pg_User_name -f 001.01/20-init.sql -L $OutTemps/20-init.log -o $OutTemps/20-init.log &
 wait
 
-echo Сбір статистики
+echo "Сбір статистики"
 exec $pg_install/psql -h $pg_host -d $Postgres_DB -U $pg_User_name --command="VACUUM ANALYZE;" -L $OutTemps/vacuum_analyze.log -o $OutTemps/vacuum_analyze.log &
 
-echo Файли логування процесу дивіться $OutTemps
+echo "Файли логування процесу дивіться $OutTemps"
 
 
 
